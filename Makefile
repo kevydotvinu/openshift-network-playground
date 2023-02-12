@@ -3,7 +3,7 @@ DIR=$(shell pwd)
 ORANGE=\e[0;33m
 NOCOLOR=\e[0m
 IGNITION_DIR=${DIR}/ignition
-OSTREE_IMAGE?=quay.io/oibl/oibl:develop
+OSTREE_IMAGE?=quay.io/onp/onp
 REGISTRY=$(shell echo ${OSTREE_IMAGE} | cut -d/ -f1)
 RELEASEVER=$(shell curl -s https://raw.githubusercontent.com/coreos/fedora-coreos-config/testing-devel/manifest.yaml | grep releasever:)
 
@@ -74,7 +74,7 @@ cosa-init:
 	source ${DIR}/env && \
 		pushd ../cosa && \
 		unset COREOS_ASSEMBLER_CONFIG_GIT && \
-		cosa init https://github.com/kevydotvinu/ocp-ipi-baremetal-lab && \
+		cosa init https://github.com/kevydotvinu/openshift-network-playground && \
 		popd
 
 .PHONY: cosa-run
@@ -143,7 +143,7 @@ customize-iso:
 			--workdir /data \
 			quay.io/coreos/coreos-installer:release iso customize \
 			--force \
-			--dest-ignition ocp-ipi-baremetal-lab/ignition/00-core.ign \
+			--dest-ignition openshift-network-playground/ignition/00-core.ign \
 			--dest-device /dev/sda \
 			--dest-console tty0 \
 			--dest-console ttyS0 \
@@ -152,3 +152,9 @@ customize-iso:
 			--live-karg-append console=ttyS0 \
 			cosa/builds/latest/x86_64/fedora-coreos-*-live.x86_64.iso && \
 		popd
+.PHONY: boot-iso
+
+boot-iso:
+	@echo -e "${ORANGE}Booting ISO image ...${NOCOLOR}"
+	@qemu-img create ../onp.img 60G
+	@virt-install --name onp --vcpu 2 --memory 4000 --disk ../onp.img --cdrom ../cosa/builds/latest/x86_64/*.iso --noautoconsole --graphics spice,listen=0.0.0.0 --boot menu=on
