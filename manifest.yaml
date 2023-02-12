@@ -4,7 +4,7 @@ variables:
 
 releasever: 37
 
-ref: oibl/${basearch}/coreos/${stream}
+ref: onp/${basearch}/coreos/${stream}
 include: manifests/fedora-coreos.yaml
 
 packages:
@@ -18,7 +18,9 @@ packages:
   - cockpit-machines
   - cockpit-storaged
   - cockpit-networkmanager
+  - cockpit-navigator
   - openvswitch
+  - NetworkManager-ovs
   - toolbox
 
 repos:
