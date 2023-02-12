@@ -11,20 +11,22 @@ passwd:
         - wheel
         - adm
         - systemd-journal
-    - name: kni
-      gecos: ocp-ipi-baremtal-lab user
+    - name: onp
+      gecos: OpenShift Network Playground User
       groups:
         - sudo
         - wheel
         - adm
         - systemd-journal
         - libvirtd
-      password_hash: $y$j9T$rVVNGAWx1YhOFEOQQdk5v1$CXiP2XQROTh/5e4ZB66WaYafvNkfO/ZqVjaXYwx5Fo2
+      password_hash: $y$j9T$PNaoSZJskJ6WwR/2iS78a0$/6.dOJ1S2UWLMz0F/1mJvNN4dH3EZ1Y68hLfBsODgi0
 systemd:
   units:
     - name: systemd-resolved.service
       enabled: false
       mask: true
+    - name: zincati.service
+      enabled: false
     - name: libvirtd.socket
       enabled: true
     - name: host-configure.service
@@ -36,7 +38,7 @@ systemd:
 
         [Service]
         Type=oneshot
-        ExecStart=/opt/ocp-ipi-baremetal-lab/host/configure.sh
+        ExecStart=/opt/openshift-network-playground/host/configure.sh
         RemainAfterExit=yes
 
         [Install]
@@ -48,13 +50,13 @@ systemd:
         Wants=libvirtd.socket
         After=libvirtd.socket
         Requires=libvirtd.socket
-        ConditionPathExists=!/opt/ocp-ipi-baremetal-lab/master0.done
+        ConditionPathExists=!/opt/openshift-network-playground/master0.done
 
         [Service]
         Timeout=0
         Type=oneshot
-        ExecStart=/opt/ocp-ipi-baremetal-lab/libvirt/create-vm.sh master0 52:54:00:11:22:b1 52:54:00:11:22:a1
-        ExecStartPost=/usr/bin/touch /opt/ocp-ipi-baremetal-lab/master0.done
+        ExecStart=/opt/openshift-network-playground/libvirt/create-vm.sh master0 52:54:00:11:22:b1 52:54:00:11:22:a1
+        ExecStartPost=/usr/bin/touch /opt/openshift-network-playground/master0.done
         RemainAfterExit=yes
 
         [Install]
@@ -66,13 +68,13 @@ systemd:
         Wants=libvirtd.socket
         After=libvirtd.socket
         Requires=libvirtd.socket
-        ConditionPathExists=!/opt/ocp-ipi-baremetal-lab/master1.done
+        ConditionPathExists=!/opt/openshift-network-playground/master1.done
 
         [Service]
         Timeout=0
         Type=oneshot
-        ExecStart=/opt/ocp-ipi-baremetal-lab/libvirt/create-vm.sh master1 52:54:00:11:22:b2 52:54:00:11:22:a2
-        ExecStartPost=/usr/bin/touch /opt/ocp-ipi-baremetal-lab/master1.done
+        ExecStart=/opt/openshift-network-playground/libvirt/create-vm.sh master1 52:54:00:11:22:b2 52:54:00:11:22:a2
+        ExecStartPost=/usr/bin/touch /opt/openshift-network-playground/master1.done
         RemainAfterExit=yes
 
         [Install]
@@ -84,13 +86,13 @@ systemd:
         Wants=libvirtd.socket
         After=libvirtd.socket
         Requires=libvirtd.socket
-        ConditionPathExists=!/opt/ocp-ipi-baremetal-lab/master2.done
+        ConditionPathExists=!/opt/openshift-network-playground/master2.done
 
         [Service]
         Timeout=0
         Type=oneshot
-        ExecStart=/opt/ocp-ipi-baremetal-lab/libvirt/create-vm.sh master2 52:54:00:11:22:b3 52:54:00:11:22:a3
-        ExecStartPost=/usr/bin/touch /opt/ocp-ipi-baremetal-lab/master2.done
+        ExecStart=/opt/openshift-network-playground/libvirt/create-vm.sh master2 52:54:00:11:22:b3 52:54:00:11:22:a3
+        ExecStartPost=/usr/bin/touch /opt/openshift-network-playground/master2.done
         RemainAfterExit=yes
 
         [Install]
@@ -102,13 +104,13 @@ systemd:
         Wants=libvirtd.socket
         After=libvirtd.socket
         Requires=libvirtd.socket
-        ConditionPathExists=!/opt/ocp-ipi-baremetal-lab/worker0.done
+        ConditionPathExists=!/opt/openshift-network-playground/worker0.done
 
         [Service]
         Timeout=0
         Type=oneshot
-        ExecStart=/opt/ocp-ipi-baremetal-lab/libvirt/create-vm.sh worker0 52:54:00:11:22:b4 52:54:00:11:22:a4 2 8192
-        ExecStartPost=/usr/bin/touch /opt/ocp-ipi-baremetal-lab/worker0.done
+        ExecStart=/opt/openshift-network-playground/libvirt/create-vm.sh worker0 52:54:00:11:22:b4 52:54:00:11:22:a4 2 8192
+        ExecStartPost=/usr/bin/touch /opt/openshift-network-playground/worker0.done
         RemainAfterExit=yes
 
         [Install]
@@ -120,13 +122,13 @@ systemd:
         Wants=libvirtd.socket
         After=libvirtd.socket
         Requires=libvirtd.socket
-        ConditionPathExists=!/opt/ocp-ipi-baremetal-lab/worker1.done
+        ConditionPathExists=!/opt/openshift-network-playground/worker1.done
 
         [Service]
         Timeout=0
         Type=oneshot
-        ExecStart=/opt/ocp-ipi-baremetal-lab/libvirt/create-vm.sh worker1 52:54:00:11:22:b5 52:54:00:11:22:a5 2 8192
-        ExecStartPost=/usr/bin/touch /opt/ocp-ipi-baremetal-lab/worker1.done
+        ExecStart=/opt/openshift-network-playground/libvirt/create-vm.sh worker1 52:54:00:11:22:b5 52:54:00:11:22:a5 2 8192
+        ExecStartPost=/usr/bin/touch /opt/openshift-network-playground/worker1.done
         RemainAfterExit=yes
 
         [Install]
@@ -135,7 +137,7 @@ systemd:
       enabled: true
       contents: |
         [Unit]
-        Description=Webserver for ocp-ipi-baremetal-lab
+        Description=Webserver for openshift-network-playground
         Wants=network-online.target
         After=network-online.target
         RequiresMountsFor=%t/containers
@@ -154,7 +156,7 @@ systemd:
                 --detach \
                 --net host \
                 --name webserver \
-                -v /home/kni/ocp-ipi-baremetal-lab/rhcos_image_cache:/var/www/html quay.io/centos7/httpd-24-centos7:latest
+                -v /home/onp/openshift-network-playground/rhcos_image_cache:/var/www/html quay.io/centos7/httpd-24-centos7:latest
         ExecStop=/usr/bin/podman stop --ignore --cidfile=%t/%n.ctr-id
         ExecStopPost=/usr/bin/podman rm -f --ignore --cidfile=%t/%n.ctr-id
         Type=notify
@@ -166,7 +168,7 @@ systemd:
       enabled: true
       contents: |
         [Unit]
-        Description=vbmc for ocp-ipi-baremetal-lab
+        Description=vbmc for openshift-network-playground
         Wants=network-online.target
         After=network-online.target
         RequiresMountsFor=%t/containers
@@ -177,7 +179,7 @@ systemd:
         TimeoutStopSec=70
         TimeoutStartSec=600
         ExecStartPre=/usr/bin/rm -f %t/%n.ctr-id
-        ExecStartPre=/usr/bin/rm -vf /opt/ocp-ipi-baremetal-lab/vbmc/config/master.pid
+        ExecStartPre=/usr/bin/rm -vf /opt/openshift-network-playground/vbmc/config/master.pid
         ExecStart=/usr/bin/podman run \
                 --cidfile=%t/%n.ctr-id \
                 --cgroups=no-conmon \
@@ -188,8 +190,8 @@ systemd:
                 -ti \
                 --name vbmc \
                 --net host \
-                --volume "/opt/ocp-ipi-baremetal-lab/vbmc/config:/root/.vbmc" \
-                --volume "/opt/ocp-ipi-baremetal-lab/vbmc/ssh:/root/.ssh" \
+                --volume "/opt/openshift-network-playground/vbmc/config:/root/.vbmc" \
+                --volume "/opt/openshift-network-playground/vbmc/ssh:/root/.ssh" \
                 quay.io/metal3-io/vbmc
         ExecStop=/usr/bin/podman stop --ignore --cidfile=%t/%n.ctr-id
         ExecStopPost=/usr/bin/podman rm -f --ignore --cidfile=%t/%n.ctr-id
@@ -202,7 +204,7 @@ systemd:
       enabled: true
       contents: |
         [Unit]
-        Description=DHCP for ocp-ipi-baremetal-lab
+        Description=DHCP for openshift-network-playground
         Wants=network-online.target
         After=network-online.target
         RequiresMountsFor=%t/containers
@@ -213,8 +215,56 @@ systemd:
         TimeoutStartSec=180
         TimeoutStopSec=70
         ExecStartPre=-/usr/bin/rm -f %t/%n.ctr-id
-        ExecStartPre=/usr/bin/podman build --net host --tag localhost/dhcp /opt/ocp-ipi-baremetal-lab/dhcp
+        ExecStartPre=/usr/bin/podman build --net host --tag localhost/dhcp /opt/openshift-network-playground/dhcp
         ExecStart=/usr/bin/podman run --cidfile=%t/%n.ctr-id --cgroups=no-conmon --rm --sdnotify=conmon --name dhcp -d --net host --cap-add NET_ADMIN,NET_RAW localhost/dhcp
+        ExecStop=/usr/bin/podman stop --ignore --cidfile=%t/%n.ctr-id
+        ExecStopPost=/usr/bin/podman rm -f --ignore --cidfile=%t/%n.ctr-id
+        Type=notify
+        NotifyAccess=all
+
+        [Install]
+        WantedBy=default.target
+    - name: onp1-dhcp.service
+      enabled: false
+      contents: |
+        [Unit]
+        Description=DHCP for openshift-network-playground
+        Wants=network-online.target
+        After=network-online.target
+        RequiresMountsFor=%t/containers
+
+        [Service]
+        Environment=PODMAN_SYSTEMD_UNIT=%n
+        Restart=always
+        TimeoutStartSec=180
+        TimeoutStopSec=70
+        ExecStartPre=-/usr/bin/rm -f %t/%n.ctr-id
+        ExecStartPre=/usr/bin/podman build --net host --tag localhost/onp1-dhcp /opt/openshift-network-playground/onp1-dhcp
+        ExecStart=/usr/bin/podman run --cidfile=%t/%n.ctr-id --cgroups=no-conmon --rm --sdnotify=conmon --name onp1-dhcp -d --net host --cap-add NET_ADMIN,NET_RAW localhost/onp1-dhcp
+        ExecStop=/usr/bin/podman stop --ignore --cidfile=%t/%n.ctr-id
+        ExecStopPost=/usr/bin/podman rm -f --ignore --cidfile=%t/%n.ctr-id
+        Type=notify
+        NotifyAccess=all
+
+        [Install]
+        WantedBy=default.target
+    - name: onp2-dhcp.service
+      enabled: false
+      contents: |
+        [Unit]
+        Description=DHCP for openshift-network-playground
+        Wants=network-online.target
+        After=network-online.target
+        RequiresMountsFor=%t/containers
+
+        [Service]
+        Environment=PODMAN_SYSTEMD_UNIT=%n
+        Restart=always
+        TimeoutStartSec=180
+        TimeoutStopSec=70
+        ExecStartPre=-/usr/bin/rm -f %t/%n.ctr-id
+        ExecStartPre=/usr/bin/podman build --net host --tag localhost/onp2-dhcp /opt/openshift-network-playground/onp2-dhcp
+        ExecStart=/usr/bin/podman run --cidfile=%t/%n.ctr-id --cgroups=no-conmon --rm --sdnotify=conmon --name onp2-dhcp -d --net host --cap-add NET_ADMIN,NET_RAW localhost/onp2-dhcp
         ExecStop=/usr/bin/podman stop --ignore --cidfile=%t/%n.ctr-id
         ExecStopPost=/usr/bin/podman rm -f --ignore --cidfile=%t/%n.ctr-id
         Type=notify
@@ -226,7 +276,7 @@ systemd:
       enabled: false
       contents: |
         [Unit]
-        Description=PXE for ocp-ipi-baremetal-lab
+        Description=PXE for openshift-network-playground
         Wants=network-online.target
         After=network-online.target
         RequiresMountsFor=%t/containers
@@ -237,7 +287,7 @@ systemd:
         TimeoutStartSec=180
         TimeoutStopSec=70
         ExecStartPre=-/usr/bin/rm -f %t/%n.ctr-id
-        ExecStartPre=/usr/bin/podman build --net host --tag localhost/pxe /opt/ocp-ipi-baremetal-lab/pxe
+        ExecStartPre=/usr/bin/podman build --net host --tag localhost/pxe /opt/openshift-network-playground/pxe
         ExecStart=/usr/bin/podman run --cidfile=%t/%n.ctr-id --cgroups=no-conmon --rm --sdnotify=conmon --name pxe -d --net host --cap-add NET_ADMIN,NET_RAW localhost/pxe
         ExecStop=/usr/bin/podman stop --ignore --cidfile=%t/%n.ctr-id
         ExecStopPost=/usr/bin/podman rm -f --ignore --cidfile=%t/%n.ctr-id
@@ -256,35 +306,35 @@ systemd:
         [Service]
         Timeout=0
         Type=oneshot
-        ExecStart=/opt/ocp-ipi-baremetal-lab/host/broadcast.sh
+        ExecStart=/opt/openshift-network-playground/host/broadcast.sh
         RemainAfterExit=yes
 
         [Install]
         WantedBy=basic.target
 storage:
   directories:
-    - path: /home/kni/ocp-ipi-baremetal-lab
+    - path: /home/onp/openshift-network-playground
       mode: 0755
       overwrite: true
       user:
-        name: kni
+        name: onp
       group:
-        name: kni
-    - path: /home/kni/ocp-ipi-baremetal-lab/rhcos_image_cache
+        name: onp
+    - path: /home/onp/openshift-network-playground/rhcos_image_cache
       mode: 0755
       overwrite: true
       user:
-        name: kni
+        name: onp
       group:
-        name: kni
+        name: onp
   files:
-    - path: /opt/ocp-ipi-baremetal-lab/vbmc/ssh/config
+    - path: /opt/openshift-network-playground/vbmc/ssh/config
       mode: 0644
       overwrite: true
       contents:
         inline: |
           StrictHostKeyChecking no
-    - path: /opt/ocp-ipi-baremetal-lab/vbmc/config/master0/config
+    - path: /opt/openshift-network-playground/vbmc/config/master0/config
       mode: 0644
       user:
         id: 1001
@@ -299,9 +349,9 @@ storage:
           address = 192.168.123.1
           port = 6230
           domain_name = master0
-          libvirt_uri = qemu+ssh://kni@192.168.123.1/system
+          libvirt_uri = qemu+ssh://onp@192.168.123.1/system
           active = True
-    - path: /opt/ocp-ipi-baremetal-lab/vbmc/config/master1/config
+    - path: /opt/openshift-network-playground/vbmc/config/master1/config
       mode: 0644
       user:
         id: 1001
@@ -316,9 +366,9 @@ storage:
           address = 192.168.123.1
           port = 6231
           domain_name = master1
-          libvirt_uri = qemu+ssh://kni@192.168.123.1/system
+          libvirt_uri = qemu+ssh://onp@192.168.123.1/system
           active = True
-    - path: /opt/ocp-ipi-baremetal-lab/vbmc/config/master2/config
+    - path: /opt/openshift-network-playground/vbmc/config/master2/config
       mode: 0644
       user:
         id: 1001
@@ -333,9 +383,9 @@ storage:
           address = 192.168.123.1
           port = 6232
           domain_name = master2
-          libvirt_uri = qemu+ssh://kni@192.168.123.1/system
+          libvirt_uri = qemu+ssh://onp@192.168.123.1/system
           active = True
-    - path: /opt/ocp-ipi-baremetal-lab/vbmc/config/worker0/config
+    - path: /opt/openshift-network-playground/vbmc/config/worker0/config
       mode: 0644
       user:
         id: 1001
@@ -350,9 +400,9 @@ storage:
           address = 192.168.123.1
           port = 6233
           domain_name = worker0
-          libvirt_uri = qemu+ssh://kni@192.168.123.1/system
+          libvirt_uri = qemu+ssh://onp@192.168.123.1/system
           active = True
-    - path: /opt/ocp-ipi-baremetal-lab/vbmc/config/worker1/config
+    - path: /opt/openshift-network-playground/vbmc/config/worker1/config
       mode: 0644
       user:
         id: 1001
@@ -367,19 +417,19 @@ storage:
           address = 192.168.123.1
           port = 6234
           domain_name = worker1
-          libvirt_uri = qemu+ssh://kni@192.168.123.1/system
+          libvirt_uri = qemu+ssh://onp@192.168.123.1/system
           active = True
     - path: /etc/resolv.conf
       mode: 0644
       overwrite: true
       contents:
         inline: ""
-    - path: /etc/sudoers.d/kni
+    - path: /etc/sudoers.d/onp
       mode: 0644
       overwrite: true
       contents:
         inline: |
-          kni ALL=(ALL) NOPASSWD: ALL
+          onp ALL=(ALL) NOPASSWD: ALL
     - path: /etc/polkit-1/localauthority/50-local.d/50-libvirt-remote-access.pkla
       mode: 0644
       overwrite: true
@@ -409,17 +459,20 @@ storage:
       contents:
         inline: |
           PasswordAuthentication yes
-    - path: /opt/ocp-ipi-baremetal-lab/host/configure.sh
+    - path: /opt/openshift-network-playground/host/configure.sh
       mode: 0755
       contents:
         inline: |
           #!/bin/sh
           /usr/sbin/iptables -t nat -I POSTROUTING -s 192.168.123.0/24 ! -d 192.168.123.0/24 -j MASQUERADE
+          /usr/sbin/iptables -t nat -I POSTROUTING -s 192.168.123.0/24 ! -d 192.168.124.0/24 -j MASQUERADE
+          /usr/sbin/iptables -t nat -I POSTROUTING -s 192.168.123.0/24 ! -d 192.168.125.0/24 -j MASQUERADE
           /usr/sbin/iptables -t nat -I PREROUTING -p tcp -i $(/usr/sbin/ip r | grep default | awk '{print $5}') --dport 443 -j DNAT --to-destination 192.168.123.89:443
           /usr/sbin/iptables -t nat -I PREROUTING -p tcp -i $(/usr/sbin/ip r | grep default | awk '{print $5}') --dport 80 -j DNAT --to-destination 192.168.123.89:80
           /usr/sbin/iptables -t nat -I PREROUTING -p tcp -i $(/usr/sbin/ip r | grep default | awk '{print $5}') --dport 6443 -j DNAT --to-destination 192.168.123.88:6443
-          test -f /opt/ocp-ipi-baremetal-lab/vbmc/ssh/id_rsa || (ssh-keygen -N '' -f /opt/ocp-ipi-baremetal-lab/vbmc/ssh/id_rsa && mkdir -p /home/kni/.ssh && cp /opt/ocp-ipi-baremetal-lab/vbmc/ssh/id_rsa.pub /home/kni/.ssh/authorized_keys && chown kni:kni -R /home/kni/.ssh)
-          test -f /opt/ocp-ipi-baremetal-lab/cockpit-ws.done || (test -d /usr/share/cockpit && podman container runlabel --name cockpit-ws RUN quay.io/cockpit/ws && podman container runlabel INSTALL quay.io/cockpit/ws && systemctl enable cockpit.service && touch /opt/ocp-ipi-baremetal-lab/cockpit-ws.done)
+          /usr/bin/test -f /opt/openshift-network-playground/vbmc/ssh/id_rsa || (ssh-keygen -N '' -f /opt/openshift-network-playground/vbmc/ssh/id_rsa && mkdir -p /home/onp/.ssh && cp /opt/openshift-network-playground/vbmc/ssh/id_rsa.pub /home/onp/.ssh/authorized_keys && chown onp:onp -R /home/onp/.ssh)
+          /usr/bin/test -f /opt/openshift-network-playground/cockpit-ws.done || (/usr/bin/test -d /usr/share/cockpit && podman container runlabel --name cockpit-ws RUN quay.io/cockpit/ws && podman container runlabel INSTALL quay.io/cockpit/ws && systemctl enable cockpit.service && touch /opt/openshift-network-playground/cockpit-ws.done)
+          /usr/bin/chown -R onp:onp /home/onp/.local
     - path: /etc/NetworkManager/system-connections/ens3.nmconnection
       mode: 0600
       overwrite: true
@@ -540,7 +593,111 @@ storage:
           master=provisioning
           autoconnect=yes
           slave-type=bridge
-    - path: /etc/NetworkManager/conf.d/ocp-ipi-baremetal-lab.conf
+    - path: /etc/NetworkManager/system-connections/onp1-dummy.nmconnection
+      mode: 0600
+      overwrite: true
+      user:
+        name: root
+      contents:
+        inline: |
+          [connection]
+          id=onp1-dummy
+          type=dummy
+          interface-name=onp1-dummy
+          autoconnect=yes
+          master=onp1
+          slave-type=bridge
+          [ipv4]
+          method=link-local
+          [ipv6]
+          method=disabled
+    - path: /etc/NetworkManager/system-connections/onp1.nmconnection
+      mode: 0600
+      overwrite: true
+      user:
+        name: root
+      contents:
+        inline: |
+          [connection]
+          id=onp1
+          type=bridge
+          autoconnect=yes
+          interface-name=onp1
+          [ipv4]
+          method=manual
+          addresses=192.168.124.1
+          [ipv6]
+          method=disabled
+          [bridge]
+          mac-address=52:54:00:11:22:c0
+          interface-name=onp1
+    - path: /etc/NetworkManager/system-connections/ocp1-slave.nmconnection
+      mode: 0600
+      overwrite: true
+      user:
+        name: root
+      contents:
+        inline: |
+          [connection]
+          id=onp1-slave
+          type=ethernet
+          interface-name=onp1-dummy
+          master=onp1
+          autoconnect=yes
+          slave-type=bridge
+    - path: /etc/NetworkManager/system-connections/onp2-dummy.nmconnection
+      mode: 0600
+      overwrite: true
+      user:
+        name: root
+      contents:
+        inline: |
+          [connection]
+          id=onp2-dummy
+          type=dummy
+          interface-name=onp2-dummy
+          autoconnect=yes
+          master=onp2
+          slave-type=bridge
+          [ipv4]
+          method=link-local
+          [ipv6]
+          method=disabled
+    - path: /etc/NetworkManager/system-connections/onp2.nmconnection
+      mode: 0600
+      overwrite: true
+      user:
+        name: root
+      contents:
+        inline: |
+          [connection]
+          id=onp2
+          type=bridge
+          autoconnect=yes
+          interface-name=onp2
+          [ipv4]
+          method=manual
+          addresses=192.168.125.1
+          [ipv6]
+          method=disabled
+          [bridge]
+          mac-address=52:54:00:11:22:d0
+          interface-name=onp2
+    - path: /etc/NetworkManager/system-connections/ocp2-slave.nmconnection
+      mode: 0600
+      overwrite: true
+      user:
+        name: root
+      contents:
+        inline: |
+          [connection]
+          id=onp2-slave
+          type=ethernet
+          interface-name=onp2-dummy
+          master=onp2
+          autoconnect=yes
+          slave-type=bridge
+    - path: /etc/NetworkManager/conf.d/openshift-network-playground.conf
       mode: 0644
       overwrite: true
       user:
@@ -550,7 +707,7 @@ storage:
           [main]
           plugins=keyfile
           dns=dnsmasq
-    - path: /etc/NetworkManager/dnsmasq.d/ocp-ipi-baremetal-lab.conf
+    - path: /etc/NetworkManager/dnsmasq.d/openshift-network-playground.conf
       mode: 0644
       overwrite: true
       user:
@@ -566,7 +723,7 @@ storage:
         name: root
       contents:
         inline: |
-          127.0.0.1 localhost localhost.localdomain ocp-ipi-baremetal-lab.ocp.example.local
+          127.0.0.1 localhost localhost.localdomain openshift-network-playground.ocp.example.local
           192.168.123.88 api.ocp.example.local
           192.168.123.90 bootstrap.ocp.example.local
           192.168.123.91 master0.ocp.example.local
@@ -574,30 +731,30 @@ storage:
           192.168.123.93 master2.ocp.example.local
           192.168.123.94 worker0.ocp.example.local
           192.168.123.95 worker1.ocp.example.local
-          192.168.123.1 ocp-ipi-baremetal-lab.ocp.example.local lb.ocp.example.local mirror.ocp.example.local proxy.ocp.example.local
+          192.168.123.1 openshift-network-playground.ocp.example.local lb.ocp.example.local mirror.ocp.example.local proxy.ocp.example.local
     - path: /etc/zincati/config.d/90-disable-auto-updates.toml
       contents:
         inline: |
           [updates]
           enabled = false
-    - path: /opt/ocp-ipi-baremetal-lab/libvirt/create-vm.sh
+    - path: /opt/openshift-network-playground/libvirt/create-vm.sh
       mode: 0755
       overwrite: true
       user:
-        name: kni
+        name: onp
       group:
-        name: kni
+        name: onp
       contents:
         inline: |
           #!/bin/bash
-          # Create node for ocp-ipi-baremetal-lab
+          # Create node for openshift-network-playground
           
           set -euxo pipefail
           
           VM_NAME=$1
           MAC1=$2
           MAC2=$3
-          VM_DIR=/opt/ocp-ipi-baremetal-lab/libvirt
+          VM_DIR=/opt/openshift-network-playground/libvirt
           VM_DISK=$VM_DIR/$VM_NAME/$VM_NAME.img
           VCPU=${4:-4}
           MEMORY=${5:-16384}
@@ -624,8 +781,8 @@ storage:
                   --serial pty \
                   --noautoconsole \
                   --print-xml 2)
-          touch /opt/ocp-ipi-baremetal-lab/$VM_NAME.done
-    - path: /opt/ocp-ipi-baremetal-lab/dhcp/Containerfile
+          touch /opt/openshift-network-playground/$VM_NAME.done
+    - path: /opt/openshift-network-playground/dhcp/Containerfile
       mode: 0644
       overwrite: true
       contents:
@@ -636,7 +793,7 @@ storage:
           ADD dnsmasq.conf /dnsmasq.conf
           ENTRYPOINT ["dnsmasq"]
           CMD ["-C", "/dnsmasq.conf"]
-    - path: /opt/ocp-ipi-baremetal-lab/dhcp/dnsmasq.conf
+    - path: /opt/openshift-network-playground/dhcp/dnsmasq.conf
       mode: 0644
       overwrite: true
       contents:
@@ -654,7 +811,7 @@ storage:
           dhcp-host=52:54:00:11:22:a3,master2.ocp.example.local,192.168.123.93
           dhcp-host=52:54:00:11:22:a4,worker0.ocp.example.local,192.168.123.94
           dhcp-host=52:54:00:11:22:a5,worker1.ocp.example.local,192.168.123.95
-    - path: /opt/ocp-ipi-baremetal-lab/pxe/Containerfile
+    - path: /opt/openshift-network-playground/pxe/Containerfile
       mode: 0644
       overwrite: true
       contents:
@@ -665,7 +822,7 @@ storage:
           ADD dnsmasq.conf /dnsmasq.conf
           ENTRYPOINT ["dnsmasq"]
           CMD ["-C", "/dnsmasq.conf"]
-    - path: /opt/ocp-ipi-baremetal-lab/pxe/dnsmasq.conf
+    - path: /opt/openshift-network-playground/pxe/dnsmasq.conf
       mode: 0644
       overwrite: true
       contents:
@@ -682,13 +839,61 @@ storage:
           enable-tftp
           dhcp-userclass=set:ipxe,iPXE
           dhcp-boot=tag:ipxe,http://172.22.0.2/boot.ipxe
-    - path: /home/kni/Makefile
+    - path: /opt/openshift-network-playground/onp1-dhcp/Containerfile
+      mode: 0644
+      overwrite: true
+      contents:
+        inline: |
+          FROM fedora
+          MAINTAINER "Vinu K" <vkochuku@redhat.com>
+          RUN yum install -y dnsmasq
+          ADD dnsmasq.conf /dnsmasq.conf
+          ENTRYPOINT ["dnsmasq"]
+          CMD ["-C", "/dnsmasq.conf"]
+    - path: /opt/openshift-network-playground/onp1-dhcp/dnsmasq.conf
+      mode: 0644
+      overwrite: true
+      contents:
+        inline: |
+          no-daemon
+          interface=onp1
+          dhcp-range=192.168.124.2,192.168.124.254,255.255.255.0
+          except-interface=lo
+          bind-interfaces
+          log-dhcp
+          dhcp-authoritative
+          log-async
+    - path: /opt/openshift-network-playground/onp2-dhcp/Containerfile
+      mode: 0644
+      overwrite: true
+      contents:
+        inline: |
+          FROM fedora
+          MAINTAINER "Vinu K" <vkochuku@redhat.com>
+          RUN yum install -y dnsmasq
+          ADD dnsmasq.conf /dnsmasq.conf
+          ENTRYPOINT ["dnsmasq"]
+          CMD ["-C", "/dnsmasq.conf"]
+    - path: /opt/openshift-network-playground/onp2-dhcp/dnsmasq.conf
+      mode: 0644
+      overwrite: true
+      contents:
+        inline: |
+          no-daemon
+          interface=onp2
+          dhcp-range=192.168.125.2,192.168.125.254,255.255.255.0
+          except-interface=lo
+          bind-interfaces
+          log-dhcp
+          dhcp-authoritative
+          log-async
+    - path: /home/onp/.Makefile
       mode: 0755
       overwrite: true
       user:
-        name: kni
+        name: onp
       group:
-        name: kni
+        name: onp
       contents:
         inline: |
           RELEASE ?= stable-4.10
@@ -722,38 +927,38 @@ storage:
           
           ssh-pullsecret: check-env
                 @echo "Generating SSH keys and pullsecret ..."
-                @ocp-ipi-baremetal-lab/ssh-pullsecret.sh $(OCM_TOKEN)
+                @openshift-network-playground/ssh-pullsecret.sh $(OCM_TOKEN)
 
           .PHONY: install-config
 
-          install-config: /home/kni/ocp-ipi-baremetal-lab/pullsecret /home/kni/ocp-ipi-baremetal-lab/id_ed25519.pub
-                @ocp-ipi-baremetal-lab/install-config.sh $(RELEASE)
+          install-config: /home/onp/openshift-network-playground/pullsecret /home/onp/openshift-network-playground/id_ed25519.pub
+                @openshift-network-playground/install-config.sh $(RELEASE)
 
           .PHONY: manifests
 
-          manifests:
+          manifests: $(SCRIPT_DIR)/openshift-network-playground/clusterconfigs/install-config.yaml
                 @echo "Generating manifests ..."
-                @/usr/local/bin/openshift-baremetal-install --log-level=${LOGLEVEL} --dir=$(SCRIPT_DIR)/ocp-ipi-baremetal-lab/clusterconfigs create manifests
+                @/usr/local/bin/openshift-baremetal-install --log-level=${LOGLEVEL} --dir=$(SCRIPT_DIR)/openshift-network-playground/clusterconfigs create manifests
 
           .PHONY: ignition-configs
 
-          ignition-configs: $(SCRIPT_DIR)/ocp-ipi-baremetal-lab/clusterconfigs/install-config.yaml
+          ignition-configs:
                 @echo "Generating ignition-configs ..."
-                @/usr/local/bin/openshift-baremetal-install --log-level=${LOGLEVEL} --dir=$(SCRIPT_DIR)/ocp-ipi-baremetal-lab/clusterconfigs create ignition-configs
+                @/usr/local/bin/openshift-baremetal-install --log-level=${LOGLEVEL} --dir=$(SCRIPT_DIR)/openshift-network-playground/clusterconfigs create ignition-configs
           
           .PHONY: cluster
           
-          cluster: $(SCRIPT_DIR)/ocp-ipi-baremetal-lab/clusterconfigs/install-config.yaml check-containers check-vms
+          cluster: check-containers check-vms
                 @echo "Creating cluster ..."
-                @/usr/local/bin/openshift-baremetal-install --log-level=${LOGLEVEL} --dir=$(SCRIPT_DIR)/ocp-ipi-baremetal-lab/clusterconfigs create cluster
+                @/usr/local/bin/openshift-baremetal-install --log-level=${LOGLEVEL} --dir=$(SCRIPT_DIR)/openshift-network-playground/clusterconfigs create cluster
           
           .PHONY: clean
           
           clean:
                 @echo "Removing old bootstrap resources ..."
-                -@$(SCRIPT_DIR)/ocp-ipi-baremetal-lab/clean-bootstrap.sh
+                -@$(SCRIPT_DIR)/openshift-network-playground/clean-bootstrap.sh
                 @echo "Removing installation directory ..."
-                -@rm -rfv $(SCRIPT_DIR)/ocp-ipi-baremetal-lab/clusterconfigs
+                -@rm -rfv $(SCRIPT_DIR)/openshift-network-playground/clusterconfigs
                 @echo "Powering off master nodes ..."
                 -@for i in master0 master1 master2; do sudo virsh destroy $$i; done
                 @echo "!!! IGNORE THE ERRORS !!!"
@@ -762,27 +967,45 @@ storage:
           
           destroy:
                 @echo "Destroying bootrap ..."
-                -@openshift-baremetal-install destroy --log-level=${LOGLEVEL} --dir=/home/kni/ocp-ipi-baremetal-lab/clusterconfigs bootstrap
+                -@openshift-baremetal-install destroy --log-level=${LOGLEVEL} --dir=/home/onp/openshift-network-playground/clusterconfigs bootstrap
                 @echo "Destroying cluster ..."
-                -@openshift-baremetal-install destroy --log-level=${LOGLEVEL} --dir=/home/kni/ocp-ipi-baremetal-lab/clusterconfigs cluster
+                -@openshift-baremetal-install destroy --log-level=${LOGLEVEL} --dir=/home/onp/openshift-network-playground/clusterconfigs cluster
                 @echo "Removing installation directory ..."
-                -@rm -rfv $(SCRIPT_DIR)/ocp-ipi-baremetal-lab/clusterconfigs
+                -@rm -rfv $(SCRIPT_DIR)/openshift-network-playground/clusterconfigs
                 @echo "Powering off master nodes ..."
                 -@for i in master0 master1 master2; do sudo virsh destroy $$i; done
                 @echo "!!! IGNORE THE ERRORS !!!"
+
+          .PHONY: deploy
+
+          deploy: clean ssh-pullsecret install-config manifests core-passwd-auth cluster
+
+          .PHONY: core-passwd-auth
+
+          core-passwd-auth:
+                sed "s/version: 4.x.x/version: $(shell oc version --client -o json | jq -r .releaseClientVersion | cut -d'.' -f'1-2').0/g" /home/onp/openshift-network-playground/99_openshift-machineconfig_99-master-core-passwd-auth.bu > /tmp/master-core-passwd-auth.bu
+                sed "s/version: 4.x.x/version: $(shell oc version --client -o json | jq -r .releaseClientVersion | cut -d'.' -f'1-2').0/g" /home/onp/openshift-network-playground/99_openshift-machineconfig_99-worker-core-passwd-auth.bu > /tmp/worker-core-passwd-auth.bu
+                podman run -i --rm quay.io/coreos/butane:release --strict < /tmp/master-core-passwd-auth.bu > /home/onp/openshift-network-playground/clusterconfigs/openshift/99_openshift-machineconfig_99-master-core-passwd-auth.yaml
+                podman run -i --rm quay.io/coreos/butane:release --strict < /tmp/worker-core-passwd-auth.bu > /home/onp/openshift-network-playground/clusterconfigs/openshift/99_openshift-machineconfig_99-worker-core-passwd-auth.yaml
+
+          .PHONY: onp-files
+
+          onp-files:
+                @echo "Cloning onp-files ..."
+                @git clone https://github.com/kevydotvinu/onp-files
 
           .PHONY: ironic-client
 
           ironic-client: check-terraform-file
                 @echo "Creating clouds.yaml file ..."
-                -@jq -jr '"clouds:","\n","  metal3:","\n","    auth_type: http_basic","\n","    username: ",.ironic_username,"\n","    password: ",.ironic_password,"\n","    baremetal_endpoint_override: ",.ironic_uri,"\n","    baremetal_introspection_endpoint_override: ",.inspector_uri,"\n"' /tmp/openshift-*/terraform.platform.auto.tfvars.json > /home/kni/ocp-ipi-baremetal-lab/clouds.yaml
+                -@jq -jr '"clouds:","\n","  metal3:","\n","    auth_type: http_basic","\n","    username: ",.ironic_username,"\n","    password: ",.ironic_password,"\n","    baremetal_endpoint_override: ",.ironic_uri,"\n","    baremetal_introspection_endpoint_override: ",.inspector_uri,"\n"' /tmp/openshift-*/terraform.platform.auto.tfvars.json > /home/onp/openshift-network-playground/clouds.yaml
                 @echo "Starting ironic-client container ..."
-                -@sudo podman run -ti --rm --entrypoint /bin/bash --net host -v /home/kni/ocp-ipi-baremetal-lab/clouds.yaml:/clouds.yaml -e OS_CLOUD=metal3 quay.io/metal3-io/ironic-client:latest
+                -@sudo podman run -ti --rm --entrypoint /bin/bash --net host -v /home/onp/openshift-network-playground/clouds.yaml:/clouds.yaml -e OS_CLOUD=metal3 quay.io/metal3-io/ironic-client:latest
 
           .PHONY: help
 
           help:
-                @echo "Usage: oibl [SUBCOMMAND] [VARIABLE_NAME]=<variable>"
+                @echo "Usage: onp [SUBCOMMAND] [VARIABLE_NAME]=<variable>"
                 @echo ""
                 @echo "Subcommands:"
                 @echo "  ssh-pullsecret OCM_TOKEN=<OCM_TOKEN>   Generate SSH keys and download pullsecret file."
@@ -793,19 +1016,19 @@ storage:
                 @echo "  ironic-client                          Create ironic-client container."
                 @echo ""
                 @echo "Example:"
-                @echo "  oibl cluster LOGLEVEL=debug"
+                @echo "  onp cluster LOGLEVEL=debug"
                 @echo ""
                 @echo "Variables:"
                 @echo "  OCM_TOKEN (token from https://cloud.redhat.com/openshift/token)"
                 @echo "  RELEASE (stable-4.10, latest-4.9, 4.9.0, etc)"
                 @echo "  LOGLEVEL (debug, info, warn, error)"
-    - path: /home/kni/ocp-ipi-baremetal-lab/clean-bootstrap.sh
+    - path: /home/onp/openshift-network-playground/clean-bootstrap.sh
       mode: 0755
       overwrite: true
       user:
-        name: kni
+        name: onp
       group:
-        name: kni
+        name: onp
       contents:
         inline: |
           #!/bin/bash
@@ -831,13 +1054,13 @@ storage:
                           sudo virsh pool-undefine ${RESOURCE}
                   done
           fi
-    - path: /home/kni/ocp-ipi-baremetal-lab/ssh-pullsecret.sh
+    - path: /home/onp/openshift-network-playground/ssh-pullsecret.sh
       mode: 0755
       overwrite: true
       user:
-        name: kni
+        name: onp
       group:
-        name: kni
+        name: onp
       contents:
         inline: |
           #!/bin/bash
@@ -878,13 +1101,13 @@ storage:
           else
                   USAGE
           fi
-    - path: /home/kni/ocp-ipi-baremetal-lab/install-config.sh
+    - path: /home/onp/openshift-network-playground/install-config.sh
       mode: 0755
       overwrite: true
       user:
-        name: kni
+        name: onp
       group:
-        name: kni
+        name: onp
       contents:
         inline: |
           set -euo pipefail
@@ -907,7 +1130,7 @@ storage:
           export RHCOS_QEMU_NAME=${RHCOS_QEMU_URI##*/}
           export RHCOS_QEMU_UNCOMPRESSED_SHA256=$(/usr/local/bin/openshift-baremetal-install coreos print-stream-json | jq -r --arg ARCH "$(arch)" '.architectures[$ARCH].artifacts.qemu.formats["qcow2.gz"].disk["uncompressed-sha256"]')
           echo "Downloading bootstrap os image ..."
-          [ -f "/home/kni/ocp-ipi-baremetal-lab/rhcos_image_cache/${RHCOS_QEMU_NAME}" ] || curl -sL ${RHCOS_QEMU_URI} -o /home/kni/ocp-ipi-baremetal-lab/rhcos_image_cache/${RHCOS_QEMU_NAME}
+          [ -f "/home/onp/openshift-network-playground/rhcos_image_cache/${RHCOS_QEMU_NAME}" ] || curl -sL ${RHCOS_QEMU_URI} -o /home/onp/openshift-network-playground/rhcos_image_cache/${RHCOS_QEMU_NAME}
           echo "✔ Downloaded!"
           export BAREMETAL_IP=$(ip addr show dev baremetal | awk '/inet /{print $2}' | cut -d"/" -f1)
           export BOOTSTRAP_OS_IMAGE="http://${BAREMETAL_IP}:8080/${RHCOS_QEMU_NAME}?sha256=${RHCOS_QEMU_UNCOMPRESSED_SHA256}"
@@ -975,27 +1198,27 @@ storage:
           echo "Copying install-config.yaml file to clusterconfigs directory ..."
           cp ${SCRIPT_DIR}/install-config.yaml ${SCRIPT_DIR}/clusterconfigs/
           echo "✔ Copied!"
-    - path: /opt/ocp-ipi-baremetal-lab/host/broadcast.sh
+    - path: /opt/openshift-network-playground/host/broadcast.sh
       mode: 0755
       overwrite: true
       contents:
         inline: |
           #!/bin/sh
           while true; do if [[ $(podman ps --format json | jq -r '.[] | .Names | .[]' | wc -l) == "3" ]]; then echo -e "The containerized services ($(podman ps --format json | jq -r '.[] | .Names | .[]' | xargs)) are ready.\nYou can start the OpenShift baremetal IPI installation now." | wall -n; break; fi; done
-    - path: /home/kni/.bashrc
+    - path: /home/onp/.bashrc
       append:
         - inline: |
-            alias oibl='make'
+            alias onp='make -C /home/onp -f /home/onp/.Makefile'
             export EDITOR=vi
-            export KUBECONFIG=/home/kni/ocp-ipi-baremetal-lab/clusterconfigs/auth/kubeconfig
-            sed -i -e 's/      /\t/g' /home/kni/Makefile
-    - path: /home/kni/ocp-ipi-baremetal-lab/worker0.yaml
+            export KUBECONFIG=/home/onp/openshift-network-playground/clusterconfigs/auth/kubeconfig
+            sed -i -e 's/      /\t/g' /home/onp/.Makefile
+    - path: /home/onp/openshift-network-playground/worker0.yaml
       mode: 0755
       overwrite: true
       user:
-        name: kni
+        name: onp
       group:
-        name: kni
+        name: onp
       contents:
         inline: |
           apiVersion: v1
@@ -1021,13 +1244,13 @@ storage:
               credentialsName: openshift-worker-0-bmc-secret
             rootDeviceHints:
               deviceName: "/dev/vda"
-    - path: /home/kni/ocp-ipi-baremetal-lab/worker1.yaml
+    - path: /home/onp/openshift-network-playground/worker1.yaml
       mode: 0755
       overwrite: true
       user:
-        name: kni
+        name: onp
       group:
-        name: kni
+        name: onp
       contents:
         inline: |
           apiVersion: v1
@@ -1053,13 +1276,13 @@ storage:
               credentialsName: openshift-worker-1-bmc-secret
             rootDeviceHints:
               deviceName: "/dev/vda"
-    - path: /home/kni/ocp-ipi-baremetal-lab/99_openshift-machineconfig_99-master-oibl.bu
+    - path: /home/onp/openshift-network-playground/99_openshift-machineconfig_99-master-core-passwd-auth.bu
       mode: 0755
       overwrite: true
       user:
-        name: kni
+        name: onp
       group:
-        name: kni
+        name: onp
       contents:
         inline: |
           variant: openshift
@@ -1067,10 +1290,10 @@ storage:
           metadata:
             labels:
               machineconfiguration.openshift.io/role: master
-            name: 99-master-oibl
+            name: 99-master-onp
           storage:
             files:
-            - path: /etc/ssh/sshd_config.d/99-oibl.conf
+            - path: /etc/ssh/sshd_config.d/99-onp.conf
               mode: 0644
               overwrite: true
               contents:
@@ -1078,7 +1301,7 @@ storage:
                   PasswordAuthentication yes
           systemd:
             units:
-            - name: oibl.service
+            - name: onp.service
               enabled: true
               contents: |
                 [Service]
@@ -1087,13 +1310,13 @@ storage:
                 RemainAfterExit=yes
                 [Install]
                 WantedBy=multi-user.target
-    - path: /home/kni/ocp-ipi-baremetal-lab/99_openshift-machineconfig_99-worker-oibl.bu
+    - path: /home/onp/openshift-network-playground/99_openshift-machineconfig_99-worker-core-passwd-auth.bu
       mode: 0755
       overwrite: true
       user:
-        name: kni
+        name: onp
       group:
-        name: kni
+        name: onp
       contents:
         inline: |
           variant: openshift
@@ -1101,10 +1324,10 @@ storage:
           metadata:
             labels:
               machineconfiguration.openshift.io/role: worker
-            name: 99-worker-oibl
+            name: 99-worker-onp
           storage:
             files:
-            - path: /etc/ssh/sshd_config.d/99-oibl.conf
+            - path: /etc/ssh/sshd_config.d/99-onp.conf
               mode: 0644
               overwrite: true
               contents:
@@ -1112,7 +1335,7 @@ storage:
                   PasswordAuthentication yes
           systemd:
             units:
-            - name: oibl.service
+            - name: onp.service
               enabled: true
               contents: |
                 [Service]
@@ -1121,3 +1344,121 @@ storage:
                 RemainAfterExit=yes
                 [Install]
                 WantedBy=multi-user.target
+    - path: /home/onp/.local/share/cockpit/openshift/deploy-cluster.sh
+      mode: 0755
+      overwrite: true
+      user:
+        name: onp
+      group:
+        name: onp
+      contents:
+        inline: |
+          #!/bin/bash
+          # This script initiates an OpenShift cluster deployment in transient systemd service.
+          sudo systemd-run --uid=onp --unit=deploy-cluster --description='OpenShift cluster deployment' make -C /home/onp/ -f /home/onp/.Makefile deploy RELEASE=${1} OCM_TOKEN=${2}
+          journalctl -f -u deploy-cluster.service
+    - path: /home/onp/.local/share/cockpit/openshift/manifest.json
+      mode: 0755
+      overwrite: true
+      user:
+        name: onp
+      group:
+        name: onp
+      contents:
+        inline: |
+          {
+            "version": 0,
+            "tools": {
+              "openshift": {
+                "label": "OpenShift",
+                "path": "openshift.html"
+              }
+            }
+          }
+    - path: /home/onp/.local/share/cockpit/openshift/openshift.html
+      mode: 0755
+      overwrite: true
+      user:
+        name: onp
+      group:
+        name: onp
+      contents:
+        inline: |
+          <!DOCTYPE html>
+          <html>
+          <head>
+              <title>OpenShift</title>
+              <meta charset="utf-8">
+              <script src="../base1/cockpit.js"></script>
+          </head>
+          <body class="pf-m-redhat-font">
+              <main tabindex="-1">
+                  <section>
+                      <div id="app">
+                          <div>
+                              <label for="release">Release</label>
+                              <input id="release" value="4.12.2">
+                          </div>
+                          <div>
+                              <label for="token">OCM Token</label>
+                              <input id="token" value="token">
+                          </div>
+                          <div>
+                              <button id="deploy">Deploy</button>
+                              <span id="result"></span>
+                          </div>
+                          <div>
+                              <pre id="output"></pre>
+                          </div>
+                      </div>
+                  </section>
+              </main>
+
+              <script src="openshift.js"></script>
+          </body>
+          </html>
+    - path: /home/onp/.local/share/cockpit/openshift/openshift.js
+      mode: 0755
+      overwrite: true
+      user:
+        name: onp
+      group:
+        name: onp
+      contents:
+        inline: |
+          const release = document.getElementById("release");
+          const token = document.getElementById("token");
+          const output = document.getElementById("output");
+          const result = document.getElementById("result");
+          const button = document.getElementById("deploy");
+
+          function deploy_run() {
+              /* global cockpit */
+              cockpit.spawn(["/home/onp/.local/share/cockpit/openshift/deploy-cluster.sh", release.value, token.value])
+                      .stream(deploy_output)
+                      .then(deploy_success)
+                      .catch(deploy_fail);
+
+              result.innerHTML = "";
+              output.innerHTML = "";
+          }
+
+          function deploy_success() {
+              result.style.color = "green";
+              result.innerHTML = "success";
+          }
+
+          function deploy_fail() {
+              result.style.color = "red";
+              result.innerHTML = "fail";
+          }
+
+          function deploy_output(data) {
+              output.append(document.createTextNode(data));
+          }
+
+          // Connect the button to starting the "deploy" process
+          button.addEventListener("click", deploy_run);
+
+          // Send a 'init' message.  This tells integration tests that we are ready to go
+          cockpit.transport.wait(function() { });

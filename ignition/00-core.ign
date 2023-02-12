@@ -20,7 +20,7 @@
         "name": "core"
       },
       {
-        "gecos": "ocp-ipi-baremtal-lab user",
+        "gecos": "OpenShift Network Playground User",
         "groups": [
           "sudo",
           "wheel",
@@ -28,8 +28,8 @@
           "systemd-journal",
           "libvirtd"
         ],
-        "name": "kni",
-        "passwordHash": "$y$j9T$rVVNGAWx1YhOFEOQQdk5v1$CXiP2XQROTh/5e4ZB66WaYafvNkfO/ZqVjaXYwx5Fo2"
+        "name": "onp",
+        "passwordHash": "$y$j9T$PNaoSZJskJ6WwR/2iS78a0$/6.dOJ1S2UWLMz0F/1mJvNN4dH3EZ1Y68hLfBsODgi0"
       }
     ]
   },
@@ -37,23 +37,23 @@
     "directories": [
       {
         "group": {
-          "name": "kni"
+          "name": "onp"
         },
         "overwrite": true,
-        "path": "/home/kni/ocp-ipi-baremetal-lab",
+        "path": "/home/onp/openshift-network-playground",
         "user": {
-          "name": "kni"
+          "name": "onp"
         },
         "mode": 493
       },
       {
         "group": {
-          "name": "kni"
+          "name": "onp"
         },
         "overwrite": true,
-        "path": "/home/kni/ocp-ipi-baremetal-lab/rhcos_image_cache",
+        "path": "/home/onp/openshift-network-playground/rhcos_image_cache",
         "user": {
-          "name": "kni"
+          "name": "onp"
         },
         "mode": 493
       }
@@ -61,7 +61,7 @@
     "files": [
       {
         "overwrite": true,
-        "path": "/opt/ocp-ipi-baremetal-lab/vbmc/ssh/config",
+        "path": "/opt/openshift-network-playground/vbmc/ssh/config",
         "contents": {
           "source": "data:,StrictHostKeyChecking%20no%0A"
         },
@@ -72,12 +72,12 @@
           "id": 1001
         },
         "overwrite": true,
-        "path": "/opt/ocp-ipi-baremetal-lab/vbmc/config/master0/config",
+        "path": "/opt/openshift-network-playground/vbmc/config/master0/config",
         "user": {
           "id": 1001
         },
         "contents": {
-          "source": "data:,%5BVirtualBMC%5D%0Ausername%20%3D%20admin%0Apassword%20%3D%20password%0Aaddress%20%3D%20192.168.123.1%0Aport%20%3D%206230%0Adomain_name%20%3D%20master0%0Alibvirt_uri%20%3D%20qemu%2Bssh%3A%2F%2Fkni%40192.168.123.1%2Fsystem%0Aactive%20%3D%20True%0A"
+          "source": "data:,%5BVirtualBMC%5D%0Ausername%20%3D%20admin%0Apassword%20%3D%20password%0Aaddress%20%3D%20192.168.123.1%0Aport%20%3D%206230%0Adomain_name%20%3D%20master0%0Alibvirt_uri%20%3D%20qemu%2Bssh%3A%2F%2Fonp%40192.168.123.1%2Fsystem%0Aactive%20%3D%20True%0A"
         },
         "mode": 420
       },
@@ -86,12 +86,12 @@
           "id": 1001
         },
         "overwrite": true,
-        "path": "/opt/ocp-ipi-baremetal-lab/vbmc/config/master1/config",
+        "path": "/opt/openshift-network-playground/vbmc/config/master1/config",
         "user": {
           "id": 1001
         },
         "contents": {
-          "source": "data:,%5BVirtualBMC%5D%0Ausername%20%3D%20admin%0Apassword%20%3D%20password%0Aaddress%20%3D%20192.168.123.1%0Aport%20%3D%206231%0Adomain_name%20%3D%20master1%0Alibvirt_uri%20%3D%20qemu%2Bssh%3A%2F%2Fkni%40192.168.123.1%2Fsystem%0Aactive%20%3D%20True%0A"
+          "source": "data:,%5BVirtualBMC%5D%0Ausername%20%3D%20admin%0Apassword%20%3D%20password%0Aaddress%20%3D%20192.168.123.1%0Aport%20%3D%206231%0Adomain_name%20%3D%20master1%0Alibvirt_uri%20%3D%20qemu%2Bssh%3A%2F%2Fonp%40192.168.123.1%2Fsystem%0Aactive%20%3D%20True%0A"
         },
         "mode": 420
       },
@@ -100,12 +100,12 @@
           "id": 1001
         },
         "overwrite": true,
-        "path": "/opt/ocp-ipi-baremetal-lab/vbmc/config/master2/config",
+        "path": "/opt/openshift-network-playground/vbmc/config/master2/config",
         "user": {
           "id": 1001
         },
         "contents": {
-          "source": "data:,%5BVirtualBMC%5D%0Ausername%20%3D%20admin%0Apassword%20%3D%20password%0Aaddress%20%3D%20192.168.123.1%0Aport%20%3D%206232%0Adomain_name%20%3D%20master2%0Alibvirt_uri%20%3D%20qemu%2Bssh%3A%2F%2Fkni%40192.168.123.1%2Fsystem%0Aactive%20%3D%20True%0A"
+          "source": "data:,%5BVirtualBMC%5D%0Ausername%20%3D%20admin%0Apassword%20%3D%20password%0Aaddress%20%3D%20192.168.123.1%0Aport%20%3D%206232%0Adomain_name%20%3D%20master2%0Alibvirt_uri%20%3D%20qemu%2Bssh%3A%2F%2Fonp%40192.168.123.1%2Fsystem%0Aactive%20%3D%20True%0A"
         },
         "mode": 420
       },
@@ -114,12 +114,12 @@
           "id": 1001
         },
         "overwrite": true,
-        "path": "/opt/ocp-ipi-baremetal-lab/vbmc/config/worker0/config",
+        "path": "/opt/openshift-network-playground/vbmc/config/worker0/config",
         "user": {
           "id": 1001
         },
         "contents": {
-          "source": "data:,%5BVirtualBMC%5D%0Ausername%20%3D%20admin%0Apassword%20%3D%20password%0Aaddress%20%3D%20192.168.123.1%0Aport%20%3D%206233%0Adomain_name%20%3D%20worker0%0Alibvirt_uri%20%3D%20qemu%2Bssh%3A%2F%2Fkni%40192.168.123.1%2Fsystem%0Aactive%20%3D%20True%0A"
+          "source": "data:,%5BVirtualBMC%5D%0Ausername%20%3D%20admin%0Apassword%20%3D%20password%0Aaddress%20%3D%20192.168.123.1%0Aport%20%3D%206233%0Adomain_name%20%3D%20worker0%0Alibvirt_uri%20%3D%20qemu%2Bssh%3A%2F%2Fonp%40192.168.123.1%2Fsystem%0Aactive%20%3D%20True%0A"
         },
         "mode": 420
       },
@@ -128,12 +128,12 @@
           "id": 1001
         },
         "overwrite": true,
-        "path": "/opt/ocp-ipi-baremetal-lab/vbmc/config/worker1/config",
+        "path": "/opt/openshift-network-playground/vbmc/config/worker1/config",
         "user": {
           "id": 1001
         },
         "contents": {
-          "source": "data:,%5BVirtualBMC%5D%0Ausername%20%3D%20admin%0Apassword%20%3D%20password%0Aaddress%20%3D%20192.168.123.1%0Aport%20%3D%206234%0Adomain_name%20%3D%20worker1%0Alibvirt_uri%20%3D%20qemu%2Bssh%3A%2F%2Fkni%40192.168.123.1%2Fsystem%0Aactive%20%3D%20True%0A"
+          "source": "data:,%5BVirtualBMC%5D%0Ausername%20%3D%20admin%0Apassword%20%3D%20password%0Aaddress%20%3D%20192.168.123.1%0Aport%20%3D%206234%0Adomain_name%20%3D%20worker1%0Alibvirt_uri%20%3D%20qemu%2Bssh%3A%2F%2Fonp%40192.168.123.1%2Fsystem%0Aactive%20%3D%20True%0A"
         },
         "mode": 420
       },
@@ -147,9 +147,9 @@
       },
       {
         "overwrite": true,
-        "path": "/etc/sudoers.d/kni",
+        "path": "/etc/sudoers.d/onp",
         "contents": {
-          "source": "data:,kni%20ALL%3D(ALL)%20NOPASSWD%3A%20ALL%0A"
+          "source": "data:,onp%20ALL%3D(ALL)%20NOPASSWD%3A%20ALL%0A"
         },
         "mode": 420
       },
@@ -186,9 +186,9 @@
         "mode": 420
       },
       {
-        "path": "/opt/ocp-ipi-baremetal-lab/host/configure.sh",
+        "path": "/opt/openshift-network-playground/host/configure.sh",
         "contents": {
-          "source": "data:,%23!%2Fbin%2Fsh%0A%2Fusr%2Fsbin%2Fiptables%20-t%20nat%20-I%20POSTROUTING%20-s%20192.168.123.0%2F24%20!%20-d%20192.168.123.0%2F24%20-j%20MASQUERADE%0A%2Fusr%2Fsbin%2Fiptables%20-t%20nat%20-I%20PREROUTING%20-p%20tcp%20-i%20%24(%2Fusr%2Fsbin%2Fip%20r%20%7C%20grep%20default%20%7C%20awk%20'%7Bprint%20%245%7D')%20--dport%20443%20-j%20DNAT%20--to-destination%20192.168.123.89%3A443%0A%2Fusr%2Fsbin%2Fiptables%20-t%20nat%20-I%20PREROUTING%20-p%20tcp%20-i%20%24(%2Fusr%2Fsbin%2Fip%20r%20%7C%20grep%20default%20%7C%20awk%20'%7Bprint%20%245%7D')%20--dport%2080%20-j%20DNAT%20--to-destination%20192.168.123.89%3A80%0A%2Fusr%2Fsbin%2Fiptables%20-t%20nat%20-I%20PREROUTING%20-p%20tcp%20-i%20%24(%2Fusr%2Fsbin%2Fip%20r%20%7C%20grep%20default%20%7C%20awk%20'%7Bprint%20%245%7D')%20--dport%206443%20-j%20DNAT%20--to-destination%20192.168.123.88%3A6443%0Atest%20-f%20%2Fopt%2Focp-ipi-baremetal-lab%2Fvbmc%2Fssh%2Fid_rsa%20%7C%7C%20(ssh-keygen%20-N%20''%20-f%20%2Fopt%2Focp-ipi-baremetal-lab%2Fvbmc%2Fssh%2Fid_rsa%20%26%26%20mkdir%20-p%20%2Fhome%2Fkni%2F.ssh%20%26%26%20cp%20%2Fopt%2Focp-ipi-baremetal-lab%2Fvbmc%2Fssh%2Fid_rsa.pub%20%2Fhome%2Fkni%2F.ssh%2Fauthorized_keys%20%26%26%20chown%20kni%3Akni%20-R%20%2Fhome%2Fkni%2F.ssh)%0Atest%20-f%20%2Fopt%2Focp-ipi-baremetal-lab%2Fcockpit-ws.done%20%7C%7C%20(test%20-d%20%2Fusr%2Fshare%2Fcockpit%20%26%26%20podman%20container%20runlabel%20--name%20cockpit-ws%20RUN%20quay.io%2Fcockpit%2Fws%20%26%26%20podman%20container%20runlabel%20INSTALL%20quay.io%2Fcockpit%2Fws%20%26%26%20systemctl%20enable%20cockpit.service%20%26%26%20touch%20%2Fopt%2Focp-ipi-baremetal-lab%2Fcockpit-ws.done)%0A"
+          "source": "data:,%23!%2Fbin%2Fsh%0A%2Fusr%2Fsbin%2Fiptables%20-t%20nat%20-I%20POSTROUTING%20-s%20192.168.123.0%2F24%20!%20-d%20192.168.123.0%2F24%20-j%20MASQUERADE%0A%2Fusr%2Fsbin%2Fiptables%20-t%20nat%20-I%20POSTROUTING%20-s%20192.168.123.0%2F24%20!%20-d%20192.168.124.0%2F24%20-j%20MASQUERADE%0A%2Fusr%2Fsbin%2Fiptables%20-t%20nat%20-I%20POSTROUTING%20-s%20192.168.123.0%2F24%20!%20-d%20192.168.125.0%2F24%20-j%20MASQUERADE%0A%2Fusr%2Fsbin%2Fiptables%20-t%20nat%20-I%20PREROUTING%20-p%20tcp%20-i%20%24(%2Fusr%2Fsbin%2Fip%20r%20%7C%20grep%20default%20%7C%20awk%20'%7Bprint%20%245%7D')%20--dport%20443%20-j%20DNAT%20--to-destination%20192.168.123.89%3A443%0A%2Fusr%2Fsbin%2Fiptables%20-t%20nat%20-I%20PREROUTING%20-p%20tcp%20-i%20%24(%2Fusr%2Fsbin%2Fip%20r%20%7C%20grep%20default%20%7C%20awk%20'%7Bprint%20%245%7D')%20--dport%2080%20-j%20DNAT%20--to-destination%20192.168.123.89%3A80%0A%2Fusr%2Fsbin%2Fiptables%20-t%20nat%20-I%20PREROUTING%20-p%20tcp%20-i%20%24(%2Fusr%2Fsbin%2Fip%20r%20%7C%20grep%20default%20%7C%20awk%20'%7Bprint%20%245%7D')%20--dport%206443%20-j%20DNAT%20--to-destination%20192.168.123.88%3A6443%0A%2Fusr%2Fbin%2Ftest%20-f%20%2Fopt%2Fopenshift-network-playground%2Fvbmc%2Fssh%2Fid_rsa%20%7C%7C%20(ssh-keygen%20-N%20''%20-f%20%2Fopt%2Fopenshift-network-playground%2Fvbmc%2Fssh%2Fid_rsa%20%26%26%20mkdir%20-p%20%2Fhome%2Fonp%2F.ssh%20%26%26%20cp%20%2Fopt%2Fopenshift-network-playground%2Fvbmc%2Fssh%2Fid_rsa.pub%20%2Fhome%2Fonp%2F.ssh%2Fauthorized_keys%20%26%26%20chown%20onp%3Aonp%20-R%20%2Fhome%2Fonp%2F.ssh)%0A%2Fusr%2Fbin%2Ftest%20-f%20%2Fopt%2Fopenshift-network-playground%2Fcockpit-ws.done%20%7C%7C%20(%2Fusr%2Fbin%2Ftest%20-d%20%2Fusr%2Fshare%2Fcockpit%20%26%26%20podman%20container%20runlabel%20--name%20cockpit-ws%20RUN%20quay.io%2Fcockpit%2Fws%20%26%26%20podman%20container%20runlabel%20INSTALL%20quay.io%2Fcockpit%2Fws%20%26%26%20systemctl%20enable%20cockpit.service%20%26%26%20touch%20%2Fopt%2Fopenshift-network-playground%2Fcockpit-ws.done)%0A%2Fusr%2Fbin%2Fchown%20-R%20onp%3Aonp%20%2Fhome%2Fonp%2F.local%0A"
         },
         "mode": 493
       },
@@ -271,7 +271,73 @@
       },
       {
         "overwrite": true,
-        "path": "/etc/NetworkManager/conf.d/ocp-ipi-baremetal-lab.conf",
+        "path": "/etc/NetworkManager/system-connections/onp1-dummy.nmconnection",
+        "user": {
+          "name": "root"
+        },
+        "contents": {
+          "source": "data:,%5Bconnection%5D%0Aid%3Donp1-dummy%0Atype%3Ddummy%0Ainterface-name%3Donp1-dummy%0Aautoconnect%3Dyes%0Amaster%3Donp1%0Aslave-type%3Dbridge%0A%5Bipv4%5D%0Amethod%3Dlink-local%0A%5Bipv6%5D%0Amethod%3Ddisabled%0A"
+        },
+        "mode": 384
+      },
+      {
+        "overwrite": true,
+        "path": "/etc/NetworkManager/system-connections/onp1.nmconnection",
+        "user": {
+          "name": "root"
+        },
+        "contents": {
+          "source": "data:,%5Bconnection%5D%0Aid%3Donp1%0Atype%3Dbridge%0Aautoconnect%3Dyes%0Ainterface-name%3Donp1%0A%5Bipv4%5D%0Amethod%3Dmanual%0Aaddresses%3D192.168.124.1%0A%5Bipv6%5D%0Amethod%3Ddisabled%0A%5Bbridge%5D%0Amac-address%3D52%3A54%3A00%3A11%3A22%3Ac0%0Ainterface-name%3Donp1%0A"
+        },
+        "mode": 384
+      },
+      {
+        "overwrite": true,
+        "path": "/etc/NetworkManager/system-connections/ocp1-slave.nmconnection",
+        "user": {
+          "name": "root"
+        },
+        "contents": {
+          "source": "data:,%5Bconnection%5D%0Aid%3Donp1-slave%0Atype%3Dethernet%0Ainterface-name%3Donp1-dummy%0Amaster%3Donp1%0Aautoconnect%3Dyes%0Aslave-type%3Dbridge%0A"
+        },
+        "mode": 384
+      },
+      {
+        "overwrite": true,
+        "path": "/etc/NetworkManager/system-connections/onp2-dummy.nmconnection",
+        "user": {
+          "name": "root"
+        },
+        "contents": {
+          "source": "data:,%5Bconnection%5D%0Aid%3Donp2-dummy%0Atype%3Ddummy%0Ainterface-name%3Donp2-dummy%0Aautoconnect%3Dyes%0Amaster%3Donp2%0Aslave-type%3Dbridge%0A%5Bipv4%5D%0Amethod%3Dlink-local%0A%5Bipv6%5D%0Amethod%3Ddisabled%0A"
+        },
+        "mode": 384
+      },
+      {
+        "overwrite": true,
+        "path": "/etc/NetworkManager/system-connections/onp2.nmconnection",
+        "user": {
+          "name": "root"
+        },
+        "contents": {
+          "source": "data:,%5Bconnection%5D%0Aid%3Donp2%0Atype%3Dbridge%0Aautoconnect%3Dyes%0Ainterface-name%3Donp2%0A%5Bipv4%5D%0Amethod%3Dmanual%0Aaddresses%3D192.168.125.1%0A%5Bipv6%5D%0Amethod%3Ddisabled%0A%5Bbridge%5D%0Amac-address%3D52%3A54%3A00%3A11%3A22%3Ad0%0Ainterface-name%3Donp2%0A"
+        },
+        "mode": 384
+      },
+      {
+        "overwrite": true,
+        "path": "/etc/NetworkManager/system-connections/ocp2-slave.nmconnection",
+        "user": {
+          "name": "root"
+        },
+        "contents": {
+          "source": "data:,%5Bconnection%5D%0Aid%3Donp2-slave%0Atype%3Dethernet%0Ainterface-name%3Donp2-dummy%0Amaster%3Donp2%0Aautoconnect%3Dyes%0Aslave-type%3Dbridge%0A"
+        },
+        "mode": 384
+      },
+      {
+        "overwrite": true,
+        "path": "/etc/NetworkManager/conf.d/openshift-network-playground.conf",
         "user": {
           "name": "root"
         },
@@ -282,7 +348,7 @@
       },
       {
         "overwrite": true,
-        "path": "/etc/NetworkManager/dnsmasq.d/ocp-ipi-baremetal-lab.conf",
+        "path": "/etc/NetworkManager/dnsmasq.d/openshift-network-playground.conf",
         "user": {
           "name": "root"
         },
@@ -298,7 +364,7 @@
           "name": "root"
         },
         "contents": {
-          "source": "data:,127.0.0.1%20localhost%20localhost.localdomain%20ocp-ipi-baremetal-lab.ocp.example.local%0A192.168.123.88%20api.ocp.example.local%0A192.168.123.90%20bootstrap.ocp.example.local%0A192.168.123.91%20master0.ocp.example.local%0A192.168.123.92%20master1.ocp.example.local%0A192.168.123.93%20master2.ocp.example.local%0A192.168.123.94%20worker0.ocp.example.local%0A192.168.123.95%20worker1.ocp.example.local%0A192.168.123.1%20ocp-ipi-baremetal-lab.ocp.example.local%20lb.ocp.example.local%20mirror.ocp.example.local%20proxy.ocp.example.local%0A"
+          "source": "data:,127.0.0.1%20localhost%20localhost.localdomain%20openshift-network-playground.ocp.example.local%0A192.168.123.88%20api.ocp.example.local%0A192.168.123.90%20bootstrap.ocp.example.local%0A192.168.123.91%20master0.ocp.example.local%0A192.168.123.92%20master1.ocp.example.local%0A192.168.123.93%20master2.ocp.example.local%0A192.168.123.94%20worker0.ocp.example.local%0A192.168.123.95%20worker1.ocp.example.local%0A192.168.123.1%20openshift-network-playground.ocp.example.local%20lb.ocp.example.local%20mirror.ocp.example.local%20proxy.ocp.example.local%0A"
         },
         "mode": 420
       },
@@ -310,21 +376,21 @@
       },
       {
         "group": {
-          "name": "kni"
+          "name": "onp"
         },
         "overwrite": true,
-        "path": "/opt/ocp-ipi-baremetal-lab/libvirt/create-vm.sh",
+        "path": "/opt/openshift-network-playground/libvirt/create-vm.sh",
         "user": {
-          "name": "kni"
+          "name": "onp"
         },
         "contents": {
-          "source": "data:,%23!%2Fbin%2Fbash%0A%23%20Create%20node%20for%20ocp-ipi-baremetal-lab%0A%0Aset%20-euxo%20pipefail%0A%0AVM_NAME%3D%241%0AMAC1%3D%242%0AMAC2%3D%243%0AVM_DIR%3D%2Fopt%2Focp-ipi-baremetal-lab%2Flibvirt%0AVM_DISK%3D%24VM_DIR%2F%24VM_NAME%2F%24VM_NAME.img%0AVCPU%3D%24%7B4%3A-4%7D%0AMEMORY%3D%24%7B5%3A-16384%7D%0ANETWORK1%3Dbridge%3Dprovisioning%2Cmac%3D%24MAC1%0ANETWORK2%3Dbridge%3Dbaremetal%2Cmac%3D%24MAC2%0A%0Aif%20virsh%20list%20%7C%20grep%20%24VM_NAME%202%3E%261%3E%2Fdev%2Fnull%3B%20then%20virsh%20destroy%20%24VM_NAME%202%3E%2Fdev%2Fnull%3B%20virsh%20undefine%20%24VM_NAME%202%3E%2Fdev%2Fnull%3B%20fi%0Aif%20virsh%20list%20--all%20%7C%20grep%20%24VM_NAME%202%3E%261%3E%2Fdev%2Fnull%3B%20then%20virsh%20undefine%20%24VM_NAME%202%3E%2Fdev%2Fnull%3B%20fi%0Aif%20%5B%20!%20-f%20%24VM_DISK%20%5D%20%3B%20then%20mkdir%20-p%20%24VM_DIR%2F%24VM_NAME%3B%20qemu-img%20create%20%24VM_DISK%20120G%3B%20fi%0A%0Avirsh%20define%20%3C(virt-install%20--name%20%24VM_NAME%20%5C%0A%20%20%20%20%20%20%20%20--os-variant%20fedora-coreos-stable%20%5C%0A%20%20%20%20%20%20%20%20--vcpus%20%24VCPU%20%5C%0A%20%20%20%20%20%20%20%20--memory%20%24MEMORY%20%5C%0A%20%20%20%20%20%20%20%20--disk%20%24VM_DISK%20%5C%0A%20%20%20%20%20%20%20%20--network%20%24NETWORK1%20%5C%0A%20%20%20%20%20%20%20%20--network%20%24NETWORK2%20%5C%0A%20%20%20%20%20%20%20%20--pxe%20%5C%0A%20%20%20%20%20%20%20%20--boot%20network%2Chd%20%5C%0A%20%20%20%20%20%20%20%20--graphics%20spice%2Clisten%3D0.0.0.0%20%5C%0A%20%20%20%20%20%20%20%20--video%20virtio%20%5C%0A%20%20%20%20%20%20%20%20--channel%20spicevmc%20%5C%0A%20%20%20%20%20%20%20%20--console%20pty%2Ctarget.type%3Dvirtio%20%5C%0A%20%20%20%20%20%20%20%20--serial%20pty%20%5C%0A%20%20%20%20%20%20%20%20--noautoconsole%20%5C%0A%20%20%20%20%20%20%20%20--print-xml%202)%0Atouch%20%2Fopt%2Focp-ipi-baremetal-lab%2F%24VM_NAME.done%0A"
+          "source": "data:,%23!%2Fbin%2Fbash%0A%23%20Create%20node%20for%20openshift-network-playground%0A%0Aset%20-euxo%20pipefail%0A%0AVM_NAME%3D%241%0AMAC1%3D%242%0AMAC2%3D%243%0AVM_DIR%3D%2Fopt%2Fopenshift-network-playground%2Flibvirt%0AVM_DISK%3D%24VM_DIR%2F%24VM_NAME%2F%24VM_NAME.img%0AVCPU%3D%24%7B4%3A-4%7D%0AMEMORY%3D%24%7B5%3A-16384%7D%0ANETWORK1%3Dbridge%3Dprovisioning%2Cmac%3D%24MAC1%0ANETWORK2%3Dbridge%3Dbaremetal%2Cmac%3D%24MAC2%0A%0Aif%20virsh%20list%20%7C%20grep%20%24VM_NAME%202%3E%261%3E%2Fdev%2Fnull%3B%20then%20virsh%20destroy%20%24VM_NAME%202%3E%2Fdev%2Fnull%3B%20virsh%20undefine%20%24VM_NAME%202%3E%2Fdev%2Fnull%3B%20fi%0Aif%20virsh%20list%20--all%20%7C%20grep%20%24VM_NAME%202%3E%261%3E%2Fdev%2Fnull%3B%20then%20virsh%20undefine%20%24VM_NAME%202%3E%2Fdev%2Fnull%3B%20fi%0Aif%20%5B%20!%20-f%20%24VM_DISK%20%5D%20%3B%20then%20mkdir%20-p%20%24VM_DIR%2F%24VM_NAME%3B%20qemu-img%20create%20%24VM_DISK%20120G%3B%20fi%0A%0Avirsh%20define%20%3C(virt-install%20--name%20%24VM_NAME%20%5C%0A%20%20%20%20%20%20%20%20--os-variant%20fedora-coreos-stable%20%5C%0A%20%20%20%20%20%20%20%20--vcpus%20%24VCPU%20%5C%0A%20%20%20%20%20%20%20%20--memory%20%24MEMORY%20%5C%0A%20%20%20%20%20%20%20%20--disk%20%24VM_DISK%20%5C%0A%20%20%20%20%20%20%20%20--network%20%24NETWORK1%20%5C%0A%20%20%20%20%20%20%20%20--network%20%24NETWORK2%20%5C%0A%20%20%20%20%20%20%20%20--pxe%20%5C%0A%20%20%20%20%20%20%20%20--boot%20network%2Chd%20%5C%0A%20%20%20%20%20%20%20%20--graphics%20spice%2Clisten%3D0.0.0.0%20%5C%0A%20%20%20%20%20%20%20%20--video%20virtio%20%5C%0A%20%20%20%20%20%20%20%20--channel%20spicevmc%20%5C%0A%20%20%20%20%20%20%20%20--console%20pty%2Ctarget.type%3Dvirtio%20%5C%0A%20%20%20%20%20%20%20%20--serial%20pty%20%5C%0A%20%20%20%20%20%20%20%20--noautoconsole%20%5C%0A%20%20%20%20%20%20%20%20--print-xml%202)%0Atouch%20%2Fopt%2Fopenshift-network-playground%2F%24VM_NAME.done%0A"
         },
         "mode": 493
       },
       {
         "overwrite": true,
-        "path": "/opt/ocp-ipi-baremetal-lab/dhcp/Containerfile",
+        "path": "/opt/openshift-network-playground/dhcp/Containerfile",
         "contents": {
           "source": "data:,FROM%20fedora%0AMAINTAINER%20%22Vinu%20K%22%20%3Cvkochuku%40redhat.com%3E%0ARUN%20yum%20install%20-y%20dnsmasq%0AADD%20dnsmasq.conf%20%2Fdnsmasq.conf%0AENTRYPOINT%20%5B%22dnsmasq%22%5D%0ACMD%20%5B%22-C%22%2C%20%22%2Fdnsmasq.conf%22%5D%0A"
         },
@@ -332,7 +398,7 @@
       },
       {
         "overwrite": true,
-        "path": "/opt/ocp-ipi-baremetal-lab/dhcp/dnsmasq.conf",
+        "path": "/opt/openshift-network-playground/dhcp/dnsmasq.conf",
         "contents": {
           "source": "data:,no-daemon%0Ainterface%3Dbaremetal%0Adhcp-range%3D192.168.123.2%2C192.168.123.254%2C255.255.255.0%0Aexcept-interface%3Dlo%0Abind-interfaces%0Alog-dhcp%0Adhcp-authoritative%0Alog-async%0Adhcp-host%3D52%3A54%3A00%3A11%3A22%3Aa1%2Cmaster0.ocp.example.local%2C192.168.123.91%0Adhcp-host%3D52%3A54%3A00%3A11%3A22%3Aa2%2Cmaster1.ocp.example.local%2C192.168.123.92%0Adhcp-host%3D52%3A54%3A00%3A11%3A22%3Aa3%2Cmaster2.ocp.example.local%2C192.168.123.93%0Adhcp-host%3D52%3A54%3A00%3A11%3A22%3Aa4%2Cworker0.ocp.example.local%2C192.168.123.94%0Adhcp-host%3D52%3A54%3A00%3A11%3A22%3Aa5%2Cworker1.ocp.example.local%2C192.168.123.95%0A"
         },
@@ -340,7 +406,7 @@
       },
       {
         "overwrite": true,
-        "path": "/opt/ocp-ipi-baremetal-lab/pxe/Containerfile",
+        "path": "/opt/openshift-network-playground/pxe/Containerfile",
         "contents": {
           "source": "data:,FROM%20fedora%0AMAINTAINER%20%22Vinu%20K%22%20%3Cvkochuku%40redhat.com%3E%0ARUN%20yum%20install%20-y%20dnsmasq%0AADD%20dnsmasq.conf%20%2Fdnsmasq.conf%0AENTRYPOINT%20%5B%22dnsmasq%22%5D%0ACMD%20%5B%22-C%22%2C%20%22%2Fdnsmasq.conf%22%5D%0A"
         },
@@ -348,34 +414,66 @@
       },
       {
         "overwrite": true,
-        "path": "/opt/ocp-ipi-baremetal-lab/pxe/dnsmasq.conf",
+        "path": "/opt/openshift-network-playground/pxe/dnsmasq.conf",
         "contents": {
           "source": "data:,no-daemon%0Ainterface%3Dprovisioning%0Adhcp-range%3D172.22.0.3%2C172.22.0.253%2C255.255.255.0%0Aexcept-interface%3Dlo%0Abind-interfaces%0Alog-dhcp%0Alog-queries%0Adhcp-authoritative%0Alog-async%0Aenable-tftp%0Adhcp-userclass%3Dset%3Aipxe%2CiPXE%0Adhcp-boot%3Dtag%3Aipxe%2Chttp%3A%2F%2F172.22.0.2%2Fboot.ipxe%0A"
         },
         "mode": 420
       },
       {
+        "overwrite": true,
+        "path": "/opt/openshift-network-playground/onp1-dhcp/Containerfile",
+        "contents": {
+          "source": "data:,FROM%20fedora%0AMAINTAINER%20%22Vinu%20K%22%20%3Cvkochuku%40redhat.com%3E%0ARUN%20yum%20install%20-y%20dnsmasq%0AADD%20dnsmasq.conf%20%2Fdnsmasq.conf%0AENTRYPOINT%20%5B%22dnsmasq%22%5D%0ACMD%20%5B%22-C%22%2C%20%22%2Fdnsmasq.conf%22%5D%0A"
+        },
+        "mode": 420
+      },
+      {
+        "overwrite": true,
+        "path": "/opt/openshift-network-playground/onp1-dhcp/dnsmasq.conf",
+        "contents": {
+          "source": "data:,no-daemon%0Ainterface%3Donp1%0Adhcp-range%3D192.168.124.2%2C192.168.124.254%2C255.255.255.0%0Aexcept-interface%3Dlo%0Abind-interfaces%0Alog-dhcp%0Adhcp-authoritative%0Alog-async%0A"
+        },
+        "mode": 420
+      },
+      {
+        "overwrite": true,
+        "path": "/opt/openshift-network-playground/onp2-dhcp/Containerfile",
+        "contents": {
+          "source": "data:,FROM%20fedora%0AMAINTAINER%20%22Vinu%20K%22%20%3Cvkochuku%40redhat.com%3E%0ARUN%20yum%20install%20-y%20dnsmasq%0AADD%20dnsmasq.conf%20%2Fdnsmasq.conf%0AENTRYPOINT%20%5B%22dnsmasq%22%5D%0ACMD%20%5B%22-C%22%2C%20%22%2Fdnsmasq.conf%22%5D%0A"
+        },
+        "mode": 420
+      },
+      {
+        "overwrite": true,
+        "path": "/opt/openshift-network-playground/onp2-dhcp/dnsmasq.conf",
+        "contents": {
+          "source": "data:,no-daemon%0Ainterface%3Donp2%0Adhcp-range%3D192.168.125.2%2C192.168.125.254%2C255.255.255.0%0Aexcept-interface%3Dlo%0Abind-interfaces%0Alog-dhcp%0Adhcp-authoritative%0Alog-async%0A"
+        },
+        "mode": 420
+      },
+      {
         "group": {
-          "name": "kni"
+          "name": "onp"
         },
         "overwrite": true,
-        "path": "/home/kni/Makefile",
+        "path": "/home/onp/.Makefile",
         "user": {
-          "name": "kni"
+          "name": "onp"
         },
         "contents": {
-          "source": "data:,RELEASE%20%3F%3D%20stable-4.10%0ALOGLEVEL%20%3F%3D%20info%0ASCRIPT_DIR%20%3D%20%24(shell%20cd%20--%20%22%24(%20dirname%20--%20%22%24%7BBASH_SOURCE%5B0%5D%3A-%240%7D%22%3B%20)%22%20%26%3E%20%2Fdev%2Fnull%20%26%26%20pwd%202%3E%20%2Fdev%2Fnull%3B%20)%0ACONTAINERS%20%3D%20%24(shell%20sudo%20podman%20ps%20--format%20%7B%7B.Names%7D%7D%20%7C%20sort%20%7C%20grep%20-oE%20'dhcp%7Cvbmc%7Cwebserver'%20%7C%20xargs)%0AVMS%20%3D%20%24(shell%20sudo%20virsh%20list%20--all%20--name%20%7C%20head%20-n%20-1%20%7C%20wc%20-l)%0ATFF%20%3D%20%24(shell%20ls%20%2Ftmp%2Fopenshift-install-bootstrap-*%2Fterraform.platform.auto.tfvars.json%202%3E%2Fdev%2Fnull%20%7C%20wc%20-l)%0A%0Acheck-env%3A%0Aifndef%20OCM_TOKEN%0A%20%20%20%20%20%20%24(error%20OCM_TOKEN%20is%20undefined%20%7C%20Get%20it%20from%20https%3A%2F%2Fcloud.redhat.com%2Fopenshift%2Ftoken)%0Aendif%0A%0Acheck-containers%3A%0Aifneq%20(%24(CONTAINERS)%2Cdhcp%20vbmc%20webserver)%0A%20%20%20%20%20%20%24(error%20The%20containerized%20services%20(dhcp%20vbmc%20webserver)%20are%20not%20ready.%20Check%20with%20'sudo%20podman%20ps'%20and%20wait%20for%20a%20while%20to%20retry)%0Aendif%0A%0Acheck-vms%3A%0Aifneq%20(%24(VMS)%2C5)%0A%20%20%20%20%20%20%24(error%20The%20VMs%20are%20not%20ready.%20Please%20restart%20the%20services%20with%20'sudo%20systemctl%20restart%20master0%20master1%20master2%20worker0%20worker1'%20and%20retry)%0Aendif%0A%0Acheck-terraform-file%3A%0Aifneq%20(%24(TFF)%2C1)%0A%20%20%20%20%20%20%24(error%20The%20terraform.platform.auto.tfvars.json%20file%20is%20not%20present%20in%20%2Ftmp)%0Aendif%0A%0A.PHONY%3A%20ssh-pullsecret%0A%0Assh-pullsecret%3A%20check-env%0A%20%20%20%20%20%20%40echo%20%22Generating%20SSH%20keys%20and%20pullsecret%20...%22%0A%20%20%20%20%20%20%40ocp-ipi-baremetal-lab%2Fssh-pullsecret.sh%20%24(OCM_TOKEN)%0A%0A.PHONY%3A%20install-config%0A%0Ainstall-config%3A%20%2Fhome%2Fkni%2Focp-ipi-baremetal-lab%2Fpullsecret%20%2Fhome%2Fkni%2Focp-ipi-baremetal-lab%2Fid_ed25519.pub%0A%20%20%20%20%20%20%40ocp-ipi-baremetal-lab%2Finstall-config.sh%20%24(RELEASE)%0A%0A.PHONY%3A%20manifests%0A%0Amanifests%3A%0A%20%20%20%20%20%20%40echo%20%22Generating%20manifests%20...%22%0A%20%20%20%20%20%20%40%2Fusr%2Flocal%2Fbin%2Fopenshift-baremetal-install%20--log-level%3D%24%7BLOGLEVEL%7D%20--dir%3D%24(SCRIPT_DIR)%2Focp-ipi-baremetal-lab%2Fclusterconfigs%20create%20manifests%0A%0A.PHONY%3A%20ignition-configs%0A%0Aignition-configs%3A%20%24(SCRIPT_DIR)%2Focp-ipi-baremetal-lab%2Fclusterconfigs%2Finstall-config.yaml%0A%20%20%20%20%20%20%40echo%20%22Generating%20ignition-configs%20...%22%0A%20%20%20%20%20%20%40%2Fusr%2Flocal%2Fbin%2Fopenshift-baremetal-install%20--log-level%3D%24%7BLOGLEVEL%7D%20--dir%3D%24(SCRIPT_DIR)%2Focp-ipi-baremetal-lab%2Fclusterconfigs%20create%20ignition-configs%0A%0A.PHONY%3A%20cluster%0A%0Acluster%3A%20%24(SCRIPT_DIR)%2Focp-ipi-baremetal-lab%2Fclusterconfigs%2Finstall-config.yaml%20check-containers%20check-vms%0A%20%20%20%20%20%20%40echo%20%22Creating%20cluster%20...%22%0A%20%20%20%20%20%20%40%2Fusr%2Flocal%2Fbin%2Fopenshift-baremetal-install%20--log-level%3D%24%7BLOGLEVEL%7D%20--dir%3D%24(SCRIPT_DIR)%2Focp-ipi-baremetal-lab%2Fclusterconfigs%20create%20cluster%0A%0A.PHONY%3A%20clean%0A%0Aclean%3A%0A%20%20%20%20%20%20%40echo%20%22Removing%20old%20bootstrap%20resources%20...%22%0A%20%20%20%20%20%20-%40%24(SCRIPT_DIR)%2Focp-ipi-baremetal-lab%2Fclean-bootstrap.sh%0A%20%20%20%20%20%20%40echo%20%22Removing%20installation%20directory%20...%22%0A%20%20%20%20%20%20-%40rm%20-rfv%20%24(SCRIPT_DIR)%2Focp-ipi-baremetal-lab%2Fclusterconfigs%0A%20%20%20%20%20%20%40echo%20%22Powering%20off%20master%20nodes%20...%22%0A%20%20%20%20%20%20-%40for%20i%20in%20master0%20master1%20master2%3B%20do%20sudo%20virsh%20destroy%20%24%24i%3B%20done%0A%20%20%20%20%20%20%40echo%20%22!!!%20IGNORE%20THE%20ERRORS%20!!!%22%0A%0A.PHONY%3A%20destroy%0A%0Adestroy%3A%0A%20%20%20%20%20%20%40echo%20%22Destroying%20bootrap%20...%22%0A%20%20%20%20%20%20-%40openshift-baremetal-install%20destroy%20--log-level%3D%24%7BLOGLEVEL%7D%20--dir%3D%2Fhome%2Fkni%2Focp-ipi-baremetal-lab%2Fclusterconfigs%20bootstrap%0A%20%20%20%20%20%20%40echo%20%22Destroying%20cluster%20...%22%0A%20%20%20%20%20%20-%40openshift-baremetal-install%20destroy%20--log-level%3D%24%7BLOGLEVEL%7D%20--dir%3D%2Fhome%2Fkni%2Focp-ipi-baremetal-lab%2Fclusterconfigs%20cluster%0A%20%20%20%20%20%20%40echo%20%22Removing%20installation%20directory%20...%22%0A%20%20%20%20%20%20-%40rm%20-rfv%20%24(SCRIPT_DIR)%2Focp-ipi-baremetal-lab%2Fclusterconfigs%0A%20%20%20%20%20%20%40echo%20%22Powering%20off%20master%20nodes%20...%22%0A%20%20%20%20%20%20-%40for%20i%20in%20master0%20master1%20master2%3B%20do%20sudo%20virsh%20destroy%20%24%24i%3B%20done%0A%20%20%20%20%20%20%40echo%20%22!!!%20IGNORE%20THE%20ERRORS%20!!!%22%0A%0A.PHONY%3A%20ironic-client%0A%0Aironic-client%3A%20check-terraform-file%0A%20%20%20%20%20%20%40echo%20%22Creating%20clouds.yaml%20file%20...%22%0A%20%20%20%20%20%20-%40jq%20-jr%20'%22clouds%3A%22%2C%22%5Cn%22%2C%22%20%20metal3%3A%22%2C%22%5Cn%22%2C%22%20%20%20%20auth_type%3A%20http_basic%22%2C%22%5Cn%22%2C%22%20%20%20%20username%3A%20%22%2C.ironic_username%2C%22%5Cn%22%2C%22%20%20%20%20password%3A%20%22%2C.ironic_password%2C%22%5Cn%22%2C%22%20%20%20%20baremetal_endpoint_override%3A%20%22%2C.ironic_uri%2C%22%5Cn%22%2C%22%20%20%20%20baremetal_introspection_endpoint_override%3A%20%22%2C.inspector_uri%2C%22%5Cn%22'%20%2Ftmp%2Fopenshift-*%2Fterraform.platform.auto.tfvars.json%20%3E%20%2Fhome%2Fkni%2Focp-ipi-baremetal-lab%2Fclouds.yaml%0A%20%20%20%20%20%20%40echo%20%22Starting%20ironic-client%20container%20...%22%0A%20%20%20%20%20%20-%40sudo%20podman%20run%20-ti%20--rm%20--entrypoint%20%2Fbin%2Fbash%20--net%20host%20-v%20%2Fhome%2Fkni%2Focp-ipi-baremetal-lab%2Fclouds.yaml%3A%2Fclouds.yaml%20-e%20OS_CLOUD%3Dmetal3%20quay.io%2Fmetal3-io%2Fironic-client%3Alatest%0A%0A.PHONY%3A%20help%0A%0Ahelp%3A%0A%20%20%20%20%20%20%40echo%20%22Usage%3A%20oibl%20%5BSUBCOMMAND%5D%20%5BVARIABLE_NAME%5D%3D%3Cvariable%3E%22%0A%20%20%20%20%20%20%40echo%20%22%22%0A%20%20%20%20%20%20%40echo%20%22Subcommands%3A%22%0A%20%20%20%20%20%20%40echo%20%22%20%20ssh-pullsecret%20OCM_TOKEN%3D%3COCM_TOKEN%3E%20%20%20Generate%20SSH%20keys%20and%20download%20pullsecret%20file.%22%0A%20%20%20%20%20%20%40echo%20%22%20%20install-config%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20Generate%20install-config.yaml%20file.%22%0A%20%20%20%20%20%20%40echo%20%22%20%20cluster%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20Create%20an%20OpenShift%20cluster.%22%0A%20%20%20%20%20%20%40echo%20%22%20%20destroy%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20Destroy%20installed%20cluster.%22%0A%20%20%20%20%20%20%40echo%20%22%20%20clean%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20Clean%20old%20cluster%20resources.%22%0A%20%20%20%20%20%20%40echo%20%22%20%20ironic-client%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20Create%20ironic-client%20container.%22%0A%20%20%20%20%20%20%40echo%20%22%22%0A%20%20%20%20%20%20%40echo%20%22Example%3A%22%0A%20%20%20%20%20%20%40echo%20%22%20%20oibl%20cluster%20LOGLEVEL%3Ddebug%22%0A%20%20%20%20%20%20%40echo%20%22%22%0A%20%20%20%20%20%20%40echo%20%22Variables%3A%22%0A%20%20%20%20%20%20%40echo%20%22%20%20OCM_TOKEN%20(token%20from%20https%3A%2F%2Fcloud.redhat.com%2Fopenshift%2Ftoken)%22%0A%20%20%20%20%20%20%40echo%20%22%20%20RELEASE%20(stable-4.10%2C%20latest-4.9%2C%204.9.0%2C%20etc)%22%0A%20%20%20%20%20%20%40echo%20%22%20%20LOGLEVEL%20(debug%2C%20info%2C%20warn%2C%20error)%22%0A"
+          "source": "data:,RELEASE%20%3F%3D%20stable-4.10%0ALOGLEVEL%20%3F%3D%20info%0ASCRIPT_DIR%20%3D%20%24(shell%20cd%20--%20%22%24(%20dirname%20--%20%22%24%7BBASH_SOURCE%5B0%5D%3A-%240%7D%22%3B%20)%22%20%26%3E%20%2Fdev%2Fnull%20%26%26%20pwd%202%3E%20%2Fdev%2Fnull%3B%20)%0ACONTAINERS%20%3D%20%24(shell%20sudo%20podman%20ps%20--format%20%7B%7B.Names%7D%7D%20%7C%20sort%20%7C%20grep%20-oE%20'dhcp%7Cvbmc%7Cwebserver'%20%7C%20xargs)%0AVMS%20%3D%20%24(shell%20sudo%20virsh%20list%20--all%20--name%20%7C%20head%20-n%20-1%20%7C%20wc%20-l)%0ATFF%20%3D%20%24(shell%20ls%20%2Ftmp%2Fopenshift-install-bootstrap-*%2Fterraform.platform.auto.tfvars.json%202%3E%2Fdev%2Fnull%20%7C%20wc%20-l)%0A%0Acheck-env%3A%0Aifndef%20OCM_TOKEN%0A%20%20%20%20%20%20%24(error%20OCM_TOKEN%20is%20undefined%20%7C%20Get%20it%20from%20https%3A%2F%2Fcloud.redhat.com%2Fopenshift%2Ftoken)%0Aendif%0A%0Acheck-containers%3A%0Aifneq%20(%24(CONTAINERS)%2Cdhcp%20vbmc%20webserver)%0A%20%20%20%20%20%20%24(error%20The%20containerized%20services%20(dhcp%20vbmc%20webserver)%20are%20not%20ready.%20Check%20with%20'sudo%20podman%20ps'%20and%20wait%20for%20a%20while%20to%20retry)%0Aendif%0A%0Acheck-vms%3A%0Aifneq%20(%24(VMS)%2C5)%0A%20%20%20%20%20%20%24(error%20The%20VMs%20are%20not%20ready.%20Please%20restart%20the%20services%20with%20'sudo%20systemctl%20restart%20master0%20master1%20master2%20worker0%20worker1'%20and%20retry)%0Aendif%0A%0Acheck-terraform-file%3A%0Aifneq%20(%24(TFF)%2C1)%0A%20%20%20%20%20%20%24(error%20The%20terraform.platform.auto.tfvars.json%20file%20is%20not%20present%20in%20%2Ftmp)%0Aendif%0A%0A.PHONY%3A%20ssh-pullsecret%0A%0Assh-pullsecret%3A%20check-env%0A%20%20%20%20%20%20%40echo%20%22Generating%20SSH%20keys%20and%20pullsecret%20...%22%0A%20%20%20%20%20%20%40openshift-network-playground%2Fssh-pullsecret.sh%20%24(OCM_TOKEN)%0A%0A.PHONY%3A%20install-config%0A%0Ainstall-config%3A%20%2Fhome%2Fonp%2Fopenshift-network-playground%2Fpullsecret%20%2Fhome%2Fonp%2Fopenshift-network-playground%2Fid_ed25519.pub%0A%20%20%20%20%20%20%40openshift-network-playground%2Finstall-config.sh%20%24(RELEASE)%0A%0A.PHONY%3A%20manifests%0A%0Amanifests%3A%20%24(SCRIPT_DIR)%2Fopenshift-network-playground%2Fclusterconfigs%2Finstall-config.yaml%0A%20%20%20%20%20%20%40echo%20%22Generating%20manifests%20...%22%0A%20%20%20%20%20%20%40%2Fusr%2Flocal%2Fbin%2Fopenshift-baremetal-install%20--log-level%3D%24%7BLOGLEVEL%7D%20--dir%3D%24(SCRIPT_DIR)%2Fopenshift-network-playground%2Fclusterconfigs%20create%20manifests%0A%0A.PHONY%3A%20ignition-configs%0A%0Aignition-configs%3A%0A%20%20%20%20%20%20%40echo%20%22Generating%20ignition-configs%20...%22%0A%20%20%20%20%20%20%40%2Fusr%2Flocal%2Fbin%2Fopenshift-baremetal-install%20--log-level%3D%24%7BLOGLEVEL%7D%20--dir%3D%24(SCRIPT_DIR)%2Fopenshift-network-playground%2Fclusterconfigs%20create%20ignition-configs%0A%0A.PHONY%3A%20cluster%0A%0Acluster%3A%20check-containers%20check-vms%0A%20%20%20%20%20%20%40echo%20%22Creating%20cluster%20...%22%0A%20%20%20%20%20%20%40%2Fusr%2Flocal%2Fbin%2Fopenshift-baremetal-install%20--log-level%3D%24%7BLOGLEVEL%7D%20--dir%3D%24(SCRIPT_DIR)%2Fopenshift-network-playground%2Fclusterconfigs%20create%20cluster%0A%0A.PHONY%3A%20clean%0A%0Aclean%3A%0A%20%20%20%20%20%20%40echo%20%22Removing%20old%20bootstrap%20resources%20...%22%0A%20%20%20%20%20%20-%40%24(SCRIPT_DIR)%2Fopenshift-network-playground%2Fclean-bootstrap.sh%0A%20%20%20%20%20%20%40echo%20%22Removing%20installation%20directory%20...%22%0A%20%20%20%20%20%20-%40rm%20-rfv%20%24(SCRIPT_DIR)%2Fopenshift-network-playground%2Fclusterconfigs%0A%20%20%20%20%20%20%40echo%20%22Powering%20off%20master%20nodes%20...%22%0A%20%20%20%20%20%20-%40for%20i%20in%20master0%20master1%20master2%3B%20do%20sudo%20virsh%20destroy%20%24%24i%3B%20done%0A%20%20%20%20%20%20%40echo%20%22!!!%20IGNORE%20THE%20ERRORS%20!!!%22%0A%0A.PHONY%3A%20destroy%0A%0Adestroy%3A%0A%20%20%20%20%20%20%40echo%20%22Destroying%20bootrap%20...%22%0A%20%20%20%20%20%20-%40openshift-baremetal-install%20destroy%20--log-level%3D%24%7BLOGLEVEL%7D%20--dir%3D%2Fhome%2Fonp%2Fopenshift-network-playground%2Fclusterconfigs%20bootstrap%0A%20%20%20%20%20%20%40echo%20%22Destroying%20cluster%20...%22%0A%20%20%20%20%20%20-%40openshift-baremetal-install%20destroy%20--log-level%3D%24%7BLOGLEVEL%7D%20--dir%3D%2Fhome%2Fonp%2Fopenshift-network-playground%2Fclusterconfigs%20cluster%0A%20%20%20%20%20%20%40echo%20%22Removing%20installation%20directory%20...%22%0A%20%20%20%20%20%20-%40rm%20-rfv%20%24(SCRIPT_DIR)%2Fopenshift-network-playground%2Fclusterconfigs%0A%20%20%20%20%20%20%40echo%20%22Powering%20off%20master%20nodes%20...%22%0A%20%20%20%20%20%20-%40for%20i%20in%20master0%20master1%20master2%3B%20do%20sudo%20virsh%20destroy%20%24%24i%3B%20done%0A%20%20%20%20%20%20%40echo%20%22!!!%20IGNORE%20THE%20ERRORS%20!!!%22%0A%0A.PHONY%3A%20deploy%0A%0Adeploy%3A%20clean%20ssh-pullsecret%20install-config%20manifests%20core-passwd-auth%20cluster%0A%0A.PHONY%3A%20core-passwd-auth%0A%0Acore-passwd-auth%3A%0A%20%20%20%20%20%20sed%20%22s%2Fversion%3A%204.x.x%2Fversion%3A%20%24(shell%20oc%20version%20--client%20-o%20json%20%7C%20jq%20-r%20.releaseClientVersion%20%7C%20cut%20-d'.'%20-f'1-2').0%2Fg%22%20%2Fhome%2Fonp%2Fopenshift-network-playground%2F99_openshift-machineconfig_99-master-core-passwd-auth.bu%20%3E%20%2Ftmp%2Fmaster-core-passwd-auth.bu%0A%20%20%20%20%20%20sed%20%22s%2Fversion%3A%204.x.x%2Fversion%3A%20%24(shell%20oc%20version%20--client%20-o%20json%20%7C%20jq%20-r%20.releaseClientVersion%20%7C%20cut%20-d'.'%20-f'1-2').0%2Fg%22%20%2Fhome%2Fonp%2Fopenshift-network-playground%2F99_openshift-machineconfig_99-worker-core-passwd-auth.bu%20%3E%20%2Ftmp%2Fworker-core-passwd-auth.bu%0A%20%20%20%20%20%20podman%20run%20-i%20--rm%20quay.io%2Fcoreos%2Fbutane%3Arelease%20--strict%20%3C%20%2Ftmp%2Fmaster-core-passwd-auth.bu%20%3E%20%2Fhome%2Fonp%2Fopenshift-network-playground%2Fclusterconfigs%2Fopenshift%2F99_openshift-machineconfig_99-master-core-passwd-auth.yaml%0A%20%20%20%20%20%20podman%20run%20-i%20--rm%20quay.io%2Fcoreos%2Fbutane%3Arelease%20--strict%20%3C%20%2Ftmp%2Fworker-core-passwd-auth.bu%20%3E%20%2Fhome%2Fonp%2Fopenshift-network-playground%2Fclusterconfigs%2Fopenshift%2F99_openshift-machineconfig_99-worker-core-passwd-auth.yaml%0A%0A.PHONY%3A%20onp-files%0A%0Aonp-files%3A%0A%20%20%20%20%20%20%40echo%20%22Cloning%20onp-files%20...%22%0A%20%20%20%20%20%20%40git%20clone%20https%3A%2F%2Fgithub.com%2Fkevydotvinu%2Fonp-files%0A%0A.PHONY%3A%20ironic-client%0A%0Aironic-client%3A%20check-terraform-file%0A%20%20%20%20%20%20%40echo%20%22Creating%20clouds.yaml%20file%20...%22%0A%20%20%20%20%20%20-%40jq%20-jr%20'%22clouds%3A%22%2C%22%5Cn%22%2C%22%20%20metal3%3A%22%2C%22%5Cn%22%2C%22%20%20%20%20auth_type%3A%20http_basic%22%2C%22%5Cn%22%2C%22%20%20%20%20username%3A%20%22%2C.ironic_username%2C%22%5Cn%22%2C%22%20%20%20%20password%3A%20%22%2C.ironic_password%2C%22%5Cn%22%2C%22%20%20%20%20baremetal_endpoint_override%3A%20%22%2C.ironic_uri%2C%22%5Cn%22%2C%22%20%20%20%20baremetal_introspection_endpoint_override%3A%20%22%2C.inspector_uri%2C%22%5Cn%22'%20%2Ftmp%2Fopenshift-*%2Fterraform.platform.auto.tfvars.json%20%3E%20%2Fhome%2Fonp%2Fopenshift-network-playground%2Fclouds.yaml%0A%20%20%20%20%20%20%40echo%20%22Starting%20ironic-client%20container%20...%22%0A%20%20%20%20%20%20-%40sudo%20podman%20run%20-ti%20--rm%20--entrypoint%20%2Fbin%2Fbash%20--net%20host%20-v%20%2Fhome%2Fonp%2Fopenshift-network-playground%2Fclouds.yaml%3A%2Fclouds.yaml%20-e%20OS_CLOUD%3Dmetal3%20quay.io%2Fmetal3-io%2Fironic-client%3Alatest%0A%0A.PHONY%3A%20help%0A%0Ahelp%3A%0A%20%20%20%20%20%20%40echo%20%22Usage%3A%20onp%20%5BSUBCOMMAND%5D%20%5BVARIABLE_NAME%5D%3D%3Cvariable%3E%22%0A%20%20%20%20%20%20%40echo%20%22%22%0A%20%20%20%20%20%20%40echo%20%22Subcommands%3A%22%0A%20%20%20%20%20%20%40echo%20%22%20%20ssh-pullsecret%20OCM_TOKEN%3D%3COCM_TOKEN%3E%20%20%20Generate%20SSH%20keys%20and%20download%20pullsecret%20file.%22%0A%20%20%20%20%20%20%40echo%20%22%20%20install-config%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20Generate%20install-config.yaml%20file.%22%0A%20%20%20%20%20%20%40echo%20%22%20%20cluster%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20Create%20an%20OpenShift%20cluster.%22%0A%20%20%20%20%20%20%40echo%20%22%20%20destroy%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20Destroy%20installed%20cluster.%22%0A%20%20%20%20%20%20%40echo%20%22%20%20clean%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20Clean%20old%20cluster%20resources.%22%0A%20%20%20%20%20%20%40echo%20%22%20%20ironic-client%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20Create%20ironic-client%20container.%22%0A%20%20%20%20%20%20%40echo%20%22%22%0A%20%20%20%20%20%20%40echo%20%22Example%3A%22%0A%20%20%20%20%20%20%40echo%20%22%20%20onp%20cluster%20LOGLEVEL%3Ddebug%22%0A%20%20%20%20%20%20%40echo%20%22%22%0A%20%20%20%20%20%20%40echo%20%22Variables%3A%22%0A%20%20%20%20%20%20%40echo%20%22%20%20OCM_TOKEN%20(token%20from%20https%3A%2F%2Fcloud.redhat.com%2Fopenshift%2Ftoken)%22%0A%20%20%20%20%20%20%40echo%20%22%20%20RELEASE%20(stable-4.10%2C%20latest-4.9%2C%204.9.0%2C%20etc)%22%0A%20%20%20%20%20%20%40echo%20%22%20%20LOGLEVEL%20(debug%2C%20info%2C%20warn%2C%20error)%22%0A"
         },
         "mode": 493
       },
       {
         "group": {
-          "name": "kni"
+          "name": "onp"
         },
         "overwrite": true,
-        "path": "/home/kni/ocp-ipi-baremetal-lab/clean-bootstrap.sh",
+        "path": "/home/onp/openshift-network-playground/clean-bootstrap.sh",
         "user": {
-          "name": "kni"
+          "name": "onp"
         },
         "contents": {
           "source": "data:,%23!%2Fbin%2Fbash%0A%23%0A%23%20Remove%20old%20bootstrap%20resources%20if%20any%20are%20left%20over%20from%20a%20previous%20deployment%20attempt%0A%0Aset%20-xo%20pipefail%0A%0ABOOTSTRAP_RESOURCES%3D%24(sudo%20virsh%20pool-list%20%7C%20grep%20bootstrap%20%7C%20awk%20'%7Bprint%20%241%7D'%20%7C%20xargs)%0A%0Aif%20%5B%20-z%20%24%7BBOOTSTRAP_RESOURCES%7D%20%5D%3B%20then%0A%20%20%20%20%20%20%20%20echo%20%22No%20bootstrap%20resources%20...%22%0Aelse%0A%20%20%20%20%20%20%20%20for%20RESOURCE%20in%20%24%7BBOOTSTRAP_RESOURCES%7D%3B%20do%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20sudo%20virsh%20destroy%20%24%7BRESOURCE%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20sudo%20virsh%20undefine%20%24%7BRESOURCE%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20sudo%20virsh%20pool-start%20%24%7BRESOURCE%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20sudo%20virsh%20vol-delete%20%24%7BRESOURCE%7D%20--pool%20%24%7BRESOURCE%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20sudo%20virsh%20vol-delete%20%24%7BRESOURCE%7D-base%20--pool%20%24%7BRESOURCE%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20sudo%20virsh%20vol-delete%20%24%7BRESOURCE%7D.ign%20--pool%20%24%7BRESOURCE%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20sudo%20virsh%20pool-destroy%20%24%7BRESOURCE%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20sudo%20virsh%20pool-delete%20%24%7BRESOURCE%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20sudo%20virsh%20pool-undefine%20%24%7BRESOURCE%7D%0A%20%20%20%20%20%20%20%20done%0Afi%0A"
@@ -384,12 +482,12 @@
       },
       {
         "group": {
-          "name": "kni"
+          "name": "onp"
         },
         "overwrite": true,
-        "path": "/home/kni/ocp-ipi-baremetal-lab/ssh-pullsecret.sh",
+        "path": "/home/onp/openshift-network-playground/ssh-pullsecret.sh",
         "user": {
-          "name": "kni"
+          "name": "onp"
         },
         "contents": {
           "source": "data:,%23!%2Fbin%2Fbash%0A%23%20Download%20pull%20secret%20using%20OpenShift%20Cluster%20Manager%20API%20Token%0A%0Aset%20-euo%20pipefail%0A%0Afunction%20USAGE%20%7B%0A%20%20%20%20%20%20%20%20echo%20%22Usage%3A%20%240%20'%3COCM%20API%20Token%3E'%22%0A%20%20%20%20%20%20%20%20echo%20%22You%20need%20to%20authenticate%20using%20a%20Bearer%20token%2C%20which%20you%20can%20get%20from%20the%20link%3A%20https%3A%2F%2Fcloud.redhat.com%2Fopenshift%2Ftoken%22%0A%20%20%20%20%20%20%20%20exit%201%0A%7D%0A%0Afunction%20DOWNLOAD_PULLSECRET%20%7B%0A%20%20%20%20%20%20%20%20export%20BEARER%3D%24(curl%20%5C%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20--silent%20%5C%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20--data-urlencode%20%22grant_type%3Drefresh_token%22%20%5C%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20--data-urlencode%20%22client_id%3Dcloud-services%22%20%5C%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20--data-urlencode%20%22refresh_token%3D%24%7BOCM_API_TOKEN%7D%22%20%5C%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20https%3A%2F%2Fsso.redhat.com%2Fauth%2Frealms%2Fredhat-external%2Fprotocol%2Fopenid-connect%2Ftoken%20%7C%20%5C%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20jq%20-r%20.access_token)%0A%20%20%20%20%20%20%20%20curl%20-s%20-X%20POST%20https%3A%2F%2Fapi.openshift.com%2Fapi%2Faccounts_mgmt%2Fv1%2Faccess_token%20--header%20%22Content-Type%3Aapplication%2Fjson%22%20--header%20%22Authorization%3A%20Bearer%20%24BEARER%22%20%3E%20%24%7BSCRIPT_DIR%7D%2Fpullsecret%0A%7D%0A%0Afunction%20SSH_KEY%20%7B%0A%20%20%20%20%20%20%20%20rm%20-fv%20%24%7BSCRIPT_DIR%7D%2Fid_ed25519%20%24%7BSCRIPT_DIR%7D%2Fid_ed25519.pub%0A%20%20%20%20%20%20%20%20ssh-keygen%20-q%20-t%20ed25519%20-N%20''%20-f%20%24%7BSCRIPT_DIR%7D%2Fid_ed25519%0A%7D%0A%0ASCRIPT_DIR%3D%22%24(%20cd%20--%20%22%24(%20dirname%20--%20%22%24%7BBASH_SOURCE%5B0%5D%3A-%240%7D%22%3B%20)%22%20%26%3E%20%2Fdev%2Fnull%20%26%26%20pwd%202%3E%20%2Fdev%2Fnull%3B%20)%22%0AARG_COUNT%3D%24%7B%23%7D%0AOCM_API_TOKEN%3D%24%7B1%7D%0AARG_SIZE%3D%24%7B%23OCM_API_TOKEN%7D%0A%0Aif%20%5B%20%24%7BARG_COUNT%7D%20-eq%201%20%5D%20%26%26%20%5B%20%24%7BARG_SIZE%7D%20-gt%2050%20%5D%3B%20then%0A%20%20%20%20%20%20%20%20(%20SSH_KEY%20%26%26%20echo%20%22%E2%9C%94%20SSH%20key%20generated!%22%20)%20%7C%7C%20echo%20%22%E2%9C%97%20Error%3A%20SSH%20key%20generation%20failed!%22%0A%20%20%20%20%20%20%20%20(%20DOWNLOAD_PULLSECRET%201%3E%2Fdev%2Fnull%20%26%26%20echo%20%22%E2%9C%94%20Pull%20secret%20downloaded!%22%20)%20%7C%7C%20echo%20%22%E2%9C%97%20Error%3A%20Pull%20secret%20download%20failed!%22%0Aelse%0A%20%20%20%20%20%20%20%20USAGE%0Afi%0A"
@@ -398,42 +496,42 @@
       },
       {
         "group": {
-          "name": "kni"
+          "name": "onp"
         },
         "overwrite": true,
-        "path": "/home/kni/ocp-ipi-baremetal-lab/install-config.sh",
+        "path": "/home/onp/openshift-network-playground/install-config.sh",
         "user": {
-          "name": "kni"
+          "name": "onp"
         },
         "contents": {
-          "source": "data:,set%20-euo%20pipefail%0A%0ASCRIPT_DIR%3D%22%24(%20cd%20--%20%22%24(%20dirname%20--%20%22%24%7BBASH_SOURCE%5B0%5D%3A-%240%7D%22%3B%20)%22%20%26%3E%20%2Fdev%2Fnull%20%26%26%20pwd%202%3E%20%2Fdev%2Fnull%3B%20)%22%0Aexport%20VERSION%3D%24%7B1%7D%0Aexport%20RELEASE_IMAGE%3D%24(curl%20-s%20https%3A%2F%2Fmirror.openshift.com%2Fpub%2Fopenshift-v4%2Fclients%2Focp%2F%24VERSION%2Frelease.txt%20%7C%20grep%20'Pull%20From%3A%20quay.io'%20%7C%20awk%20-F%20'%20'%20'%7Bprint%20%243%7D')%0Aexport%20cmd%3Dopenshift-baremetal-install%0Aexport%20pullsecret_file%3D%24%7BSCRIPT_DIR%7D%2Fpullsecret%0Aexport%20extract_dir%3D%24%7BSCRIPT_DIR%7D%0Aecho%20%22Downloading%20oc%20binary%20...%22%0Acurl%20-s%20https%3A%2F%2Fmirror.openshift.com%2Fpub%2Fopenshift-v4%2Fclients%2Focp%2F%24VERSION%2Fopenshift-client-linux.tar.gz%20%7C%20tar%20zxf%20-%20-C%20%24%7BSCRIPT_DIR%7D%20oc%0Asudo%20mv%20%24%7BSCRIPT_DIR%7D%2Foc%20%2Fusr%2Flocal%2Fbin%0Aecho%20%22%E2%9C%94%20Downloaded!%22%0Aecho%20%22Downloading%20openshift-install%20binary%20...%22%0A%2Fusr%2Flocal%2Fbin%2Foc%20adm%20release%20extract%20--registry-config%20%22%24%7Bpullsecret_file%7D%22%20--command%3D%24cmd%20--to%20%22%24%7Bextract_dir%7D%22%20%24%7BRELEASE_IMAGE%7D%0Asudo%20mv%20%24%7BSCRIPT_DIR%7D%2Fopenshift-baremetal-install%20%2Fusr%2Flocal%2Fbin%0Aecho%20%22%E2%9C%94%20Downloaded!%22%0Aexport%20RHCOS_QEMU_URI%3D%24(%2Fusr%2Flocal%2Fbin%2Fopenshift-baremetal-install%20coreos%20print-stream-json%20%7C%20jq%20-r%20--arg%20ARCH%20%22%24(arch)%22%20'.architectures%5B%24ARCH%5D.artifacts.qemu.formats%5B%22qcow2.gz%22%5D.disk.location')%0Aexport%20RHCOS_QEMU_NAME%3D%24%7BRHCOS_QEMU_URI%23%23*%2F%7D%0Aexport%20RHCOS_QEMU_UNCOMPRESSED_SHA256%3D%24(%2Fusr%2Flocal%2Fbin%2Fopenshift-baremetal-install%20coreos%20print-stream-json%20%7C%20jq%20-r%20--arg%20ARCH%20%22%24(arch)%22%20'.architectures%5B%24ARCH%5D.artifacts.qemu.formats%5B%22qcow2.gz%22%5D.disk%5B%22uncompressed-sha256%22%5D')%0Aecho%20%22Downloading%20bootstrap%20os%20image%20...%22%0A%5B%20-f%20%22%2Fhome%2Fkni%2Focp-ipi-baremetal-lab%2Frhcos_image_cache%2F%24%7BRHCOS_QEMU_NAME%7D%22%20%5D%20%7C%7C%20curl%20-sL%20%24%7BRHCOS_QEMU_URI%7D%20-o%20%2Fhome%2Fkni%2Focp-ipi-baremetal-lab%2Frhcos_image_cache%2F%24%7BRHCOS_QEMU_NAME%7D%0Aecho%20%22%E2%9C%94%20Downloaded!%22%0Aexport%20BAREMETAL_IP%3D%24(ip%20addr%20show%20dev%20baremetal%20%7C%20awk%20'%2Finet%20%2F%7Bprint%20%242%7D'%20%7C%20cut%20-d%22%2F%22%20-f1)%0Aexport%20BOOTSTRAP_OS_IMAGE%3D%22http%3A%2F%2F%24%7BBAREMETAL_IP%7D%3A8080%2F%24%7BRHCOS_QEMU_NAME%7D%3Fsha256%3D%24%7BRHCOS_QEMU_UNCOMPRESSED_SHA256%7D%22%0Aecho%20%22Generating%20install-config.yaml%20file%20...%22%0Acat%20%3C%3C%20EOF%20%3E%20%24%7BSCRIPT_DIR%7D%2Finstall-config.yaml%0AapiVersion%3A%20v1%0AbaseDomain%3A%20example.local%0Ametadata%3A%0A%20%20name%3A%20ocp%0Anetworking%3A%0A%20%20machineNetwork%3A%0A%20%20-%20cidr%3A%20192.168.123.0%2F24%0A%20%20networkType%3A%20OVNKubernetes%0Acompute%3A%0A-%20name%3A%20worker%0A%20%20replicas%3A%200%0AcontrolPlane%3A%0A%20%20name%3A%20master%0A%20%20replicas%3A%203%0A%20%20platform%3A%0A%20%20%20%20baremetal%3A%20%7B%7D%0Aplatform%3A%0A%20%20baremetal%3A%0A%20%20%20%20libvirtURI%3A%20qemu%3A%2F%2F%2Fsystem%0A%20%20%20%20bootstrapOSImage%3A%20%24%7BBOOTSTRAP_OS_IMAGE%7D%0A%20%20%20%20apiVIP%3A%20192.168.123.88%0A%20%20%20%20ingressVIP%3A%20192.168.123.89%0A%20%20%20%20provisioningNetworkCIDR%3A%20172.22.0.0%2F24%0A%20%20%20%20hosts%3A%0A%20%20%20%20%20%20-%20name%3A%20master0%0A%20%20%20%20%20%20%20%20role%3A%20master%0A%20%20%20%20%20%20%20%20bmc%3A%0A%20%20%20%20%20%20%20%20%20%20address%3A%20ipmi%3A%2F%2F192.168.123.1%3A6230%0A%20%20%20%20%20%20%20%20%20%20username%3A%20admin%0A%20%20%20%20%20%20%20%20%20%20password%3A%20password%0A%20%20%20%20%20%20%20%20bootMACAddress%3A%2052%3A54%3A00%3A11%3A22%3Ab1%0A%20%20%20%20%20%20%20%20hardwareProfile%3A%20libvirt%0A%20%20%20%20%20%20%20%20rootDeviceHints%3A%0A%20%20%20%20%20%20%20%20%20deviceName%3A%20%22%2Fdev%2Fvda%22%0A%20%20%20%20%20%20-%20name%3A%20master1%0A%20%20%20%20%20%20%20%20role%3A%20master%0A%20%20%20%20%20%20%20%20bmc%3A%0A%20%20%20%20%20%20%20%20%20%20address%3A%20ipmi%3A%2F%2F192.168.123.1%3A6231%0A%20%20%20%20%20%20%20%20%20%20username%3A%20admin%0A%20%20%20%20%20%20%20%20%20%20password%3A%20password%0A%20%20%20%20%20%20%20%20bootMACAddress%3A%2052%3A54%3A00%3A11%3A22%3Ab2%0A%20%20%20%20%20%20%20%20hardwareProfile%3A%20libvirt%0A%20%20%20%20%20%20%20%20rootDeviceHints%3A%0A%20%20%20%20%20%20%20%20%20deviceName%3A%20%22%2Fdev%2Fvda%22%0A%20%20%20%20%20%20-%20name%3A%20master2%0A%20%20%20%20%20%20%20%20role%3A%20master%0A%20%20%20%20%20%20%20%20bmc%3A%0A%20%20%20%20%20%20%20%20%20%20address%3A%20ipmi%3A%2F%2F192.168.123.1%3A6232%0A%20%20%20%20%20%20%20%20%20%20username%3A%20admin%0A%20%20%20%20%20%20%20%20%20%20password%3A%20password%0A%20%20%20%20%20%20%20%20bootMACAddress%3A%2052%3A54%3A00%3A11%3A22%3Ab3%0A%20%20%20%20%20%20%20%20hardwareProfile%3A%20libvirt%0A%20%20%20%20%20%20%20%20rootDeviceHints%3A%0A%20%20%20%20%20%20%20%20%20deviceName%3A%20%22%2Fdev%2Fvda%22%0ApullSecret%3A%20'%24(cat%20%24%7BSCRIPT_DIR%7D%2Fpullsecret)'%0AsshKey%3A%20'%24(cat%20%24%7BSCRIPT_DIR%7D%2Fid_ed25519.pub)'%0AEOF%0Aecho%20%22%E2%9C%94%20Generated!%22%0Amkdir%20-p%20%24%7BSCRIPT_DIR%7D%2Fclusterconfigs%0Aecho%20%22Copying%20install-config.yaml%20file%20to%20clusterconfigs%20directory%20...%22%0Acp%20%24%7BSCRIPT_DIR%7D%2Finstall-config.yaml%20%24%7BSCRIPT_DIR%7D%2Fclusterconfigs%2F%0Aecho%20%22%E2%9C%94%20Copied!%22%0A"
+          "source": "data:,set%20-euo%20pipefail%0A%0ASCRIPT_DIR%3D%22%24(%20cd%20--%20%22%24(%20dirname%20--%20%22%24%7BBASH_SOURCE%5B0%5D%3A-%240%7D%22%3B%20)%22%20%26%3E%20%2Fdev%2Fnull%20%26%26%20pwd%202%3E%20%2Fdev%2Fnull%3B%20)%22%0Aexport%20VERSION%3D%24%7B1%7D%0Aexport%20RELEASE_IMAGE%3D%24(curl%20-s%20https%3A%2F%2Fmirror.openshift.com%2Fpub%2Fopenshift-v4%2Fclients%2Focp%2F%24VERSION%2Frelease.txt%20%7C%20grep%20'Pull%20From%3A%20quay.io'%20%7C%20awk%20-F%20'%20'%20'%7Bprint%20%243%7D')%0Aexport%20cmd%3Dopenshift-baremetal-install%0Aexport%20pullsecret_file%3D%24%7BSCRIPT_DIR%7D%2Fpullsecret%0Aexport%20extract_dir%3D%24%7BSCRIPT_DIR%7D%0Aecho%20%22Downloading%20oc%20binary%20...%22%0Acurl%20-s%20https%3A%2F%2Fmirror.openshift.com%2Fpub%2Fopenshift-v4%2Fclients%2Focp%2F%24VERSION%2Fopenshift-client-linux.tar.gz%20%7C%20tar%20zxf%20-%20-C%20%24%7BSCRIPT_DIR%7D%20oc%0Asudo%20mv%20%24%7BSCRIPT_DIR%7D%2Foc%20%2Fusr%2Flocal%2Fbin%0Aecho%20%22%E2%9C%94%20Downloaded!%22%0Aecho%20%22Downloading%20openshift-install%20binary%20...%22%0A%2Fusr%2Flocal%2Fbin%2Foc%20adm%20release%20extract%20--registry-config%20%22%24%7Bpullsecret_file%7D%22%20--command%3D%24cmd%20--to%20%22%24%7Bextract_dir%7D%22%20%24%7BRELEASE_IMAGE%7D%0Asudo%20mv%20%24%7BSCRIPT_DIR%7D%2Fopenshift-baremetal-install%20%2Fusr%2Flocal%2Fbin%0Aecho%20%22%E2%9C%94%20Downloaded!%22%0Aexport%20RHCOS_QEMU_URI%3D%24(%2Fusr%2Flocal%2Fbin%2Fopenshift-baremetal-install%20coreos%20print-stream-json%20%7C%20jq%20-r%20--arg%20ARCH%20%22%24(arch)%22%20'.architectures%5B%24ARCH%5D.artifacts.qemu.formats%5B%22qcow2.gz%22%5D.disk.location')%0Aexport%20RHCOS_QEMU_NAME%3D%24%7BRHCOS_QEMU_URI%23%23*%2F%7D%0Aexport%20RHCOS_QEMU_UNCOMPRESSED_SHA256%3D%24(%2Fusr%2Flocal%2Fbin%2Fopenshift-baremetal-install%20coreos%20print-stream-json%20%7C%20jq%20-r%20--arg%20ARCH%20%22%24(arch)%22%20'.architectures%5B%24ARCH%5D.artifacts.qemu.formats%5B%22qcow2.gz%22%5D.disk%5B%22uncompressed-sha256%22%5D')%0Aecho%20%22Downloading%20bootstrap%20os%20image%20...%22%0A%5B%20-f%20%22%2Fhome%2Fonp%2Fopenshift-network-playground%2Frhcos_image_cache%2F%24%7BRHCOS_QEMU_NAME%7D%22%20%5D%20%7C%7C%20curl%20-sL%20%24%7BRHCOS_QEMU_URI%7D%20-o%20%2Fhome%2Fonp%2Fopenshift-network-playground%2Frhcos_image_cache%2F%24%7BRHCOS_QEMU_NAME%7D%0Aecho%20%22%E2%9C%94%20Downloaded!%22%0Aexport%20BAREMETAL_IP%3D%24(ip%20addr%20show%20dev%20baremetal%20%7C%20awk%20'%2Finet%20%2F%7Bprint%20%242%7D'%20%7C%20cut%20-d%22%2F%22%20-f1)%0Aexport%20BOOTSTRAP_OS_IMAGE%3D%22http%3A%2F%2F%24%7BBAREMETAL_IP%7D%3A8080%2F%24%7BRHCOS_QEMU_NAME%7D%3Fsha256%3D%24%7BRHCOS_QEMU_UNCOMPRESSED_SHA256%7D%22%0Aecho%20%22Generating%20install-config.yaml%20file%20...%22%0Acat%20%3C%3C%20EOF%20%3E%20%24%7BSCRIPT_DIR%7D%2Finstall-config.yaml%0AapiVersion%3A%20v1%0AbaseDomain%3A%20example.local%0Ametadata%3A%0A%20%20name%3A%20ocp%0Anetworking%3A%0A%20%20machineNetwork%3A%0A%20%20-%20cidr%3A%20192.168.123.0%2F24%0A%20%20networkType%3A%20OVNKubernetes%0Acompute%3A%0A-%20name%3A%20worker%0A%20%20replicas%3A%200%0AcontrolPlane%3A%0A%20%20name%3A%20master%0A%20%20replicas%3A%203%0A%20%20platform%3A%0A%20%20%20%20baremetal%3A%20%7B%7D%0Aplatform%3A%0A%20%20baremetal%3A%0A%20%20%20%20libvirtURI%3A%20qemu%3A%2F%2F%2Fsystem%0A%20%20%20%20bootstrapOSImage%3A%20%24%7BBOOTSTRAP_OS_IMAGE%7D%0A%20%20%20%20apiVIP%3A%20192.168.123.88%0A%20%20%20%20ingressVIP%3A%20192.168.123.89%0A%20%20%20%20provisioningNetworkCIDR%3A%20172.22.0.0%2F24%0A%20%20%20%20hosts%3A%0A%20%20%20%20%20%20-%20name%3A%20master0%0A%20%20%20%20%20%20%20%20role%3A%20master%0A%20%20%20%20%20%20%20%20bmc%3A%0A%20%20%20%20%20%20%20%20%20%20address%3A%20ipmi%3A%2F%2F192.168.123.1%3A6230%0A%20%20%20%20%20%20%20%20%20%20username%3A%20admin%0A%20%20%20%20%20%20%20%20%20%20password%3A%20password%0A%20%20%20%20%20%20%20%20bootMACAddress%3A%2052%3A54%3A00%3A11%3A22%3Ab1%0A%20%20%20%20%20%20%20%20hardwareProfile%3A%20libvirt%0A%20%20%20%20%20%20%20%20rootDeviceHints%3A%0A%20%20%20%20%20%20%20%20%20deviceName%3A%20%22%2Fdev%2Fvda%22%0A%20%20%20%20%20%20-%20name%3A%20master1%0A%20%20%20%20%20%20%20%20role%3A%20master%0A%20%20%20%20%20%20%20%20bmc%3A%0A%20%20%20%20%20%20%20%20%20%20address%3A%20ipmi%3A%2F%2F192.168.123.1%3A6231%0A%20%20%20%20%20%20%20%20%20%20username%3A%20admin%0A%20%20%20%20%20%20%20%20%20%20password%3A%20password%0A%20%20%20%20%20%20%20%20bootMACAddress%3A%2052%3A54%3A00%3A11%3A22%3Ab2%0A%20%20%20%20%20%20%20%20hardwareProfile%3A%20libvirt%0A%20%20%20%20%20%20%20%20rootDeviceHints%3A%0A%20%20%20%20%20%20%20%20%20deviceName%3A%20%22%2Fdev%2Fvda%22%0A%20%20%20%20%20%20-%20name%3A%20master2%0A%20%20%20%20%20%20%20%20role%3A%20master%0A%20%20%20%20%20%20%20%20bmc%3A%0A%20%20%20%20%20%20%20%20%20%20address%3A%20ipmi%3A%2F%2F192.168.123.1%3A6232%0A%20%20%20%20%20%20%20%20%20%20username%3A%20admin%0A%20%20%20%20%20%20%20%20%20%20password%3A%20password%0A%20%20%20%20%20%20%20%20bootMACAddress%3A%2052%3A54%3A00%3A11%3A22%3Ab3%0A%20%20%20%20%20%20%20%20hardwareProfile%3A%20libvirt%0A%20%20%20%20%20%20%20%20rootDeviceHints%3A%0A%20%20%20%20%20%20%20%20%20deviceName%3A%20%22%2Fdev%2Fvda%22%0ApullSecret%3A%20'%24(cat%20%24%7BSCRIPT_DIR%7D%2Fpullsecret)'%0AsshKey%3A%20'%24(cat%20%24%7BSCRIPT_DIR%7D%2Fid_ed25519.pub)'%0AEOF%0Aecho%20%22%E2%9C%94%20Generated!%22%0Amkdir%20-p%20%24%7BSCRIPT_DIR%7D%2Fclusterconfigs%0Aecho%20%22Copying%20install-config.yaml%20file%20to%20clusterconfigs%20directory%20...%22%0Acp%20%24%7BSCRIPT_DIR%7D%2Finstall-config.yaml%20%24%7BSCRIPT_DIR%7D%2Fclusterconfigs%2F%0Aecho%20%22%E2%9C%94%20Copied!%22%0A"
         },
         "mode": 493
       },
       {
         "overwrite": true,
-        "path": "/opt/ocp-ipi-baremetal-lab/host/broadcast.sh",
+        "path": "/opt/openshift-network-playground/host/broadcast.sh",
         "contents": {
           "source": "data:,%23!%2Fbin%2Fsh%0Awhile%20true%3B%20do%20if%20%5B%5B%20%24(podman%20ps%20--format%20json%20%7C%20jq%20-r%20'.%5B%5D%20%7C%20.Names%20%7C%20.%5B%5D'%20%7C%20wc%20-l)%20%3D%3D%20%223%22%20%5D%5D%3B%20then%20echo%20-e%20%22The%20containerized%20services%20(%24(podman%20ps%20--format%20json%20%7C%20jq%20-r%20'.%5B%5D%20%7C%20.Names%20%7C%20.%5B%5D'%20%7C%20xargs))%20are%20ready.%5CnYou%20can%20start%20the%20OpenShift%20baremetal%20IPI%20installation%20now.%22%20%7C%20wall%20-n%3B%20break%3B%20fi%3B%20done%0A"
         },
         "mode": 493
       },
       {
-        "path": "/home/kni/.bashrc",
+        "path": "/home/onp/.bashrc",
         "append": [
           {
-            "source": "data:,alias%20oibl%3D'make'%0Aexport%20EDITOR%3Dvi%0Aexport%20KUBECONFIG%3D%2Fhome%2Fkni%2Focp-ipi-baremetal-lab%2Fclusterconfigs%2Fauth%2Fkubeconfig%0Ased%20-i%20-e%20's%2F%20%20%20%20%20%20%2F%5Ct%2Fg'%20%2Fhome%2Fkni%2FMakefile%0A"
+            "source": "data:,alias%20onp%3D'make%20-C%20%2Fhome%2Fonp%20-f%20%2Fhome%2Fonp%2F.Makefile'%0Aexport%20EDITOR%3Dvi%0Aexport%20KUBECONFIG%3D%2Fhome%2Fonp%2Fopenshift-network-playground%2Fclusterconfigs%2Fauth%2Fkubeconfig%0Ased%20-i%20-e%20's%2F%20%20%20%20%20%20%2F%5Ct%2Fg'%20%2Fhome%2Fonp%2F.Makefile%0A"
           }
         ]
       },
       {
         "group": {
-          "name": "kni"
+          "name": "onp"
         },
         "overwrite": true,
-        "path": "/home/kni/ocp-ipi-baremetal-lab/worker0.yaml",
+        "path": "/home/onp/openshift-network-playground/worker0.yaml",
         "user": {
-          "name": "kni"
+          "name": "onp"
         },
         "contents": {
           "source": "data:,apiVersion%3A%20v1%0Akind%3A%20Secret%0Ametadata%3A%0A%20%20name%3A%20openshift-worker-0-bmc-secret%0A%20%20namespace%3A%20openshift-machine-api%0Atype%3A%20Opaque%0Adata%3A%0A%20%20username%3A%20YWRtaW4K%0A%20%20password%3A%20cGFzc3dvcmQK%0A---%0AapiVersion%3A%20metal3.io%2Fv1alpha1%0Akind%3A%20BareMetalHost%0Ametadata%3A%0A%20%20name%3A%20openshift-worker-0%0A%20%20namespace%3A%20openshift-machine-api%0Aspec%3A%0A%20%20online%3A%20true%0A%20%20bootMACAddress%3A%2052%3A54%3A00%3A11%3A22%3Ab4%0A%20%20bmc%3A%0A%20%20%20%20address%3A%20ipmi%3A%2F%2F192.168.123.1%3A6233%0A%20%20%20%20credentialsName%3A%20openshift-worker-0-bmc-secret%0A%20%20rootDeviceHints%3A%0A%20%20%20%20deviceName%3A%20%22%2Fdev%2Fvda%22%0A"
@@ -442,12 +540,12 @@
       },
       {
         "group": {
-          "name": "kni"
+          "name": "onp"
         },
         "overwrite": true,
-        "path": "/home/kni/ocp-ipi-baremetal-lab/worker1.yaml",
+        "path": "/home/onp/openshift-network-playground/worker1.yaml",
         "user": {
-          "name": "kni"
+          "name": "onp"
         },
         "contents": {
           "source": "data:,apiVersion%3A%20v1%0Akind%3A%20Secret%0Ametadata%3A%0A%20%20name%3A%20openshift-worker-1-bmc-secret%0A%20%20namespace%3A%20openshift-machine-api%0Atype%3A%20Opaque%0Adata%3A%0A%20%20username%3A%20YWRtaW4K%0A%20%20password%3A%20cGFzc3dvcmQK%0A---%0AapiVersion%3A%20metal3.io%2Fv1alpha1%0Akind%3A%20BareMetalHost%0Ametadata%3A%0A%20%20name%3A%20openshift-worker-1%0A%20%20namespace%3A%20openshift-machine-api%0Aspec%3A%0A%20%20online%3A%20true%0A%20%20bootMACAddress%3A%2052%3A54%3A00%3A11%3A22%3Ab5%0A%20%20bmc%3A%0A%20%20%20%20address%3A%20ipmi%3A%2F%2F192.168.123.1%3A6234%0A%20%20%20%20credentialsName%3A%20openshift-worker-1-bmc-secret%0A%20%20rootDeviceHints%3A%0A%20%20%20%20deviceName%3A%20%22%2Fdev%2Fvda%22%0A"
@@ -456,29 +554,85 @@
       },
       {
         "group": {
-          "name": "kni"
+          "name": "onp"
         },
         "overwrite": true,
-        "path": "/home/kni/ocp-ipi-baremetal-lab/99_openshift-machineconfig_99-master-oibl.bu",
+        "path": "/home/onp/openshift-network-playground/99_openshift-machineconfig_99-master-core-passwd-auth.bu",
         "user": {
-          "name": "kni"
+          "name": "onp"
         },
         "contents": {
-          "source": "data:,variant%3A%20openshift%0Aversion%3A%204.x.x%0Ametadata%3A%0A%20%20labels%3A%0A%20%20%20%20machineconfiguration.openshift.io%2Frole%3A%20master%0A%20%20name%3A%2099-master-oibl%0Astorage%3A%0A%20%20files%3A%0A%20%20-%20path%3A%20%2Fetc%2Fssh%2Fsshd_config.d%2F99-oibl.conf%0A%20%20%20%20mode%3A%200644%0A%20%20%20%20overwrite%3A%20true%0A%20%20%20%20contents%3A%0A%20%20%20%20%20%20inline%3A%20%7C%0A%20%20%20%20%20%20%20%20PasswordAuthentication%20yes%0Asystemd%3A%0A%20%20units%3A%0A%20%20-%20name%3A%20oibl.service%0A%20%20%20%20enabled%3A%20true%0A%20%20%20%20contents%3A%20%7C%0A%20%20%20%20%20%20%5BService%5D%0A%20%20%20%20%20%20Type%3Doneshot%0A%20%20%20%20%20%20ExecStart%3D%2Fusr%2Fbin%2Fsh%20-c%20'%2Fusr%2Fbin%2Fecho%20%22Core%40123%22%20%7C%20%2Fusr%2Fbin%2Fpasswd%20--stdin%20core'%0A%20%20%20%20%20%20RemainAfterExit%3Dyes%0A%20%20%20%20%20%20%5BInstall%5D%0A%20%20%20%20%20%20WantedBy%3Dmulti-user.target%0A"
+          "source": "data:,variant%3A%20openshift%0Aversion%3A%204.x.x%0Ametadata%3A%0A%20%20labels%3A%0A%20%20%20%20machineconfiguration.openshift.io%2Frole%3A%20master%0A%20%20name%3A%2099-master-onp%0Astorage%3A%0A%20%20files%3A%0A%20%20-%20path%3A%20%2Fetc%2Fssh%2Fsshd_config.d%2F99-onp.conf%0A%20%20%20%20mode%3A%200644%0A%20%20%20%20overwrite%3A%20true%0A%20%20%20%20contents%3A%0A%20%20%20%20%20%20inline%3A%20%7C%0A%20%20%20%20%20%20%20%20PasswordAuthentication%20yes%0Asystemd%3A%0A%20%20units%3A%0A%20%20-%20name%3A%20onp.service%0A%20%20%20%20enabled%3A%20true%0A%20%20%20%20contents%3A%20%7C%0A%20%20%20%20%20%20%5BService%5D%0A%20%20%20%20%20%20Type%3Doneshot%0A%20%20%20%20%20%20ExecStart%3D%2Fusr%2Fbin%2Fsh%20-c%20'%2Fusr%2Fbin%2Fecho%20%22Core%40123%22%20%7C%20%2Fusr%2Fbin%2Fpasswd%20--stdin%20core'%0A%20%20%20%20%20%20RemainAfterExit%3Dyes%0A%20%20%20%20%20%20%5BInstall%5D%0A%20%20%20%20%20%20WantedBy%3Dmulti-user.target%0A"
         },
         "mode": 493
       },
       {
         "group": {
-          "name": "kni"
+          "name": "onp"
         },
         "overwrite": true,
-        "path": "/home/kni/ocp-ipi-baremetal-lab/99_openshift-machineconfig_99-worker-oibl.bu",
+        "path": "/home/onp/openshift-network-playground/99_openshift-machineconfig_99-worker-core-passwd-auth.bu",
         "user": {
-          "name": "kni"
+          "name": "onp"
         },
         "contents": {
-          "source": "data:,variant%3A%20openshift%0Aversion%3A%204.x.x%0Ametadata%3A%0A%20%20labels%3A%0A%20%20%20%20machineconfiguration.openshift.io%2Frole%3A%20worker%0A%20%20name%3A%2099-worker-oibl%0Astorage%3A%0A%20%20files%3A%0A%20%20-%20path%3A%20%2Fetc%2Fssh%2Fsshd_config.d%2F99-oibl.conf%0A%20%20%20%20mode%3A%200644%0A%20%20%20%20overwrite%3A%20true%0A%20%20%20%20contents%3A%0A%20%20%20%20%20%20inline%3A%20%7C%0A%20%20%20%20%20%20%20%20PasswordAuthentication%20yes%0Asystemd%3A%0A%20%20units%3A%0A%20%20-%20name%3A%20oibl.service%0A%20%20%20%20enabled%3A%20true%0A%20%20%20%20contents%3A%20%7C%0A%20%20%20%20%20%20%5BService%5D%0A%20%20%20%20%20%20Type%3Doneshot%0A%20%20%20%20%20%20ExecStart%3D%2Fusr%2Fbin%2Fsh%20-c%20'%2Fusr%2Fbin%2Fecho%20%22Core%40123%22%20%7C%20%2Fusr%2Fbin%2Fpasswd%20--stdin%20core'%0A%20%20%20%20%20%20RemainAfterExit%3Dyes%0A%20%20%20%20%20%20%5BInstall%5D%0A%20%20%20%20%20%20WantedBy%3Dmulti-user.target%0A"
+          "source": "data:,variant%3A%20openshift%0Aversion%3A%204.x.x%0Ametadata%3A%0A%20%20labels%3A%0A%20%20%20%20machineconfiguration.openshift.io%2Frole%3A%20worker%0A%20%20name%3A%2099-worker-onp%0Astorage%3A%0A%20%20files%3A%0A%20%20-%20path%3A%20%2Fetc%2Fssh%2Fsshd_config.d%2F99-onp.conf%0A%20%20%20%20mode%3A%200644%0A%20%20%20%20overwrite%3A%20true%0A%20%20%20%20contents%3A%0A%20%20%20%20%20%20inline%3A%20%7C%0A%20%20%20%20%20%20%20%20PasswordAuthentication%20yes%0Asystemd%3A%0A%20%20units%3A%0A%20%20-%20name%3A%20onp.service%0A%20%20%20%20enabled%3A%20true%0A%20%20%20%20contents%3A%20%7C%0A%20%20%20%20%20%20%5BService%5D%0A%20%20%20%20%20%20Type%3Doneshot%0A%20%20%20%20%20%20ExecStart%3D%2Fusr%2Fbin%2Fsh%20-c%20'%2Fusr%2Fbin%2Fecho%20%22Core%40123%22%20%7C%20%2Fusr%2Fbin%2Fpasswd%20--stdin%20core'%0A%20%20%20%20%20%20RemainAfterExit%3Dyes%0A%20%20%20%20%20%20%5BInstall%5D%0A%20%20%20%20%20%20WantedBy%3Dmulti-user.target%0A"
+        },
+        "mode": 493
+      },
+      {
+        "group": {
+          "name": "onp"
+        },
+        "overwrite": true,
+        "path": "/home/onp/.local/share/cockpit/openshift/deploy-cluster.sh",
+        "user": {
+          "name": "onp"
+        },
+        "contents": {
+          "source": "data:,%23!%2Fbin%2Fbash%0A%23%20This%20script%20initiates%20an%20OpenShift%20cluster%20deployment%20in%20transient%20systemd%20service.%0Asudo%20systemd-run%20--uid%3Donp%20--unit%3Ddeploy-cluster%20--description%3D'OpenShift%20cluster%20deployment'%20make%20-C%20%2Fhome%2Fonp%2F%20-f%20%2Fhome%2Fonp%2F.Makefile%20deploy%20RELEASE%3D%24%7B1%7D%20OCM_TOKEN%3D%24%7B2%7D%0Ajournalctl%20-f%20-u%20deploy-cluster.service%0A"
+        },
+        "mode": 493
+      },
+      {
+        "group": {
+          "name": "onp"
+        },
+        "overwrite": true,
+        "path": "/home/onp/.local/share/cockpit/openshift/manifest.json",
+        "user": {
+          "name": "onp"
+        },
+        "contents": {
+          "source": "data:,%7B%0A%20%20%22version%22%3A%200%2C%0A%20%20%22tools%22%3A%20%7B%0A%20%20%20%20%22openshift%22%3A%20%7B%0A%20%20%20%20%20%20%22label%22%3A%20%22OpenShift%22%2C%0A%20%20%20%20%20%20%22path%22%3A%20%22openshift.html%22%0A%20%20%20%20%7D%0A%20%20%7D%0A%7D%0A"
+        },
+        "mode": 493
+      },
+      {
+        "group": {
+          "name": "onp"
+        },
+        "overwrite": true,
+        "path": "/home/onp/.local/share/cockpit/openshift/openshift.html",
+        "user": {
+          "name": "onp"
+        },
+        "contents": {
+          "source": "data:,%3C!DOCTYPE%20html%3E%0A%3Chtml%3E%0A%3Chead%3E%0A%20%20%20%20%3Ctitle%3EOpenShift%3C%2Ftitle%3E%0A%20%20%20%20%3Cmeta%20charset%3D%22utf-8%22%3E%0A%20%20%20%20%3Cscript%20src%3D%22..%2Fbase1%2Fcockpit.js%22%3E%3C%2Fscript%3E%0A%3C%2Fhead%3E%0A%3Cbody%20class%3D%22pf-m-redhat-font%22%3E%0A%20%20%20%20%3Cmain%20tabindex%3D%22-1%22%3E%0A%20%20%20%20%20%20%20%20%3Csection%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3Cdiv%20id%3D%22app%22%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Cdiv%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Clabel%20for%3D%22release%22%3ERelease%3C%2Flabel%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Cinput%20id%3D%22release%22%20value%3D%224.12.2%22%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3C%2Fdiv%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Cdiv%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Clabel%20for%3D%22token%22%3EOCM%20Token%3C%2Flabel%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Cinput%20id%3D%22token%22%20value%3D%22token%22%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3C%2Fdiv%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Cdiv%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Cbutton%20id%3D%22deploy%22%3EDeploy%3C%2Fbutton%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Cspan%20id%3D%22result%22%3E%3C%2Fspan%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3C%2Fdiv%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Cdiv%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Cpre%20id%3D%22output%22%3E%3C%2Fpre%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3C%2Fdiv%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3C%2Fdiv%3E%0A%20%20%20%20%20%20%20%20%3C%2Fsection%3E%0A%20%20%20%20%3C%2Fmain%3E%0A%0A%20%20%20%20%3Cscript%20src%3D%22openshift.js%22%3E%3C%2Fscript%3E%0A%3C%2Fbody%3E%0A%3C%2Fhtml%3E%0A"
+        },
+        "mode": 493
+      },
+      {
+        "group": {
+          "name": "onp"
+        },
+        "overwrite": true,
+        "path": "/home/onp/.local/share/cockpit/openshift/openshift.js",
+        "user": {
+          "name": "onp"
+        },
+        "contents": {
+          "source": "data:,const%20release%20%3D%20document.getElementById(%22release%22)%3B%0Aconst%20token%20%3D%20document.getElementById(%22token%22)%3B%0Aconst%20output%20%3D%20document.getElementById(%22output%22)%3B%0Aconst%20result%20%3D%20document.getElementById(%22result%22)%3B%0Aconst%20button%20%3D%20document.getElementById(%22deploy%22)%3B%0A%0Afunction%20deploy_run()%20%7B%0A%20%20%20%20%2F*%20global%20cockpit%20*%2F%0A%20%20%20%20cockpit.spawn(%5B%22%2Fhome%2Fonp%2F.local%2Fshare%2Fcockpit%2Fopenshift%2Fdeploy-cluster.sh%22%2C%20release.value%2C%20token.value%5D)%0A%20%20%20%20%20%20%20%20%20%20%20%20.stream(deploy_output)%0A%20%20%20%20%20%20%20%20%20%20%20%20.then(deploy_success)%0A%20%20%20%20%20%20%20%20%20%20%20%20.catch(deploy_fail)%3B%0A%0A%20%20%20%20result.innerHTML%20%3D%20%22%22%3B%0A%20%20%20%20output.innerHTML%20%3D%20%22%22%3B%0A%7D%0A%0Afunction%20deploy_success()%20%7B%0A%20%20%20%20result.style.color%20%3D%20%22green%22%3B%0A%20%20%20%20result.innerHTML%20%3D%20%22success%22%3B%0A%7D%0A%0Afunction%20deploy_fail()%20%7B%0A%20%20%20%20result.style.color%20%3D%20%22red%22%3B%0A%20%20%20%20result.innerHTML%20%3D%20%22fail%22%3B%0A%7D%0A%0Afunction%20deploy_output(data)%20%7B%0A%20%20%20%20output.append(document.createTextNode(data))%3B%0A%7D%0A%0A%2F%2F%20Connect%20the%20button%20to%20starting%20the%20%22deploy%22%20process%0Abutton.addEventListener(%22click%22%2C%20deploy_run)%3B%0A%0A%2F%2F%20Send%20a%20'init'%20message.%20%20This%20tells%20integration%20tests%20that%20we%20are%20ready%20to%20go%0Acockpit.transport.wait(function()%20%7B%20%7D)%3B%0A"
         },
         "mode": 493
       }
@@ -492,61 +646,75 @@
         "name": "systemd-resolved.service"
       },
       {
+        "enabled": false,
+        "name": "zincati.service"
+      },
+      {
         "enabled": true,
         "name": "libvirtd.socket"
       },
       {
-        "contents": "[Unit]\nWants=network-online.target\nAfter=network-online.target\n\n[Service]\nType=oneshot\nExecStart=/opt/ocp-ipi-baremetal-lab/host/configure.sh\nRemainAfterExit=yes\n\n[Install]\nWantedBy=basic.target\n",
+        "contents": "[Unit]\nWants=network-online.target\nAfter=network-online.target\n\n[Service]\nType=oneshot\nExecStart=/opt/openshift-network-playground/host/configure.sh\nRemainAfterExit=yes\n\n[Install]\nWantedBy=basic.target\n",
         "enabled": true,
         "name": "host-configure.service"
       },
       {
-        "contents": "[Unit]\nWants=libvirtd.socket\nAfter=libvirtd.socket\nRequires=libvirtd.socket\nConditionPathExists=!/opt/ocp-ipi-baremetal-lab/master0.done\n\n[Service]\nTimeout=0\nType=oneshot\nExecStart=/opt/ocp-ipi-baremetal-lab/libvirt/create-vm.sh master0 52:54:00:11:22:b1 52:54:00:11:22:a1\nExecStartPost=/usr/bin/touch /opt/ocp-ipi-baremetal-lab/master0.done\nRemainAfterExit=yes\n\n[Install]\nWantedBy=basic.target\n",
+        "contents": "[Unit]\nWants=libvirtd.socket\nAfter=libvirtd.socket\nRequires=libvirtd.socket\nConditionPathExists=!/opt/openshift-network-playground/master0.done\n\n[Service]\nTimeout=0\nType=oneshot\nExecStart=/opt/openshift-network-playground/libvirt/create-vm.sh master0 52:54:00:11:22:b1 52:54:00:11:22:a1\nExecStartPost=/usr/bin/touch /opt/openshift-network-playground/master0.done\nRemainAfterExit=yes\n\n[Install]\nWantedBy=basic.target\n",
         "enabled": true,
         "name": "master0.service"
       },
       {
-        "contents": "[Unit]\nWants=libvirtd.socket\nAfter=libvirtd.socket\nRequires=libvirtd.socket\nConditionPathExists=!/opt/ocp-ipi-baremetal-lab/master1.done\n\n[Service]\nTimeout=0\nType=oneshot\nExecStart=/opt/ocp-ipi-baremetal-lab/libvirt/create-vm.sh master1 52:54:00:11:22:b2 52:54:00:11:22:a2\nExecStartPost=/usr/bin/touch /opt/ocp-ipi-baremetal-lab/master1.done\nRemainAfterExit=yes\n\n[Install]\nWantedBy=basic.target\n",
+        "contents": "[Unit]\nWants=libvirtd.socket\nAfter=libvirtd.socket\nRequires=libvirtd.socket\nConditionPathExists=!/opt/openshift-network-playground/master1.done\n\n[Service]\nTimeout=0\nType=oneshot\nExecStart=/opt/openshift-network-playground/libvirt/create-vm.sh master1 52:54:00:11:22:b2 52:54:00:11:22:a2\nExecStartPost=/usr/bin/touch /opt/openshift-network-playground/master1.done\nRemainAfterExit=yes\n\n[Install]\nWantedBy=basic.target\n",
         "enabled": true,
         "name": "master1.service"
       },
       {
-        "contents": "[Unit]\nWants=libvirtd.socket\nAfter=libvirtd.socket\nRequires=libvirtd.socket\nConditionPathExists=!/opt/ocp-ipi-baremetal-lab/master2.done\n\n[Service]\nTimeout=0\nType=oneshot\nExecStart=/opt/ocp-ipi-baremetal-lab/libvirt/create-vm.sh master2 52:54:00:11:22:b3 52:54:00:11:22:a3\nExecStartPost=/usr/bin/touch /opt/ocp-ipi-baremetal-lab/master2.done\nRemainAfterExit=yes\n\n[Install]\nWantedBy=basic.target\n",
+        "contents": "[Unit]\nWants=libvirtd.socket\nAfter=libvirtd.socket\nRequires=libvirtd.socket\nConditionPathExists=!/opt/openshift-network-playground/master2.done\n\n[Service]\nTimeout=0\nType=oneshot\nExecStart=/opt/openshift-network-playground/libvirt/create-vm.sh master2 52:54:00:11:22:b3 52:54:00:11:22:a3\nExecStartPost=/usr/bin/touch /opt/openshift-network-playground/master2.done\nRemainAfterExit=yes\n\n[Install]\nWantedBy=basic.target\n",
         "enabled": true,
         "name": "master2.service"
       },
       {
-        "contents": "[Unit]\nWants=libvirtd.socket\nAfter=libvirtd.socket\nRequires=libvirtd.socket\nConditionPathExists=!/opt/ocp-ipi-baremetal-lab/worker0.done\n\n[Service]\nTimeout=0\nType=oneshot\nExecStart=/opt/ocp-ipi-baremetal-lab/libvirt/create-vm.sh worker0 52:54:00:11:22:b4 52:54:00:11:22:a4 2 8192\nExecStartPost=/usr/bin/touch /opt/ocp-ipi-baremetal-lab/worker0.done\nRemainAfterExit=yes\n\n[Install]\nWantedBy=basic.target\n",
+        "contents": "[Unit]\nWants=libvirtd.socket\nAfter=libvirtd.socket\nRequires=libvirtd.socket\nConditionPathExists=!/opt/openshift-network-playground/worker0.done\n\n[Service]\nTimeout=0\nType=oneshot\nExecStart=/opt/openshift-network-playground/libvirt/create-vm.sh worker0 52:54:00:11:22:b4 52:54:00:11:22:a4 2 8192\nExecStartPost=/usr/bin/touch /opt/openshift-network-playground/worker0.done\nRemainAfterExit=yes\n\n[Install]\nWantedBy=basic.target\n",
         "enabled": true,
         "name": "worker0.service"
       },
       {
-        "contents": "[Unit]\nWants=libvirtd.socket\nAfter=libvirtd.socket\nRequires=libvirtd.socket\nConditionPathExists=!/opt/ocp-ipi-baremetal-lab/worker1.done\n\n[Service]\nTimeout=0\nType=oneshot\nExecStart=/opt/ocp-ipi-baremetal-lab/libvirt/create-vm.sh worker1 52:54:00:11:22:b5 52:54:00:11:22:a5 2 8192\nExecStartPost=/usr/bin/touch /opt/ocp-ipi-baremetal-lab/worker1.done\nRemainAfterExit=yes\n\n[Install]\nWantedBy=basic.target\n",
+        "contents": "[Unit]\nWants=libvirtd.socket\nAfter=libvirtd.socket\nRequires=libvirtd.socket\nConditionPathExists=!/opt/openshift-network-playground/worker1.done\n\n[Service]\nTimeout=0\nType=oneshot\nExecStart=/opt/openshift-network-playground/libvirt/create-vm.sh worker1 52:54:00:11:22:b5 52:54:00:11:22:a5 2 8192\nExecStartPost=/usr/bin/touch /opt/openshift-network-playground/worker1.done\nRemainAfterExit=yes\n\n[Install]\nWantedBy=basic.target\n",
         "enabled": true,
         "name": "worker1.service"
       },
       {
-        "contents": "[Unit]\nDescription=Webserver for ocp-ipi-baremetal-lab\nWants=network-online.target\nAfter=network-online.target\nRequiresMountsFor=%t/containers\n\n[Service]\nEnvironment=PODMAN_SYSTEMD_UNIT=%n\nRestart=on-failure\nTimeoutStopSec=70\nExecStartPre=/bin/rm -f %t/%n.ctr-id\nExecStart=/usr/bin/podman run \\\n        --cidfile=%t/%n.ctr-id \\\n        --cgroups=no-conmon \\\n        --rm \\\n        --sdnotify=conmon \\\n        --replace \\\n        --detach \\\n        --net host \\\n        --name webserver \\\n        -v /home/kni/ocp-ipi-baremetal-lab/rhcos_image_cache:/var/www/html quay.io/centos7/httpd-24-centos7:latest\nExecStop=/usr/bin/podman stop --ignore --cidfile=%t/%n.ctr-id\nExecStopPost=/usr/bin/podman rm -f --ignore --cidfile=%t/%n.ctr-id\nType=notify\nNotifyAccess=all\n\n[Install]\nWantedBy=default.target\n",
+        "contents": "[Unit]\nDescription=Webserver for openshift-network-playground\nWants=network-online.target\nAfter=network-online.target\nRequiresMountsFor=%t/containers\n\n[Service]\nEnvironment=PODMAN_SYSTEMD_UNIT=%n\nRestart=on-failure\nTimeoutStopSec=70\nExecStartPre=/bin/rm -f %t/%n.ctr-id\nExecStart=/usr/bin/podman run \\\n        --cidfile=%t/%n.ctr-id \\\n        --cgroups=no-conmon \\\n        --rm \\\n        --sdnotify=conmon \\\n        --replace \\\n        --detach \\\n        --net host \\\n        --name webserver \\\n        -v /home/onp/openshift-network-playground/rhcos_image_cache:/var/www/html quay.io/centos7/httpd-24-centos7:latest\nExecStop=/usr/bin/podman stop --ignore --cidfile=%t/%n.ctr-id\nExecStopPost=/usr/bin/podman rm -f --ignore --cidfile=%t/%n.ctr-id\nType=notify\nNotifyAccess=all\n\n[Install]\nWantedBy=default.target\n",
         "enabled": true,
         "name": "webserver.service"
       },
       {
-        "contents": "[Unit]\nDescription=vbmc for ocp-ipi-baremetal-lab\nWants=network-online.target\nAfter=network-online.target\nRequiresMountsFor=%t/containers\n\n[Service]\nEnvironment=PODMAN_SYSTEMD_UNIT=%n\nRestart=always\nTimeoutStopSec=70\nTimeoutStartSec=600\nExecStartPre=/usr/bin/rm -f %t/%n.ctr-id\nExecStartPre=/usr/bin/rm -vf /opt/ocp-ipi-baremetal-lab/vbmc/config/master.pid\nExecStart=/usr/bin/podman run \\\n        --cidfile=%t/%n.ctr-id \\\n        --cgroups=no-conmon \\\n        --rm \\\n        --sdnotify=conmon \\\n        --replace \\\n        -d \\\n        -ti \\\n        --name vbmc \\\n        --net host \\\n        --volume \"/opt/ocp-ipi-baremetal-lab/vbmc/config:/root/.vbmc\" \\\n        --volume \"/opt/ocp-ipi-baremetal-lab/vbmc/ssh:/root/.ssh\" \\\n        quay.io/metal3-io/vbmc\nExecStop=/usr/bin/podman stop --ignore --cidfile=%t/%n.ctr-id\nExecStopPost=/usr/bin/podman rm -f --ignore --cidfile=%t/%n.ctr-id\nType=notify\nNotifyAccess=all\n\n[Install]\nWantedBy=default.target\n",
+        "contents": "[Unit]\nDescription=vbmc for openshift-network-playground\nWants=network-online.target\nAfter=network-online.target\nRequiresMountsFor=%t/containers\n\n[Service]\nEnvironment=PODMAN_SYSTEMD_UNIT=%n\nRestart=always\nTimeoutStopSec=70\nTimeoutStartSec=600\nExecStartPre=/usr/bin/rm -f %t/%n.ctr-id\nExecStartPre=/usr/bin/rm -vf /opt/openshift-network-playground/vbmc/config/master.pid\nExecStart=/usr/bin/podman run \\\n        --cidfile=%t/%n.ctr-id \\\n        --cgroups=no-conmon \\\n        --rm \\\n        --sdnotify=conmon \\\n        --replace \\\n        -d \\\n        -ti \\\n        --name vbmc \\\n        --net host \\\n        --volume \"/opt/openshift-network-playground/vbmc/config:/root/.vbmc\" \\\n        --volume \"/opt/openshift-network-playground/vbmc/ssh:/root/.ssh\" \\\n        quay.io/metal3-io/vbmc\nExecStop=/usr/bin/podman stop --ignore --cidfile=%t/%n.ctr-id\nExecStopPost=/usr/bin/podman rm -f --ignore --cidfile=%t/%n.ctr-id\nType=notify\nNotifyAccess=all\n\n[Install]\nWantedBy=default.target\n",
         "enabled": true,
         "name": "vbmc.service"
       },
       {
-        "contents": "[Unit]\nDescription=DHCP for ocp-ipi-baremetal-lab\nWants=network-online.target\nAfter=network-online.target\nRequiresMountsFor=%t/containers\n\n[Service]\nEnvironment=PODMAN_SYSTEMD_UNIT=%n\nRestart=always\nTimeoutStartSec=180\nTimeoutStopSec=70\nExecStartPre=-/usr/bin/rm -f %t/%n.ctr-id\nExecStartPre=/usr/bin/podman build --net host --tag localhost/dhcp /opt/ocp-ipi-baremetal-lab/dhcp\nExecStart=/usr/bin/podman run --cidfile=%t/%n.ctr-id --cgroups=no-conmon --rm --sdnotify=conmon --name dhcp -d --net host --cap-add NET_ADMIN,NET_RAW localhost/dhcp\nExecStop=/usr/bin/podman stop --ignore --cidfile=%t/%n.ctr-id\nExecStopPost=/usr/bin/podman rm -f --ignore --cidfile=%t/%n.ctr-id\nType=notify\nNotifyAccess=all\n\n[Install]\nWantedBy=default.target\n",
+        "contents": "[Unit]\nDescription=DHCP for openshift-network-playground\nWants=network-online.target\nAfter=network-online.target\nRequiresMountsFor=%t/containers\n\n[Service]\nEnvironment=PODMAN_SYSTEMD_UNIT=%n\nRestart=always\nTimeoutStartSec=180\nTimeoutStopSec=70\nExecStartPre=-/usr/bin/rm -f %t/%n.ctr-id\nExecStartPre=/usr/bin/podman build --net host --tag localhost/dhcp /opt/openshift-network-playground/dhcp\nExecStart=/usr/bin/podman run --cidfile=%t/%n.ctr-id --cgroups=no-conmon --rm --sdnotify=conmon --name dhcp -d --net host --cap-add NET_ADMIN,NET_RAW localhost/dhcp\nExecStop=/usr/bin/podman stop --ignore --cidfile=%t/%n.ctr-id\nExecStopPost=/usr/bin/podman rm -f --ignore --cidfile=%t/%n.ctr-id\nType=notify\nNotifyAccess=all\n\n[Install]\nWantedBy=default.target\n",
         "enabled": true,
         "name": "dhcp.service"
       },
       {
-        "contents": "[Unit]\nDescription=PXE for ocp-ipi-baremetal-lab\nWants=network-online.target\nAfter=network-online.target\nRequiresMountsFor=%t/containers\n\n[Service]\nEnvironment=PODMAN_SYSTEMD_UNIT=%n\nRestart=always\nTimeoutStartSec=180\nTimeoutStopSec=70\nExecStartPre=-/usr/bin/rm -f %t/%n.ctr-id\nExecStartPre=/usr/bin/podman build --net host --tag localhost/pxe /opt/ocp-ipi-baremetal-lab/pxe\nExecStart=/usr/bin/podman run --cidfile=%t/%n.ctr-id --cgroups=no-conmon --rm --sdnotify=conmon --name pxe -d --net host --cap-add NET_ADMIN,NET_RAW localhost/pxe\nExecStop=/usr/bin/podman stop --ignore --cidfile=%t/%n.ctr-id\nExecStopPost=/usr/bin/podman rm -f --ignore --cidfile=%t/%n.ctr-id\nType=notify\nNotifyAccess=all\n\n[Install]\nWantedBy=default.target\n",
+        "contents": "[Unit]\nDescription=DHCP for openshift-network-playground\nWants=network-online.target\nAfter=network-online.target\nRequiresMountsFor=%t/containers\n\n[Service]\nEnvironment=PODMAN_SYSTEMD_UNIT=%n\nRestart=always\nTimeoutStartSec=180\nTimeoutStopSec=70\nExecStartPre=-/usr/bin/rm -f %t/%n.ctr-id\nExecStartPre=/usr/bin/podman build --net host --tag localhost/onp1-dhcp /opt/openshift-network-playground/onp1-dhcp\nExecStart=/usr/bin/podman run --cidfile=%t/%n.ctr-id --cgroups=no-conmon --rm --sdnotify=conmon --name onp1-dhcp -d --net host --cap-add NET_ADMIN,NET_RAW localhost/onp1-dhcp\nExecStop=/usr/bin/podman stop --ignore --cidfile=%t/%n.ctr-id\nExecStopPost=/usr/bin/podman rm -f --ignore --cidfile=%t/%n.ctr-id\nType=notify\nNotifyAccess=all\n\n[Install]\nWantedBy=default.target\n",
+        "enabled": false,
+        "name": "onp1-dhcp.service"
+      },
+      {
+        "contents": "[Unit]\nDescription=DHCP for openshift-network-playground\nWants=network-online.target\nAfter=network-online.target\nRequiresMountsFor=%t/containers\n\n[Service]\nEnvironment=PODMAN_SYSTEMD_UNIT=%n\nRestart=always\nTimeoutStartSec=180\nTimeoutStopSec=70\nExecStartPre=-/usr/bin/rm -f %t/%n.ctr-id\nExecStartPre=/usr/bin/podman build --net host --tag localhost/onp2-dhcp /opt/openshift-network-playground/onp2-dhcp\nExecStart=/usr/bin/podman run --cidfile=%t/%n.ctr-id --cgroups=no-conmon --rm --sdnotify=conmon --name onp2-dhcp -d --net host --cap-add NET_ADMIN,NET_RAW localhost/onp2-dhcp\nExecStop=/usr/bin/podman stop --ignore --cidfile=%t/%n.ctr-id\nExecStopPost=/usr/bin/podman rm -f --ignore --cidfile=%t/%n.ctr-id\nType=notify\nNotifyAccess=all\n\n[Install]\nWantedBy=default.target\n",
+        "enabled": false,
+        "name": "onp2-dhcp.service"
+      },
+      {
+        "contents": "[Unit]\nDescription=PXE for openshift-network-playground\nWants=network-online.target\nAfter=network-online.target\nRequiresMountsFor=%t/containers\n\n[Service]\nEnvironment=PODMAN_SYSTEMD_UNIT=%n\nRestart=always\nTimeoutStartSec=180\nTimeoutStopSec=70\nExecStartPre=-/usr/bin/rm -f %t/%n.ctr-id\nExecStartPre=/usr/bin/podman build --net host --tag localhost/pxe /opt/openshift-network-playground/pxe\nExecStart=/usr/bin/podman run --cidfile=%t/%n.ctr-id --cgroups=no-conmon --rm --sdnotify=conmon --name pxe -d --net host --cap-add NET_ADMIN,NET_RAW localhost/pxe\nExecStop=/usr/bin/podman stop --ignore --cidfile=%t/%n.ctr-id\nExecStopPost=/usr/bin/podman rm -f --ignore --cidfile=%t/%n.ctr-id\nType=notify\nNotifyAccess=all\n\n[Install]\nWantedBy=default.target\n",
         "enabled": false,
         "name": "pxe.service"
       },
       {
-        "contents": "[Unit]\nDescription=Check containers status\nAfter=selinux-configure.service\n\n[Service]\nTimeout=0\nType=oneshot\nExecStart=/opt/ocp-ipi-baremetal-lab/host/broadcast.sh\nRemainAfterExit=yes\n\n[Install]\nWantedBy=basic.target\n",
+        "contents": "[Unit]\nDescription=Check containers status\nAfter=selinux-configure.service\n\n[Service]\nTimeout=0\nType=oneshot\nExecStart=/opt/openshift-network-playground/host/broadcast.sh\nRemainAfterExit=yes\n\n[Install]\nWantedBy=basic.target\n",
         "enabled": true,
         "name": "broadcast.service"
       }
