@@ -1,0 +1,50 @@
+name: Build and release ISO
+on:
+  workflow_dispatch:
+    inputs:
+      tags:
+        description: 'Release tag'
+        required: true
+        type: string
+  push:
+    tags:
+      - 'v*'
+jobs:
+  build-customize-iso:
+    name: Build and customize ISO
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          submodules: recursive
+      - name: Build ISO
+        run: |
+          make cosa-init
+          make build-iso
+          make customize-iso
+      - name: Set ISO absolute path
+        run: |
+          echo "PATH=$(readlink -f $(dirname $(pwd))/cosa/builds/latest/x86_64/*.iso)" >> $GITHUB_OUTPUT
+        id: iso
+      - name: Create release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref_name }}
+          release_name: OpenShift Network Playground Release ${{ github.ref_name }}
+          draft: false
+          prerelease: false
+      - name: Upload release assets
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ${{ steps.iso.outputs.PATH }}
+          asset_name: onp-${{ github.ref_name }}-x86_64.iso
+          asset_content_type: application/octet-stream
