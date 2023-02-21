@@ -1140,9 +1140,9 @@ storage:
                 @echo "  onp cluster LOGLEVEL=debug"
                 @echo ""
                 @echo "Variables:"
-                @echo "  OCM_TOKEN (token from https://cloud.redhat.com/openshift/token)"
-                @echo "  RELEASE (stable-4.10, latest-4.9, 4.9.0, etc)"
-                @echo "  LOGLEVEL (debug, info, warn, error)"
+                @echo -e "  OCM_TOKEN\ttoken from https://cloud.redhat.com/openshift/token"
+                @echo -e "  RELEASE\tstable-4.10, latest-4.9, 4.9.0, etc"
+                @echo -e "  LOGLEVEL\tdebug, info, warn, error"
     - path: /home/onp/openshift-network-playground/clean-bootstrap.sh
       mode: 0755
       overwrite: true
