@@ -327,6 +327,13 @@ storage:
         name: onp
       group:
         name: onp
+    - path: /home/onp/.local/bin
+      mode: 0755
+      overwrite: true
+      user:
+        name: onp
+      group:
+        name: onp
   files:
     - path: /opt/openshift-network-playground/vbmc/ssh/config
       mode: 0644
@@ -896,12 +903,15 @@ storage:
         name: onp
       contents:
         inline: |
-          RELEASE ?= stable-4.10
+          SHELL = /bin/bash
+          RELEASE ?= stable-4.12
           LOGLEVEL ?= info
           SCRIPT_DIR = $(shell cd -- "$( dirname -- "${BASH_SOURCE[0]:-$0}"; )" &> /dev/null && pwd 2> /dev/null; )
           CONTAINERS = $(shell sudo podman ps --format {{.Names}} | sort | grep -oE 'dhcp|vbmc|webserver' | xargs)
           VMS = $(shell sudo virsh list --all --name | head -n -1 | wc -l)
           TFF = $(shell ls /tmp/openshift-install-bootstrap-*/terraform.platform.auto.tfvars.json 2>/dev/null | wc -l)
+          VIRBR0=$(shell sudo virsh net-info default | awk '/Bridge:/{print $$2}')
+          VIRBR0MAC=$(shell ip a s ${VIRBR0} | awk '/ether /{print $$2}' | cut -f1-4 -d':')
           
           check-env:
           ifndef OCM_TOKEN
@@ -978,15 +988,19 @@ storage:
 
           .PHONY: deploy
 
-          deploy: clean ssh-pullsecret install-config manifests core-passwd-auth cluster
+          deploy: check-env clean ssh-pullsecret install-config manifests core-passwd-auth cluster
 
           .PHONY: core-passwd-auth
 
           core-passwd-auth:
-                sed "s/version: 4.x.x/version: $(shell oc version --client -o json | jq -r .releaseClientVersion | cut -d'.' -f'1-2').0/g" /home/onp/openshift-network-playground/99_openshift-machineconfig_99-master-core-passwd-auth.bu > /tmp/master-core-passwd-auth.bu
-                sed "s/version: 4.x.x/version: $(shell oc version --client -o json | jq -r .releaseClientVersion | cut -d'.' -f'1-2').0/g" /home/onp/openshift-network-playground/99_openshift-machineconfig_99-worker-core-passwd-auth.bu > /tmp/worker-core-passwd-auth.bu
-                podman run -i --rm quay.io/coreos/butane:release --strict < /tmp/master-core-passwd-auth.bu > /home/onp/openshift-network-playground/clusterconfigs/openshift/99_openshift-machineconfig_99-master-core-passwd-auth.yaml
-                podman run -i --rm quay.io/coreos/butane:release --strict < /tmp/worker-core-passwd-auth.bu > /home/onp/openshift-network-playground/clusterconfigs/openshift/99_openshift-machineconfig_99-worker-core-passwd-auth.yaml
+                sed "s/version: 4.x.x/version: $(shell oc version --client -o json | jq -r .releaseClientVersion | cut -d'.' -f'1-2').0/g" \
+                /home/onp/openshift-network-playground/99_openshift-machineconfig_99-master-core-passwd-auth.bu > /tmp/master-core-passwd-auth.bu
+                sed "s/version: 4.x.x/version: $(shell oc version --client -o json | jq -r .releaseClientVersion | cut -d'.' -f'1-2').0/g" \
+                /home/onp/openshift-network-playground/99_openshift-machineconfig_99-worker-core-passwd-auth.bu > /tmp/worker-core-passwd-auth.bu
+                podman run -i --rm quay.io/coreos/butane:release --strict < /tmp/master-core-passwd-auth.bu > \
+                /home/onp/openshift-network-playground/clusterconfigs/openshift/99_openshift-machineconfig_99-master-core-passwd-auth.yaml
+                podman run -i --rm quay.io/coreos/butane:release --strict < /tmp/worker-core-passwd-auth.bu > \
+                /home/onp/openshift-network-playground/clusterconfigs/openshift/99_openshift-machineconfig_99-worker-core-passwd-auth.yaml
 
           .PHONY: onp-files
 
@@ -1002,18 +1016,125 @@ storage:
                 @echo "Starting ironic-client container ..."
                 -@sudo podman run -ti --rm --entrypoint /bin/bash --net host -v /home/onp/openshift-network-playground/clouds.yaml:/clouds.yaml -e OS_CLOUD=metal3 quay.io/metal3-io/ironic-client:latest
 
+          .PHONY: go-download
+
+          go-download:
+                @echo "Downloading go ..."
+                @curl -sL https://golang.org$$(curl -sL https://golang.org/dl/ | grep -oP '/dl/go([0-9\.]+)\.linux-amd64.tar.gz' | head -1) | sudo tar xzf - -C /usr/local
+                @echo "OK!"
+
+
+          .PHONY: kind-download
+
+          kind-download:
+                @echo "Downloading kind ..."
+                @sudo curl -sLo /usr/local/bin/kind $$(curl -sL https://api.github.com/repos/kubernetes-sigs/kind/releases/latest | jq -r '.assets | .[] | select(.name == "kind-linux-amd64") | .browser_download_url')
+                @chmod +x /usr/local/bin/kind
+                @echo "OK"
+                @echo "Downloading kubectl ..."
+                @sudo curl -sLo /usr/local/bin/kubectl https://dl.k8s.io/release/$$(curl -sL https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl
+                @chmod +x /usr/local/bin/kubectl
+                @echo "OK"
+
+          .PHONY: kind-create
+
+          kind-create:
+                @echo "Creating kind cluster ..."
+                @sudo KIND_EXPERIMENTAL_PROVIDER=podman kind create cluster --name onp
+                @sudo cp /root/.kube/config ${HOME}/.kube/onp-kind-config
+                @sudo chown onp:onp $HOME/.kube/onp-kind-config
+                @echo "OK"
+                @echo "Try, k get nodes."
+
+          .PHONY: kind-delete
+
+          kind-delete:
+                @echo "Deleting kind cluster ..."
+                @sudo KIND_EXPERIMENTAL_PROVIDER=podman kind delete cluster --name onp
+
+          .PHONY: ovn-kind
+
+          ovn-kind:
+                @echo "Creating OVN kind cluster ..."
+                go env -w GO111MODULE=auto && \
+                rm -rf ovn-kubernetes && \
+                git clone -b release-4.12 https://github.com/openshift/ovn-kubernetes && \
+                pushd $${HOME}/ovn-kubernetes/go-controller && \
+                make && \
+                popd && \
+                pushd $${HOME}/ovn-kubernetes/dist/images && \
+                OCI_BIN=podman make fedora && \
+                popd && \
+                pushd $${HOME}/ovn-kubernetes/contrib && \
+                sudo ./kind.sh -ep podman && \
+                sudo cp /root/ovn.conf ~/.kube/ovn-kind-config && \
+                sudo chown $(id -u):$(id -g) ~/.kube/ovn-kind-config && \
+                popd
+
+          .PHONY: sno
+
+          sno: /home/onp/openshift-network-playground/pullsecret /home/onp/openshift-network-playground/id_ed25519.pub
+                @echo "Creating SNO cluster ..."
+                -@rm -rf $(SCRIPT_DIR)/openshift-network-playground/sno
+                -@rm -rf $(SCRIPT_DIR)/openshift-network-playground/rhcos-live.iso
+                -@rm -rf $(SCRIPT_DIR)/openshift-network-playground/sno.yaml
+                @openshift-network-playground/sno.sh ${RELEASE}
+                @/usr/local/bin/openshift-install --log-level=${LOGLEVEL} \
+                                                  --dir=$(SCRIPT_DIR)/openshift-network-playground/sno create single-node-ignition-config
+                @podman run --privileged \
+                        --pull always \
+                        --rm \
+                        -v /dev:/dev \
+                        -v /run/udev:/run/udev \
+                        -v $(SCRIPT_DIR):/data \
+                        -w /data \
+                        quay.io/coreos/coreos-installer:release iso ignition embed -fi \
+                        openshift-network-playground/sno/bootstrap-in-place-for-live-iso.ign \
+                        openshift-network-playground/rhcos-live.iso
+                @sudo cp $(SCRIPT_DIR)/openshift-network-playground/rhcos-live.iso /var/lib/libvirt/images/
+                -@sudo virsh destroy sno 2>/dev/null
+                -@sudo virsh undefine sno 2>/dev/null
+                @sudo mkdir -p /opt/openshift-network-playground/libvirt/sno
+                -@rm -f /opt/openshift-network-playground/libvirt/sno/sno.img 2>/dev/null
+                @sudo qemu-img create /opt/openshift-network-playground/libvirt/sno/sno.img 120G
+                -@sudo virsh net-update default delete ip-dhcp-host \
+                             --xml "<host mac='${VIRBR0MAC}:1a:1b' name='node.sno.example.local' ip='192.168.122.100'/>" \
+                             --live \
+                             --config 2>/dev/null
+                @sudo virsh net-update default add-last ip-dhcp-host \
+                             --xml "<host mac='${VIRBR0MAC}:1a:1b' name='node.sno.example.local' ip='192.168.122.100'/>" \
+                             --live \
+                             --config
+                @sudo virt-install --name sno \
+                                   --os-variant fedora-coreos-stable \
+                                   --vcpu 4 \
+                                   --memory 16384 \
+                                   --disk /opt/openshift-network-playground/libvirt/sno/sno.img,bus=scsi \
+                                   --cdrom /var/lib/libvirt/images/rhcos-live.iso \
+                                   --network network=default,mac=${VIRBR0MAC}:1a:1b \
+                                   --noautoconsole \
+                                   --graphics spice,listen=0.0.0.0 \
+                                   --boot menu=on
+                @$(SCRIPT_DIR)/openshift-network-playground/sno-restart.sh
+                @/usr/local/bin/openshift-install --log-level=${LOGLEVEL} \
+                                                  --dir=$(SCRIPT_DIR)/openshift-network-playground/sno wait-for install-complete
+
           .PHONY: help
 
           help:
                 @echo "Usage: onp [SUBCOMMAND] [VARIABLE_NAME]=<variable>"
                 @echo ""
                 @echo "Subcommands:"
-                @echo "  ssh-pullsecret OCM_TOKEN=<OCM_TOKEN>   Generate SSH keys and download pullsecret file."
-                @echo "  install-config                         Generate install-config.yaml file."
-                @echo "  cluster                                Create an OpenShift cluster."
-                @echo "  destroy                                Destroy installed cluster."
-                @echo "  clean                                  Clean old cluster resources."
-                @echo "  ironic-client                          Create ironic-client container."
+                @echo -e "  ssh-pullsecret OCM_TOKEN=<OCM_TOKEN>\tGenerate SSH keys and download pullsecret file."
+                @echo -e "  install-config\t\t\tGenerate install-config.yaml file."
+                @echo -e "  cluster\t\t\t\tCreate an OpenShift cluster."
+                @echo -e "  clean\t\t\t\t\tClean old cluster resources."
+                @echo -e "  go-download\t\t\t\tDownload and install Golang."
+                @echo -e "  kind-download\t\t\t\tDownload and install Kind."
+                @echo -e "  kind-create\t\t\t\tCreate a Kind cluster."
+                @echo -e "  kind-delete\t\t\t\tDelete a Kind cluster."
+                @echo -e "  ovn-kind\t\t\t\tCreate an OVN Kind cluster."
+                @echo -e "  sno\t\t\t\t\tCreate a SNO cluster."
                 @echo ""
                 @echo "Example:"
                 @echo "  onp cluster LOGLEVEL=debug"
@@ -1208,8 +1329,11 @@ storage:
     - path: /home/onp/.bashrc
       append:
         - inline: |
-            alias onp='make -C /home/onp -f /home/onp/.Makefile'
+            alias onp='make --no-print-directory -C /home/onp -f /home/onp/.Makefile'
+            alias konp='kubectl --kubeconfig /home/onp/.kube/onp-kind-config'
+            alias kind='sudo KIND_EXPERIMENTAL_PROVIDER=podman kind'
             export EDITOR=vi
+            export PATH=${PATH}:/usr/local/go/bin
             export KUBECONFIG=/home/onp/openshift-network-playground/clusterconfigs/auth/kubeconfig
             sed -i -e 's/      /\t/g' /home/onp/.Makefile
     - path: /home/onp/openshift-network-playground/worker0.yaml
@@ -1401,7 +1525,7 @@ storage:
                           </div>
                           <div>
                               <label for="token">OCM Token</label>
-                              <input id="token" value="token">
+                              <input id="token" value="">
                           </div>
                           <div>
                               <button id="deploy">Deploy</button>
@@ -1462,3 +1586,93 @@ storage:
 
           // Send a 'init' message.  This tells integration tests that we are ready to go
           cockpit.transport.wait(function() { });
+    - path: /home/onp/openshift-network-playground/sno.sh
+      mode: 0755
+      overwrite: true
+      user:
+        name: onp
+      group:
+        name: onp
+      contents:
+        inline: |
+          set -euo pipefail
+
+          ONPDIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]:-$0}"; )" &> /dev/null && pwd 2> /dev/null; )"
+          export VERSION=${1}
+          echo "Downloading oc binary ..."
+          curl -s https://mirror.openshift.com/pub/openshift-v4/clients/ocp/$VERSION/openshift-client-linux.tar.gz | tar zxf - -C ${ONPDIR} oc
+          sudo mv ${ONPDIR}/oc /usr/local/bin
+          echo "✔ Downloaded!"
+          echo "Downloading openshift-install binary ..."
+          curl -s https://mirror.openshift.com/pub/openshift-v4/clients/ocp/$VERSION/openshift-install-linux.tar.gz | tar zxf - -C ${ONPDIR} openshift-install
+          sudo mv ${ONPDIR}/openshift-install /usr/local/bin
+          echo "✔ Downloaded!"
+          echo "Downloading RHCOS ISO ..."
+          curl -sLo ${ONPDIR}/rhcos-live.iso $(/usr/local/bin/openshift-install coreos print-stream-json | grep location | grep x86_64 | grep iso | cut -d\" -f4)
+          echo "✔ Downloaded!"
+          echo "Generating install-config.yaml file ..."
+          cat << EOF > ${ONPDIR}/sno.yaml
+          apiVersion: v1
+          baseDomain: example.local
+          metadata:
+            name: sno
+          networking:
+            machineNetwork:
+            - cidr: 192.168.125.0/24
+            networkType: OVNKubernetes
+          compute:
+          - name: worker
+            replicas: 0
+          controlPlane:
+            name: master
+            replicas: 1
+          platform:
+            none: {}
+          bootstrapInPlace:
+            installationDisk: /dev/sda
+          pullSecret: '$(cat ${ONPDIR}/pullsecret)'
+          sshKey: '$(cat ${ONPDIR}/id_ed25519.pub)'
+          EOF
+          echo "✔ Generated!"
+          mkdir -p ${ONPDIR}/sno
+          echo "Copying install-config.yaml file to the installation directory ..."
+          cp ${ONPDIR}/sno.yaml ${ONPDIR}/sno/install-config.yaml
+          echo "✔ Copied!"
+    - path: /home/onp/openshift-network-playground/sno-restart.sh
+      mode: 0755
+      overwrite: true
+      user:
+        name: onp
+      group:
+        name: onp
+      contents:
+        inline: |
+          #!/bin/bash
+
+          function WAIT_FOR_REBOOT {
+          sp='/-\|'
+          sc=0
+
+          spin() {
+             printf "\r[${sp:sc++:1}] $1"
+             ((sc==${#sp})) && sc=0
+          }
+
+          endspin() {
+             printf "\r%s\n" "$@"
+          }
+
+          until [[ $(sudo virsh -q list | grep -o sno | wc -c) -eq 0 ]]
+          do spin "Waiting for the installation and restart ..."
+          sleep 0.5
+          done
+          endspin
+          }
+
+          function START_NODE {
+                  sudo virsh start sno > /dev/null
+                  echo "[✔] Installation completed!"
+          }
+
+          WAIT_FOR_REBOOT
+          START_NODE
