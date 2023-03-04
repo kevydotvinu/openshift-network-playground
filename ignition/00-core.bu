@@ -311,6 +311,79 @@ systemd:
 
         [Install]
         WantedBy=basic.target
+    - name: nat64.service
+      enabled: true
+      contents: |
+        [Unit]
+        Description=NAT64 for openshift-network-playground
+        Wants=network-online.target
+        After=network-online.target
+        RequiresMountsFor=%t/containers
+        
+        [Service]
+        Environment=PODMAN_SYSTEMD_UNIT=%n
+        Restart=always
+        TimeoutStartSec=180
+        TimeoutStopSec=70
+        ExecStartPre=-/usr/bin/rm -f %t/%n.ctr-id
+        ExecStartPre=/usr/bin/podman build --net host --tag localhost/nat64 /opt/openshift-network-playground/nat64
+        ExecStart=/usr/bin/podman run --cidfile=%t/%n.ctr-id --cgroups=no-conmon --rm --sdnotify=conmon --name nat64 --detach --net host --privileged localhost/nat64
+        ExecStartPost=/opt/openshift-network-playground/nat64/host.sh
+        ExecStop=/usr/bin/podman stop --ignore --cidfile=%t/%n.ctr-id
+        ExecStopPost=/usr/bin/podman rm -f --ignore --cidfile=%t/%n.ctr-id
+        Type=notify
+        NotifyAccess=all
+        
+        [Install]
+        WantedBy=default.target
+    - name: dns64.service
+      enabled: true
+      contents: |
+        [Unit]
+        Description=DNS64 for openshift-network-playground
+        Wants=network-online.target
+        After=network-online.target
+        RequiresMountsFor=%t/containers
+        
+        [Service]
+        Environment=PODMAN_SYSTEMD_UNIT=%n
+        Restart=always
+        TimeoutStartSec=180
+        TimeoutStopSec=70
+        ExecStartPre=-/usr/bin/rm -f %t/%n.ctr-id
+        ExecStartPre=/usr/bin/podman build --net host --tag localhost/dns64 /opt/openshift-network-playground/dns64
+        ExecStart=/usr/bin/podman run --cidfile=%t/%n.ctr-id --cgroups=no-conmon --rm --sdnotify=conmon --name dns64 -d --net host --cap-add NET_ADMIN,NET_RAW localhost/dns64
+        ExecStop=/usr/bin/podman stop --ignore --cidfile=%t/%n.ctr-id
+        ExecStopPost=/usr/bin/podman rm -f --ignore --cidfile=%t/%n.ctr-id
+        Type=notify
+        NotifyAccess=all
+        
+        [Install]
+        WantedBy=default.target
+    - name: proxy.service
+      enabled: true
+      contents: |
+        [Unit]
+        Description=Proxy for openshift-network-playground
+        Wants=network-online.target
+        After=network-online.target
+        RequiresMountsFor=%t/containers
+        
+        [Service]
+        Environment=PODMAN_SYSTEMD_UNIT=%n
+        Restart=always
+        TimeoutStartSec=180
+        TimeoutStopSec=70
+        ExecStartPre=-/usr/bin/rm -f %t/%n.ctr-id
+        ExecStartPre=/usr/bin/podman build --net host --tag localhost/proxy /opt/openshift-network-playground/proxy
+        ExecStart=/usr/bin/podman run --cidfile=%t/%n.ctr-id --cgroups=no-conmon --rm --sdnotify=conmon --name proxy -d --net host --volume /opt/openshift-network-playground/proxy/certs:/etc/squid-cert --cap-add NET_ADMIN,NET_RAW localhost/proxy
+        ExecStop=/usr/bin/podman stop --ignore --cidfile=%t/%n.ctr-id
+        ExecStopPost=/usr/bin/podman rm -f --ignore --cidfile=%t/%n.ctr-id
+        Type=notify
+        NotifyAccess=all
+        
+        [Install]
+        WantedBy=default.target
 storage:
   directories:
     - path: /home/onp/openshift-network-playground
@@ -437,13 +510,13 @@ storage:
       contents:
         inline: |
           onp ALL=(ALL) NOPASSWD: ALL
-    - path: /etc/polkit-1/localauthority/50-local.d/50-libvirt-remote-access.pkla
+    - path: /etc/polkit-1/localauthority/50-local.d/50-onp-libvirt-remote-access.pkla
       mode: 0644
       overwrite: true
       contents:
         inline: |
           [Remote libvirt SSH access]
-          Identity=unix-group:libvirtd
+          Identity=unix-user:onp
           Action=org.libvirt.unix.manage
           ResultAny=yes
           ResultInactive=yes
@@ -472,8 +545,8 @@ storage:
         inline: |
           #!/bin/sh
           /usr/sbin/iptables -t nat -I POSTROUTING -s 192.168.123.0/24 ! -d 192.168.123.0/24 -j MASQUERADE
-          /usr/sbin/iptables -t nat -I POSTROUTING -s 192.168.123.0/24 ! -d 192.168.124.0/24 -j MASQUERADE
-          /usr/sbin/iptables -t nat -I POSTROUTING -s 192.168.123.0/24 ! -d 192.168.125.0/24 -j MASQUERADE
+          /usr/sbin/iptables -t nat -I POSTROUTING -s 192.168.124.0/24 ! -d 192.168.124.0/24 -j MASQUERADE
+          /usr/sbin/iptables -t nat -I POSTROUTING -s 192.168.125.0/24 ! -d 192.168.125.0/24 -j MASQUERADE
           /usr/sbin/iptables -t nat -I PREROUTING -p tcp -i $(/usr/sbin/ip r | grep default | awk '{print $5}') --dport 443 -j DNAT --to-destination 192.168.123.89:443
           /usr/sbin/iptables -t nat -I PREROUTING -p tcp -i $(/usr/sbin/ip r | grep default | awk '{print $5}') --dport 80 -j DNAT --to-destination 192.168.123.89:80
           /usr/sbin/iptables -t nat -I PREROUTING -p tcp -i $(/usr/sbin/ip r | grep default | awk '{print $5}') --dport 6443 -j DNAT --to-destination 192.168.123.88:6443
@@ -638,7 +711,7 @@ storage:
           [bridge]
           mac-address=52:54:00:11:22:c0
           interface-name=onp1
-    - path: /etc/NetworkManager/system-connections/ocp1-slave.nmconnection
+    - path: /etc/NetworkManager/system-connections/onp1-slave.nmconnection
       mode: 0600
       overwrite: true
       user:
@@ -690,7 +763,7 @@ storage:
           [bridge]
           mac-address=52:54:00:11:22:d0
           interface-name=onp2
-    - path: /etc/NetworkManager/system-connections/ocp2-slave.nmconnection
+    - path: /etc/NetworkManager/system-connections/onp2-slave.nmconnection
       mode: 0600
       overwrite: true
       user:
@@ -704,6 +777,59 @@ storage:
           master=onp2
           autoconnect=yes
           slave-type=bridge
+    - path: /etc/NetworkManager/system-connections/sno0-dummy.nmconnection
+      mode: 0600
+      overwrite: true
+      user:
+        name: root
+      contents:
+        inline: |
+          [connection]
+          id=sno0-dummy
+          type=dummy
+          interface-name=sno0-dummy
+          autoconnect=yes
+          master=sno0
+          slave-type=bridge
+          [ipv4]
+          method=link-local
+          [ipv6]
+          method=disabled
+    - path: /etc/NetworkManager/system-connections/sno0-slave.nmconnection
+      mode: 0600
+      overwrite: true
+      user:
+        name: root
+      contents:
+        inline: |
+          [connection]
+          id=sno0-slave
+          type=ethernet
+          interface-name=sno0-dummy
+          master=sno0
+          autoconnect=yes
+          slave-type=bridge
+    - path: /etc/NetworkManager/system-connections/sno0.nmconnection
+      mode: 0600
+      overwrite: true
+      user:
+        name: root
+      contents:
+        inline: |
+          [connection]
+          id=sno0
+          type=bridge
+          autoconnect=yes
+          interface-name=sno0
+          [ipv4]
+          method=manual
+          addresses=192.168.126.1
+          [ipv6]
+          method=manual
+          addresses=fd00:dead:beef::1/96
+          [bridge]
+          mac-address=52:54:00:11:22:e0
+          interface-name=sno0
     - path: /etc/NetworkManager/conf.d/openshift-network-playground.conf
       mode: 0644
       overwrite: true
@@ -722,6 +848,8 @@ storage:
       contents:
         inline: |
           address=/.apps.ocp.example.local/192.168.123.89
+          address=/.apps.sno.example.local/192.168.124.2
+          address=/.apps.sno.example.local/fd00:dead:beef::2
           addn-hosts=/etc/hosts
     - path: /etc/hosts
       mode: 0644
@@ -739,6 +867,8 @@ storage:
           192.168.123.94 worker0.ocp.example.local
           192.168.123.95 worker1.ocp.example.local
           192.168.123.1 openshift-network-playground.ocp.example.local lb.ocp.example.local mirror.ocp.example.local proxy.ocp.example.local
+          192.168.126.2 api.sno.example.local api-int.sno.example.local node.sno.example.local
+          fd00:dead:beef::2 api.sno.example.local
     - path: /etc/zincati/config.d/90-disable-auto-updates.toml
       contents:
         inline: |
@@ -894,6 +1024,395 @@ storage:
           log-dhcp
           dhcp-authoritative
           log-async
+    - path: /opt/openshift-network-playground/nat64/Containerfile
+      mode: 0644
+      overwrite: true
+      contents:
+        inline: |
+          FROM fedora
+          MAINTAINER "Vinu K" <vkochuku@redhat.com>
+          ADD env entrypoint.sh /
+          RUN yum install -y \
+                  iproute \
+                  iptables \
+                  make \
+                  gcc \
+                  bzip2 \
+                  bind && \
+                  curl -O http://www.litech.org/tayga/tayga-0.9.2.tar.bz2 && \
+                  bzip2 -dk tayga-0.9.2.tar.bz2 && \
+                  tar xfv tayga-0.9.2.tar && \
+                  pushd tayga-0.9.2 && \
+                  ./configure && \
+                  make && \
+                  make install && \
+                  popd && \
+                  chmod +x /entrypoint.sh
+          ENTRYPOINT ["/entrypoint.sh"]
+    - path: /opt/openshift-network-playground/nat64/entrypoint.sh
+      mode: 0644
+      overwrite: true
+      contents:
+        inline: |
+          #!/bin/bash
+        
+          # Create Tayga directories.
+          mkdir -p ${TDATADIR} ${TCONFDIR}
+          
+          # Configure Tayga.
+          cat << EOF > ${TCONFDIR}/tayga.conf
+          tun-device nat64
+          ipv4-addr ${TIP4ADDR}
+          ipv6-addr ${TIP6ADDR}
+          prefix ${TPREFIX}
+          dynamic-pool ${TDPOOL}
+          data-dir ${TDATADIR}
+          EOF
+          
+          # Setup Tayga networking.
+          ip link del dev ${TINT} 2>/dev/null
+          tayga -c ${TCONFDIR}/tayga.conf --mktun
+          ip link set dev ${TINT} up
+          ip route del ${TDPOOL} dev ${TINT} 2>/dev/null
+          ip route add ${TDPOOL} dev ${TINT}
+          ip -6 route del ${TPREFIX} dev ${TINT} 2>/dev/null
+          ip -6 route add ${TPREFIX} dev ${TINT}
+         
+          # Run tayga
+          echo "Starting tayga ..."
+          tayga -c ${TCONFDIR}/tayga.conf -d
+    - path: /opt/openshift-network-playground/dns64/env
+      mode: 0644
+      overwrite: true
+      contents:
+        inline: |
+          TIP4ADDR=192.168.126.1
+          TIP6ADDR=fd00:dead:beef::1
+          TPREFIX=2001:db8:1:ffff::/96
+          TDPOOL=192.168.126.128/25
+          TDATADIR=/var/db/tayga
+          TCONFDIR=/usr/local/etc
+          TINT=nat64
+          TVMINT=sno0
+          TMAININT=eno1
+    - path: /opt/openshift-network-playground/dns64/host.sh
+      mode: 0755
+      overwrite: true
+      contents:
+        inline: |
+          #!/bin/bash
+
+          DIR=$( cd -- $( dirname -- ${BASH_SOURCE[0]:-$0}; ) &> /dev/null && pwd 2> /dev/null; )
+          source ${DIR}/env
+          
+          echo 1 | sudo tee /proc/sys/net/ipv4/ip_forward
+          echo 1 | sudo tee /proc/sys/net/ipv6/conf/all/forwarding
+          echo 2 | sudo tee /proc/sys/net/ipv6/conf/all/accept_ra
+          
+          sudo iptables -t nat -C POSTROUTING -o ${TINT} -j MASQUERADE || \
+          sudo iptables -t nat -I POSTROUTING -o ${TINT} -j MASQUERADE
+          sudo iptables -t nat -C POSTROUTING -o ${TMAININT} -j MASQUERADE || \
+          sudo iptables -t nat -I POSTROUTING -o ${TMAININT} -j MASQUERADE
+          sudo iptables -C FORWARD -i ${TVMINT} -o ${TINT} -j ACCEPT || \
+          sudo iptables -I FORWARD -i ${TVMINT} -o ${TINT} -j ACCEPT
+          sudo iptables -C FORWARD -o ${TVMINT} -i ${TINT} -j ACCEPT || \
+          sudo iptables -I FORWARD -o ${TVMINT} -i ${TINT} -j ACCEPT
+    - path: /opt/openshift-network-playground/dns64/Containerfile
+      mode: 0644
+      overwrite: true
+      contents:
+        inline: |
+          FROM fedora
+          MAINTAINER "Vinu K" <vkochuku@redhat.com>
+          COPY named.conf \
+              sno.example.local.forward \
+              sno.example.local.reverse \
+              sno.example.local.reverse.v6 \
+              /
+          RUN yum install -y bind
+          ENTRYPOINT ["/usr/sbin/named", "-c", "/named.conf", "-g", "-u", "named"]
+    - path: /opt/openshift-network-playground/dns64/named.conf
+      mode: 0644
+      overwrite: true
+      contents:
+        inline: |
+          options {
+          listen-on port 53 { 192.168.126.1; };
+          listen-on-v6 port 53 { fd00:dead:beef::1; };
+          directory       "/var/named";
+          allow-query     { 192.168.126.0/24; fd00:dead:beef::/96; };
+          forwarders { 8.8.8.8; 8.8.4.4; };
+          dns64 2001:db8:1:ffff::/96 {
+                  clients { fd00:dead:beef::/96; };
+                  exclude { !fd00:dead:beef::/96; any; };
+          };
+          recursion yes;
+          };
+          
+          zone "sno.example.local" IN {
+                  type master;
+                  file "/sno.example.local.forward";
+          };
+          
+          zone "126.168.192.in-addr.arpa" IN {
+                  type master;
+                  file "/sno.example.local.reverse";
+          };
+          
+          zone "0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.f.e.e.b.d.a.e.d.0.0.d.f.ip6.arpa" IN {
+                  type master;
+                  file "/sno.example.local.reverse.v6";
+          };
+    - path: /opt/openshift-network-playground/dns64/sno.example.local.forward
+      mode: 0644
+      overwrite: true
+      contents:
+        inline: |
+          $TTL 86400
+          @               IN      SOA     ns1.sno.example.local. root (
+                                          2001062501  ; serial
+                                          21600       ; refresh after 6 hours
+                                          3600        ; retry after 1 hour
+                                          604800      ; expire after 1 week
+                                          86400 )     ; minimum TTL of 1 day
+                          IN      NS      ns1.sno.example.local.
+          
+          ns1             IN      A       192.168.126.1
+                          IN      AAAA    fd00:dead:beef::1
+          dns             IN      A       192.168.126.1
+                          IN      AAAA    fd00:dead:beef::1
+          node            IN      A       192.168.126.2
+                          IN      AAAA    fd00:dead:beef::2
+          api             IN      A       192.168.126.2
+                          IN      AAAA    fd00:dead:beef::2
+          api-int         IN      A       192.168.126.2
+                          IN      AAAA    fd00:dead:beef::2
+          *.apps          IN      A       192.168.126.2
+                          IN      AAAA    fd00:dead:beef::2
+    - path: /opt/openshift-network-playground/dns64/sno.example.local.reverse
+      mode: 0644
+      overwrite: true
+      contents:
+        inline: |
+          $TTL 86400
+          @       IN      SOA     ns1.sno.example.local. root (
+                                          2001062501  ; serial
+                                          21600       ; refresh after 6 hours
+                                          3600        ; retry after 1 hour
+                                          604800      ; expire after 1 week
+                                          86400 )     ; minimum TTL of 1 day
+                  IN      NS      ns1.sno.example.local.
+          
+          1       IN      PTR     ns1.sno.example.local.
+          2       IN      PTR     node.sno.example.local.
+    - path: /opt/openshift-network-playground/dns64/sno.example.local.reverse.v6
+      mode: 0644
+      overwrite: true
+      contents:
+        inline: |
+          $TTL 86400
+          @       IN      SOA     ns1.sno.example.local. root (
+                                          2001062501  ; serial
+                                          21600       ; refresh after 6 hours
+                                          3600        ; retry after 1 hour
+                                          604800      ; expire after 1 week
+                                          86400 )     ; minimum TTL of 1 day
+                  IN      NS      ns1.sno.example.local.
+          
+          1       IN      PTR     ns1.sno.example.local.
+          2       IN      PTR     node.sno.example.local.
+    - path: /opt/openshift-network-playground/proxy/Containerfile
+      mode: 0644
+      overwrite: true
+      contents:
+        inline: |
+          FROM fedora
+          MAINTAINER "Vinu K" <vkochuku@redhat.com>
+          ADD entrypoint.sh /usr/local/bin/entrypoint.sh
+          ADD openssl.cnf.add /etc/ssl/openssl.cnf.add
+          ADD squid.conf /etc/squid/squid.conf
+          RUN yum install -y squid openssl ca-certificates which && \
+              chmod +x /usr/local/bin/entrypoint.sh && \
+              cat /etc/ssl/openssl.cnf.add >> /etc/ssl/openssl.cnf
+          EXPOSE 3128
+          EXPOSE 4128
+          ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
+    - path: /opt/openshift-network-playground/proxy/squid.conf
+      mode: 0644
+      overwrite: true
+      contents:
+        inline: |
+          #
+          # Recommended minimum configuration:
+          #
+          
+          # Example rule allowing access from your local networks.
+          # Adapt to list your (internal) IP networks from where browsing
+          # should be allowed
+          acl localnet src 10.0.0.0/8     # RFC1918 possible internal network
+          acl localnet src 172.16.0.0/12  # RFC1918 possible internal network
+          acl localnet src 192.168.0.0/16 # RFC1918 possible internal network
+          acl localnet src fc00::/7       # RFC 4193 local private network range
+          acl localnet src fe80::/10      # RFC 4291 link-local (directly plugged) machines
+          
+          acl SSL_ports port 443
+          acl Safe_ports port 80          # http
+          acl Safe_ports port 21          # ftp
+          acl Safe_ports port 443         # https
+          acl Safe_ports port 70          # gopher
+          acl Safe_ports port 210         # wais
+          acl Safe_ports port 1025-65535  # unregistered ports
+          acl Safe_ports port 280         # http-mgmt
+          acl Safe_ports port 488         # gss-http
+          acl Safe_ports port 591         # filemaker
+          acl Safe_ports port 777         # multiling http
+          acl CONNECT method CONNECT
+          
+          #
+          # Recommended minimum Access Permission configuration:
+          #
+          # Deny requests to certain unsafe ports
+          http_access deny !Safe_ports
+          
+          # Deny CONNECT to other than secure SSL ports
+          http_access deny CONNECT !SSL_ports
+          
+          # Only allow cachemgr access from localhost
+          http_access allow localhost manager
+          http_access deny manager
+          
+          # We strongly recommend the following be uncommented to protect innocent
+          # web applications running on the proxy server who think the only
+          # one who can access services on "localhost" is a local user
+          #http_access deny to_localhost
+          
+          #
+          # INSERT YOUR OWN RULE(S) HERE TO ALLOW ACCESS FROM YOUR CLIENTS
+          #
+          
+          # Example rule allowing access from your local networks.
+          # Adapt localnet in the ACL section to list your (internal) IP networks
+          # from where browsing should be allowed
+          http_access allow localnet
+          http_access allow localhost
+          
+          # And finally deny all other access to this proxy
+          http_access deny all
+          
+          # Squid normally listens to port 3128
+          http_port 3128
+          
+          # Squid normally listens to port 4128 for ssl bump
+          http_port 4128 ssl-bump generate-host-certificates=on dynamic_cert_mem_cache_size=4MB cert=/etc/squid-cert/private.pem key=/etc/squid-cert/private.pem
+          ssl_bump server-first all
+          always_direct allow all
+          
+          # Uncomment and adjust the following to add a disk cache directory.
+          cache_dir ufs /var/cache/squid 100 16 256
+          
+          # Leave coredumps in the first cache dir
+          coredump_dir /var/cache/squid
+          
+          #
+          # Add any of your own refresh_pattern entries above these.
+          #
+          refresh_pattern ^ftp:           1440    20%     10080
+          refresh_pattern ^gopher:        1440    0%      1440
+          refresh_pattern -i (/cgi-bin/|\?) 0     0%      0
+          refresh_pattern .               30      20%     4320 reload-into-ims
+          
+          
+          range_offset_limit 200 MB
+          maximum_object_size 200 MB
+          quick_abort_min -1
+          
+          sslcrtd_program /usr/lib64/squid/security_file_certgen -s /var/lib/squid/ssl_db -M 20MB
+          sslproxy_cert_error allow all
+          ssl_bump stare all
+    - path: /opt/openshift-network-playground/proxy/openssl.cnf.add
+      mode: 0644
+      overwrite: true
+      contents:
+        inline: |
+          [ v3_req ]
+          basicConstraints = CA:FALSE
+          keyUsage = nonRepudiation, digitalSignature, keyEncipherment
+          [ v3_ca ]
+          keyUsage = cRLSign, keyCertSign
+          subjectKeyIdentifier=hash
+          authorityKeyIdentifier=keyid:always,issuer:always
+          basicConstraints = CA:true
+    - path: /opt/openshift-network-playground/proxy/entrypoint.sh
+      mode: 0644
+      overwrite: true
+      contents:
+        inline: |
+          #!/bin/sh
+          
+          set -e
+          
+          CHOWN=$(/usr/bin/which chown)
+          SQUID=$(/usr/bin/which squid)
+          
+          prepare_folders() {
+                  echo "Preparing folders..."
+                  mkdir -p /etc/squid-cert/
+                  mkdir -p /var/cache/squid/
+                  mkdir -p /var/log/squid/
+                  "$CHOWN" -R squid:squid /etc/squid-cert/
+                  "$CHOWN" -R squid:squid /var/cache/squid/
+                  "$CHOWN" -R squid:squid /var/log/squid/
+          }
+          
+          initialize_cache() {
+                  echo "Creating cache folder..."
+                  "$SQUID" -z
+          
+                  sleep 5
+          }
+          
+          create_cert() {
+                  if [ ! -f /etc/squid-cert/private.pem ]; then
+                          echo "Creating certificate..."
+                          openssl req -new -newkey rsa:2048 -sha256 -days 3650 -nodes -x509 \
+                                  -extensions v3_ca -keyout /etc/squid-cert/private.pem \
+                                  -out /etc/squid-cert/private.pem \
+                                  -subj "/CN=proxy.${CLUSTER_NAME}.${DOMAIN}/O=Squid/OU=Squid/C=IN" -utf8 -nameopt multiline,utf8
+          
+                          openssl x509 -in /etc/squid-cert/private.pem \
+                                  -outform DER -out /etc/squid-cert/CA.der
+          
+                          openssl x509 -inform DER -in /etc/squid-cert/CA.der \
+                                  -out /etc/squid-cert/CA.pem
+                  else
+                          echo "Certificate found..."
+                  fi
+          }
+          
+          clear_certs_db() {
+                  echo "Clearing generated certificate db..."
+                  rm -rfv /var/lib/squid
+                  mkdir -p /var/lib/squid
+                  /usr/lib64/squid/security_file_certgen -c -s /var/lib/squid/ssl_db -M 20MB
+                  "$CHOWN" -R squid:squid /var/lib/squid
+          }
+          
+          run() {
+                  echo "Starting squid..."
+                  prepare_folders
+                  create_cert
+                  clear_certs_db
+                  initialize_cache
+                  exec "$SQUID" -NYCd 1 -f /etc/squid/squid.conf
+          }
+          
+          run
+    - path: /opt/openshift-network-playground/proxy/certs/.keepdir
+      mode: 0644
+      overwrite: true
+      contents:
+        inline: |
+          keepdir
     - path: /home/onp/.Makefile
       mode: 0755
       overwrite: true
@@ -907,11 +1426,15 @@ storage:
           RELEASE ?= stable-4.12
           LOGLEVEL ?= info
           SCRIPT_DIR = $(shell cd -- "$( dirname -- "${BASH_SOURCE[0]:-$0}"; )" &> /dev/null && pwd 2> /dev/null; )
-          CONTAINERS = $(shell sudo podman ps --format {{.Names}} | sort | grep -oE 'dhcp|vbmc|webserver' | xargs)
-          VMS = $(shell sudo virsh list --all --name | head -n -1 | wc -l)
+          CONTAINERS = $(shell sudo podman ps --format {{.Names}} | sort | grep -oE '^dhcp|vbmc|webserver' | xargs)
+          VMS = $(shell sudo virsh list --all --name | grep -oE 'master0|master1|master2|worker0|worker1' | xargs)
           TFF = $(shell ls /tmp/openshift-install-bootstrap-*/terraform.platform.auto.tfvars.json 2>/dev/null | wc -l)
           VIRBR0=$(shell sudo virsh net-info default | awk '/Bridge:/{print $$2}')
           VIRBR0MAC=$(shell ip a s ${VIRBR0} | awk '/ether /{print $$2}' | cut -f1-4 -d':')
+
+          .PHONY: all
+          
+          all: help
           
           check-env:
           ifndef OCM_TOKEN
@@ -924,7 +1447,7 @@ storage:
           endif
 
           check-vms:
-          ifneq ($(VMS),5)
+          ifneq ($(VMS),master0 master1 master2 worker0 worker1)
                 $(error The VMs are not ready. Please restart the services with 'sudo systemctl restart master0 master1 master2 worker0 worker1' and retry)
           endif
 
@@ -1006,6 +1529,7 @@ storage:
 
           onp-files:
                 @echo "Cloning onp-files ..."
+                -@rm -rf $(SCRIPT_DIR)/onp-files 2>/dev/null
                 @git clone https://github.com/kevydotvinu/onp-files
 
           .PHONY: ironic-client
@@ -1029,46 +1553,57 @@ storage:
           kind-download:
                 @echo "Downloading kind ..."
                 @sudo curl -sLo /usr/local/bin/kind $$(curl -sL https://api.github.com/repos/kubernetes-sigs/kind/releases/latest | jq -r '.assets | .[] | select(.name == "kind-linux-amd64") | .browser_download_url')
-                @chmod +x /usr/local/bin/kind
+                @sudo chmod +x /usr/local/bin/kind
                 @echo "OK"
                 @echo "Downloading kubectl ..."
                 @sudo curl -sLo /usr/local/bin/kubectl https://dl.k8s.io/release/$$(curl -sL https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl
-                @chmod +x /usr/local/bin/kubectl
+                @sudo chmod +x /usr/local/bin/kubectl
                 @echo "OK"
 
-          .PHONY: kind-create
+          .PHONY: kind-create-onp
 
-          kind-create:
+          kind-create-onp:
                 @echo "Creating kind cluster ..."
                 @sudo KIND_EXPERIMENTAL_PROVIDER=podman kind create cluster --name onp
                 @sudo cp /root/.kube/config ${HOME}/.kube/onp-kind-config
-                @sudo chown onp:onp $HOME/.kube/onp-kind-config
+                @sudo chown onp:onp ${HOME}/.kube/onp-kind-config
                 @echo "OK"
                 @echo "Try, k get nodes."
 
-          .PHONY: kind-delete
+          .PHONY: kind-delete-onp
 
-          kind-delete:
+          kind-delete-onp:
                 @echo "Deleting kind cluster ..."
                 @sudo KIND_EXPERIMENTAL_PROVIDER=podman kind delete cluster --name onp
+                @rm -rf ${HOME}/.kube/onp-kind-config
 
-          .PHONY: ovn-kind
+          .PHONY: kind-create-ovn
 
-          ovn-kind:
+          kind-create-ovn: go-download
                 @echo "Creating OVN kind cluster ..."
                 go env -w GO111MODULE=auto && \
-                rm -rf ovn-kubernetes && \
-                git clone -b release-4.12 https://github.com/openshift/ovn-kubernetes && \
-                pushd $${HOME}/ovn-kubernetes/go-controller && \
+                (rm -rf ${HOME}/ovn-kubernetes || true) && \
+                git clone https://github.com/ovn-org/ovn-kubernetes ${HOME}/ovn-kubernetes && \
+                pushd ${HOME}/ovn-kubernetes/go-controller && \
                 make && \
                 popd && \
-                pushd $${HOME}/ovn-kubernetes/dist/images && \
+                pushd ${HOME}/ovn-kubernetes/dist/images && \
                 OCI_BIN=podman make fedora && \
                 popd && \
-                pushd $${HOME}/ovn-kubernetes/contrib && \
-                sudo ./kind.sh -ep podman && \
-                sudo cp /root/ovn.conf ~/.kube/ovn-kind-config && \
-                sudo chown $(id -u):$(id -g) ~/.kube/ovn-kind-config && \
+                pushd ${HOME}/ovn-kubernetes/contrib && \
+                sudo PATH=${PATH}:/usr/local/go/bin ./kind.sh -ep podman && \
+                sudo cp /root/ovn.conf ${HOME}/.kube/ovn-kind-config && \
+                sudo chown $(id -u):$(id -g) ${HOME}/.kube/ovn-kind-config && \
+                popd
+
+          .PHONY: kind-delete-ovn
+
+          kind-delete-ovn:
+                @echo "Deleting OVN kind cluster ..."
+                pushd ${HOME}/ovn-kubernetes/contrib && \
+                sudo ./kind.sh -ep podman --delete && \
+                rm -rf ${HOME}/ovn-kubernetes && \
+                sudo rm -rf ${HOME}/.kube/ovn-kind-config && \
                 popd
 
           .PHONY: sno
@@ -1076,52 +1611,144 @@ storage:
           sno: /home/onp/openshift-network-playground/pullsecret /home/onp/openshift-network-playground/id_ed25519.pub
                 @echo "Creating SNO cluster ..."
                 -@rm -rf $(SCRIPT_DIR)/openshift-network-playground/sno
-                -@rm -rf $(SCRIPT_DIR)/openshift-network-playground/rhcos-live.iso
                 -@rm -rf $(SCRIPT_DIR)/openshift-network-playground/sno.yaml
                 @openshift-network-playground/sno.sh ${RELEASE}
                 @/usr/local/bin/openshift-install --log-level=${LOGLEVEL} \
                                                   --dir=$(SCRIPT_DIR)/openshift-network-playground/sno create single-node-ignition-config
-                @podman run --privileged \
+                @sudo podman run --privileged \
                         --pull always \
                         --rm \
                         -v /dev:/dev \
                         -v /run/udev:/run/udev \
-                        -v $(SCRIPT_DIR):/data \
+                        -v /:/data \
                         -w /data \
                         quay.io/coreos/coreos-installer:release iso ignition embed -fi \
-                        openshift-network-playground/sno/bootstrap-in-place-for-live-iso.ign \
-                        openshift-network-playground/rhcos-live.iso
-                @sudo cp $(SCRIPT_DIR)/openshift-network-playground/rhcos-live.iso /var/lib/libvirt/images/
+                        var/home/onp/openshift-network-playground/sno/bootstrap-in-place-for-live-iso.ign \
+                        opt/openshift-network-playground/libvirt/sno/rhcos-live.iso
+                @sudo podman run --privileged \
+                        --pull always \
+                        --rm \
+                        -v /dev:/dev \
+                        -v /run/udev:/run/udev \
+                        -v /:/data \
+                        -w /data \
+                        quay.io/coreos/coreos-installer:release iso network embed -fk \
+                        var/home/onp/openshift-network-playground/enp1s0.nmconnection \
+                        opt/openshift-network-playground/libvirt/sno/rhcos-live.iso
                 -@sudo virsh destroy sno 2>/dev/null
                 -@sudo virsh undefine sno 2>/dev/null
-                @sudo mkdir -p /opt/openshift-network-playground/libvirt/sno
                 -@rm -f /opt/openshift-network-playground/libvirt/sno/sno.img 2>/dev/null
                 @sudo qemu-img create /opt/openshift-network-playground/libvirt/sno/sno.img 120G
-                -@sudo virsh net-update default delete ip-dhcp-host \
-                             --xml "<host mac='${VIRBR0MAC}:1a:1b' name='node.sno.example.local' ip='192.168.122.100'/>" \
-                             --live \
-                             --config 2>/dev/null
-                @sudo virsh net-update default add-last ip-dhcp-host \
-                             --xml "<host mac='${VIRBR0MAC}:1a:1b' name='node.sno.example.local' ip='192.168.122.100'/>" \
-                             --live \
-                             --config
                 @sudo virt-install --name sno \
                                    --os-variant fedora-coreos-stable \
                                    --vcpu 4 \
                                    --memory 16384 \
+                                   --boot menu=on \
+                                   --pxe \
                                    --disk /opt/openshift-network-playground/libvirt/sno/sno.img,bus=scsi \
-                                   --cdrom /var/lib/libvirt/images/rhcos-live.iso \
-                                   --network network=default,mac=${VIRBR0MAC}:1a:1b \
+                                   --cdrom /opt/openshift-network-playground/libvirt/sno/rhcos-live.iso \
+                                   --network bridge=sno0 \
                                    --noautoconsole \
-                                   --graphics spice,listen=0.0.0.0 \
-                                   --boot menu=on
+                                   --graphics spice,listen=0.0.0.0
                 @$(SCRIPT_DIR)/openshift-network-playground/sno-restart.sh
                 @/usr/local/bin/openshift-install --log-level=${LOGLEVEL} \
                                                   --dir=$(SCRIPT_DIR)/openshift-network-playground/sno wait-for install-complete
 
+          .PHONY: network-tools
+
+          network-tools:
+                @echo "Cloning network-tools ..."
+                -@rm -rf $(SCRIPT_DIR)/.local/network-tools 2>/dev/null
+                @git clone https://github.com/openshift/network-tools $(SCRIPT_DIR)/.local/network-tools
+
+          .PHONY: fcos
+
+          fcos:
+                @echo "Creating FCOS VM ..."
+                @$(SCRIPT_DIR)/openshift-network-playground/fcos.sh
+
+          .PHONY: rhcos-livecd
+
+          NETWORK?=network=default
+
+          rhcos-livecd:
+                  @echo "Creating RHCOS live CD ..."
+                  @sudo mkdir -p /opt/openshift-network-playground/libvirt/rhcos-livecd
+                  @sudo curl -# -o /opt/openshift-network-playground/libvirt/rhcos-livecd/rhcos-livecd.iso \
+                  https://mirror.openshift.com/pub/openshift-v4/dependencies/rhcos/latest/rhcos-live.x86_64.iso
+                  -@sudo virsh destroy rhcos-livecd >/dev/null 2>&1
+                  -@sudo virsh undefine rhcos-livecd >/dev/null 2>&1
+                  @echo "Press TAB and type console=ttyS0 in the next screen ..."
+                  @sleep 5s
+                  @sudo virt-install --name rhcos-livecd \
+                                     --network ${NETWORK} \
+                                     --pxe \
+                                     --boot menu=on \
+                                     --memory 2096 \
+                                     --vcpu 2 \
+                                     --disk none \
+                                     --os-variant fedora-coreos-stable \
+                                     --cdrom /opt/openshift-network-playground/libvirt/rhcos-livecd/rhcos-livecd.iso \
+                                     --noautoconsole \
+                                     --graphics spice,listen=0.0.0.0
+                  @sudo virsh console rhcos-livecd
+
+          .PHONY: disconnect-cluster
+
+          disconnect-cluster:
+                @echo "Making an iptables rule change to make the OpenShift cluster disconnected"
+                @sudo iptables -D FORWARD -i baremetal -o eno1 -j DROP > /dev/null 2>&1
+                @sudo iptables -A FORWARD -i baremetal -o eno1 -j DROP
+
+          .PHONY: connect-cluster
+
+          connect-cluster:
+                @echo "Making an iptables rule change to make the OpenShift cluster connected"
+                @sudo iptables -D FORWARD -i baremetal -o eno1 -j DROP > /dev/null 2>&1
+
+          .PHONY: services
+
+          BAREMETAL-DHCP=$$(sudo systemctl is-active dhcp)
+          VBMC=$$(sudo systemctl is-active vbmc)
+          WEBSERVER=$$(sudo systemctl is-active webserver)
+          ONP1-DHCP=$$(sudo systemctl is-active onp1-dhcp)
+          ONP2-DHCP=$$(sudo systemctl is-active onp2-dhcp)
+          COCKPIT=$$(sudo systemctl is-active cockpit)
+          PXE=$$(sudo systemctl is-active pxe)
+          PROXY=$$(sudo systemctl is-active proxy)
+          NAT64=$$(sudo systemctl is-active nat64)
+          DNS64=$$(sudo systemctl is-active dns64)
+          
+          services:
+                @echo -e "SERVICE\t\tIS-ACTIVE"
+                @echo -e "baremetal-dhcp\t${BAREMETAL-DHCP}"
+                @echo -e "vbmc\t\t${VBMC}"
+                @echo -e "webserver\t${WEBSERVER}"
+                @echo -e "onp1-dhcp\t${ONP1-DHCP}"
+                @echo -e "onp2-dhcp\t${ONP2-DHCP}"
+                @echo -e "cockpit\t\t${COCKPIT}"
+                @echo -e "pxe\t\t${PXE}"
+                @echo -e "proxy\t\t${PROXY}"
+                @echo -e "nat64\t\t${NAT64}"
+                @echo -e "dns64\t\t${DNS64}"
+
           .PHONY: help
 
+          define onp
+          
+            ___  _ __  _ __
+           / _ \| '_ \| '_ \
+          | (_) | | | | |_) |
+           \___/|_| |_| .__/
+                      | |
+                      |_|
+          
+          endef
+          
+          export onp
+
           help:
+                @echo "$${onp}"
                 @echo "Usage: onp [SUBCOMMAND] [VARIABLE_NAME]=<variable>"
                 @echo ""
                 @echo "Subcommands:"
@@ -1134,7 +1761,12 @@ storage:
                 @echo -e "  kind-create\t\t\t\tCreate a Kind cluster."
                 @echo -e "  kind-delete\t\t\t\tDelete a Kind cluster."
                 @echo -e "  ovn-kind\t\t\t\tCreate an OVN Kind cluster."
-                @echo -e "  sno\t\t\t\t\tCreate a SNO cluster."
+                @echo -e "  sno\t\t\t\t\tCreate an IPv6 single-stack SNO cluster."
+                @echo -e "  onp-files\t\t\t\tClone the ONP sample manifests."
+                @echo -e "  rhcos-livecd\t\t\t\tCreate a RHCOS VM with custom network."
+                @echo -e "  disconnect-cluster\t\t\t\tDisconnect cluster from internet."
+                @echo -e "  connect-cluster\t\t\t\tConnect cluster to internet."
+                @echo -e "  services\t\t\t\tList services status."
                 @echo ""
                 @echo "Example:"
                 @echo "  onp cluster LOGLEVEL=debug"
@@ -1331,9 +1963,11 @@ storage:
         - inline: |
             alias onp='make --no-print-directory -C /home/onp -f /home/onp/.Makefile'
             alias konp='kubectl --kubeconfig /home/onp/.kube/onp-kind-config'
+            alias kovn='kubectl --kubeconfig /home/onp/.kube/ovn-kind-config'
             alias kind='sudo KIND_EXPERIMENTAL_PROVIDER=podman kind'
             export EDITOR=vi
             export PATH=${PATH}:/usr/local/go/bin
+            export PATH=${PATH}:${HOME}/.local/network-tools/debug-scripts
             export KUBECONFIG=/home/onp/openshift-network-playground/clusterconfigs/auth/kubeconfig
             sed -i -e 's/      /\t/g' /home/onp/.Makefile
     - path: /home/onp/openshift-network-playground/worker0.yaml
@@ -1608,7 +2242,8 @@ storage:
           sudo mv ${ONPDIR}/openshift-install /usr/local/bin
           echo "✔ Downloaded!"
           echo "Downloading RHCOS ISO ..."
-          curl -sLo ${ONPDIR}/rhcos-live.iso $(/usr/local/bin/openshift-install coreos print-stream-json | grep location | grep x86_64 | grep iso | cut -d\" -f4)
+          sudo mkdir -p /opt/openshift-network-playground/libvirt/sno
+          sudo curl -sLo /opt/openshift-network-playground/libvirt/sno/rhcos-live.iso $(/usr/local/bin/openshift-install coreos print-stream-json | grep location | grep x86_64 | grep iso | cut -d\" -f4)
           echo "✔ Downloaded!"
           echo "Generating install-config.yaml file ..."
           cat << EOF > ${ONPDIR}/sno.yaml
@@ -1618,7 +2253,12 @@ storage:
             name: sno
           networking:
             machineNetwork:
-            - cidr: 192.168.125.0/24
+            - cidr: fd00:dead:beef::/96
+            clusterNetwork:
+            - cidr: fd01::/48
+              hostPrefix: 64
+            serviceNetwork:
+              - fd02::/112
             networkType: OVNKubernetes
           compute:
           - name: worker
@@ -1676,3 +2316,108 @@ storage:
 
           WAIT_FOR_REBOOT
           START_NODE
+    - path: /home/onp/openshift-network-playground/enp1s0.nmconnection
+      mode: 0755
+      overwrite: true
+      user:
+        name: onp
+      group:
+        name: onp
+      contents:
+        inline: |
+          [connection]
+          id=ens3
+          type=ethernet
+          autoconnect=yes
+          interface-name=enp1s0
+          [ipv4]
+          method=disabled
+          [ipv6]
+          method=manual
+          addresses=fd00:dead:beef::2/96
+          dns=fd00:dead:beef::1
+          gateway=fd00:dead:beef::1
+    - path: /home/onp/openshift-network-playground/fcos.sh
+      mode: 0755
+      overwrite: true
+      user:
+        name: onp
+      group:
+        name: onp
+      contents:
+        inline: |
+          #!/bin/bash
+          set -exuo pipefail
+          DIR=/opt/openshift-network-playground/libvirt/fcos
+          
+          function downloadImage {
+                  sudo mkdir -p ${DIR}
+                  STREAM="stable"
+                  sudo podman run --pull=always \
+                             --rm -v ${DIR}:/data \
+                             --workdir /data \
+                             quay.io/coreos/coreos-installer:release \
+                             download -s ${STREAM} -p qemu -f qcow2.xz --decompress
+          }
+          
+          function createButane {
+          cat << EOF | sudo tee ${DIR}/fcos.bu
+          variant: fcos
+          version: 1.4.0
+          passwd:
+            users:
+              - name: core
+                groups:
+                  - wheel
+                  - sudo
+                password_hash: \$y\$j9T\$9NWuGa4oxrKeZ6T8eo8Ef1\$cEQV6UhM1XvR2sfUvSwKs.BTmYNut3VRP33/c5qfw35
+          EOF
+          }
+          
+          function createIgnition {
+                  sudo podman run --interactive \
+                             --rm quay.io/coreos/butane:release \
+                             --pretty \
+                             --strict \
+                             < ${DIR}/fcos.bu \
+                             | sudo tee ${DIR}/fcos.ign
+          }
+          
+          function createVirtualMachine {
+                  IGNITION_CONFIG="${DIR}/fcos.ign"
+                  IMAGE="${DIR}/fedora*.qcow2"
+                  DISK="${DIR}/fcos.qcow2"
+                  VM_NAME="fcos"
+                  VCPUS="2"
+                  RAM_MB="2048"
+                  STREAM="stable"
+                  DISK_GB="10"
+                  IGNITION_DEVICE_ARG=(--qemu-commandline="-fw_cfg name=opt/com.coreos/config,file=${IGNITION_CONFIG}")
+          
+                  sudo cp ${DIR}/fedora-coreos-* ${DIR}/fcos.qcow2
+                  sudo virsh destroy fcos > /dev/null 2>&1 || :
+                  sudo virsh undefine fcos > /dev/null 2>&1 || :
+                  sudo virt-install --connect="qemu:///system" \
+                          --name=${VM_NAME} \
+                          --vcpus=${VCPUS} \
+                          --memory=${RAM_MB} \
+                          --pxe \
+                          --boot menu=on \
+                          --os-variant=fedora-coreos-${STREAM} \
+                          --import \
+                          --graphics spice,listen=0.0.0.0 \
+                          --noautoconsole \
+                          --disk=size=${DISK_GB} \
+                          --network network=default \
+                          "${IGNITION_DEVICE_ARG[@]}"
+                  watch sudo virsh domifaddr fcos
+          }
+          
+          function main {
+                  downloadImage
+                  createButane
+                  createIgnition
+                  createVirtualMachine
+          }
+          
+          main
