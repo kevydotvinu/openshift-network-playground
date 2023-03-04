@@ -547,11 +547,12 @@ storage:
           /usr/sbin/iptables -t nat -I POSTROUTING -s 192.168.123.0/24 ! -d 192.168.123.0/24 -j MASQUERADE
           /usr/sbin/iptables -t nat -I POSTROUTING -s 192.168.124.0/24 ! -d 192.168.124.0/24 -j MASQUERADE
           /usr/sbin/iptables -t nat -I POSTROUTING -s 192.168.125.0/24 ! -d 192.168.125.0/24 -j MASQUERADE
+          /usr/bin/echo 1 > /proc/sys/net/ipv6/conf/$(ip -o -4 route show default | awk '{print $5}')/disable_ipv6
           /usr/sbin/iptables -t nat -I PREROUTING -p tcp -i $(/usr/sbin/ip r | grep default | awk '{print $5}') --dport 443 -j DNAT --to-destination 192.168.123.89:443
           /usr/sbin/iptables -t nat -I PREROUTING -p tcp -i $(/usr/sbin/ip r | grep default | awk '{print $5}') --dport 80 -j DNAT --to-destination 192.168.123.89:80
           /usr/sbin/iptables -t nat -I PREROUTING -p tcp -i $(/usr/sbin/ip r | grep default | awk '{print $5}') --dport 6443 -j DNAT --to-destination 192.168.123.88:6443
           /usr/bin/test -f /opt/openshift-network-playground/vbmc/ssh/id_rsa || (ssh-keygen -N '' -f /opt/openshift-network-playground/vbmc/ssh/id_rsa && mkdir -p /home/onp/.ssh && cp /opt/openshift-network-playground/vbmc/ssh/id_rsa.pub /home/onp/.ssh/authorized_keys && chown onp:onp -R /home/onp/.ssh)
-          /usr/bin/test -f /opt/openshift-network-playground/cockpit-ws.done || (/usr/bin/test -d /usr/share/cockpit && podman container runlabel --name cockpit-ws RUN quay.io/cockpit/ws && podman container runlabel INSTALL quay.io/cockpit/ws && systemctl enable cockpit.service && touch /opt/openshift-network-playground/cockpit-ws.done)
+          /usr/bin/test -f /opt/openshift-network-playground/cockpit-ws.done || (/usr/bin/test -d /usr/share/cockpit && podman container runlabel --name cockpit-ws RUN quay.io/cockpit/ws && podman container runlabel INSTALL quay.io/cockpit/ws && systemctl enable --now cockpit.service && touch /opt/openshift-network-playground/cockpit-ws.done)
           /usr/bin/chown -R onp:onp /home/onp/.local
     - path: /etc/NetworkManager/system-connections/ens3.nmconnection
       mode: 0600
@@ -1055,6 +1056,8 @@ storage:
       contents:
         inline: |
           #!/bin/bash
+          
+          source /env
         
           # Create Tayga directories.
           mkdir -p ${TDATADIR} ${TCONFDIR}
@@ -1081,7 +1084,7 @@ storage:
           # Run tayga
           echo "Starting tayga ..."
           tayga -c ${TCONFDIR}/tayga.conf -d
-    - path: /opt/openshift-network-playground/dns64/env
+    - path: /opt/openshift-network-playground/nat64/env
       mode: 0644
       overwrite: true
       contents:
@@ -1094,8 +1097,8 @@ storage:
           TCONFDIR=/usr/local/etc
           TINT=nat64
           TVMINT=sno0
-          TMAININT=eno1
-    - path: /opt/openshift-network-playground/dns64/host.sh
+          TMAININT=$(ip -o -4 route show default | awk '{print $5}')
+    - path: /opt/openshift-network-playground/nat64/host.sh
       mode: 0755
       overwrite: true
       contents:
@@ -1141,7 +1144,7 @@ storage:
           listen-on-v6 port 53 { fd00:dead:beef::1; };
           directory       "/var/named";
           allow-query     { 192.168.126.0/24; fd00:dead:beef::/96; };
-          forwarders { 8.8.8.8; 8.8.4.4; };
+          forwarders { 127.0.0.1; };
           dns64 2001:db8:1:ffff::/96 {
                   clients { fd00:dead:beef::/96; };
                   exclude { !fd00:dead:beef::/96; any; };
@@ -1737,7 +1740,7 @@ storage:
           define onp
           
             ___  _ __  _ __
-           / _ \| '_ \| '_ \
+           / _ \| '_ \| '_ \\
           | (_) | | | | |_) |
            \___/|_| |_| .__/
                       | |
@@ -1748,7 +1751,7 @@ storage:
           export onp
 
           help:
-                @echo "$${onp}"
+                @echo -e "$${onp}"
                 @echo "Usage: onp [SUBCOMMAND] [VARIABLE_NAME]=<variable>"
                 @echo ""
                 @echo "Subcommands:"
@@ -1758,14 +1761,15 @@ storage:
                 @echo -e "  clean\t\t\t\t\tClean old cluster resources."
                 @echo -e "  go-download\t\t\t\tDownload and install Golang."
                 @echo -e "  kind-download\t\t\t\tDownload and install Kind."
-                @echo -e "  kind-create\t\t\t\tCreate a Kind cluster."
-                @echo -e "  kind-delete\t\t\t\tDelete a Kind cluster."
-                @echo -e "  ovn-kind\t\t\t\tCreate an OVN Kind cluster."
+                @echo -e "  kind-create-onp\t\t\tCreate a Kind cluster."
+                @echo -e "  kind-delete-onp\t\t\tDelete a Kind cluster."
+                @echo -e "  kind-create-ovn\t\t\tCreate an OVN Kind cluster."
+                @echo -e "  kind-delete-ovn\t\t\tCreate an OVN Kind cluster."
                 @echo -e "  sno\t\t\t\t\tCreate an IPv6 single-stack SNO cluster."
                 @echo -e "  onp-files\t\t\t\tClone the ONP sample manifests."
                 @echo -e "  rhcos-livecd\t\t\t\tCreate a RHCOS VM with custom network."
-                @echo -e "  disconnect-cluster\t\t\t\tDisconnect cluster from internet."
-                @echo -e "  connect-cluster\t\t\t\tConnect cluster to internet."
+                @echo -e "  disconnect-cluster\t\t\tDisconnect cluster from internet."
+                @echo -e "  connect-cluster\t\t\tConnect cluster to internet."
                 @echo -e "  services\t\t\t\tList services status."
                 @echo ""
                 @echo "Example:"
@@ -1835,12 +1839,12 @@ storage:
                           --data-urlencode "refresh_token=${OCM_API_TOKEN}" \
                           https://sso.redhat.com/auth/realms/redhat-external/protocol/openid-connect/token | \
                           jq -r .access_token)
-                  curl -s -X POST https://api.openshift.com/api/accounts_mgmt/v1/access_token --header "Content-Type:application/json" --header "Authorization: Bearer $BEARER" > ${SCRIPT_DIR}/pullsecret
+                  [ -f ${SCRIPT_DIR}/pullsecret ] || curl -s -X POST https://api.openshift.com/api/accounts_mgmt/v1/access_token --header "Content-Type:application/json" --header "Authorization: Bearer $BEARER" > ${SCRIPT_DIR}/pullsecret
           }
           
           function SSH_KEY {
-                  rm -fv ${SCRIPT_DIR}/id_ed25519 ${SCRIPT_DIR}/id_ed25519.pub
-                  ssh-keygen -q -t ed25519 -N '' -f ${SCRIPT_DIR}/id_ed25519
+                  # rm -fv ${SCRIPT_DIR}/id_ed25519 ${SCRIPT_DIR}/id_ed25519.pub
+                  [ -f ${SCRIPT_DIR}/id_ed25519 ] || ssh-keygen -q -t ed25519 -N '' -f ${SCRIPT_DIR}/id_ed25519
           }
           
           SCRIPT_DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]:-$0}"; )" &> /dev/null && pwd 2> /dev/null; )"
