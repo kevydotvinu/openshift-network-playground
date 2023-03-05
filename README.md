@@ -32,7 +32,7 @@ Copy it from [here](https://console.redhat.com/openshift/token/show).
 ## Installation
 - Download the ISO.
 ```bash
-$ curl -O https://github.com/kevydotvinu/openshift-network-playground/releases/download/v0.1.0/onp-v0.1.0-x86_64.iso
+curl -LO https://github.com/kevydotvinu/openshift-network-playground/releases/download/v0.1.0/onp-v0.1.0-x86_64.iso
 ```
 - Boot it and wait for the installation to complete (Monitor the progress in the machine console).
 > **WARNING**: The ISO boot will erase ALL the data on the `/dev/sda` disk and install OpenShift Network Playground automatically.
@@ -49,8 +49,8 @@ $ curl -O https://github.com/kevydotvinu/openshift-network-playground/releases/d
 
 ### CLI-based
 ```bash
-$ onp help
-$ onp deploy RELEASE=<release> OCM_TOKEN=<token>
+onp help
+onp deploy RELEASE=<release> OCM_TOKEN=<token>
 ```
 ## Single-stack IPv6 cluster architecture
 ![Single-stack IPv6 cluster architecture](../media/onp-ipv6.png?raw=true)

@@ -36,11 +36,10 @@ update-repo:
 		overlay.d \
 		live \
 		platforms.yaml
-	@echo -e "${ORANGE}Linking manifest-lock*,image.yaml,image-base.yaml & live ...${NOCOLOR}"
+	@echo -e "${ORANGE}Linking manifest-lock*,image.yaml,image-base.yaml ...${NOCOLOR}"
 	ln -svf fedora-coreos-config/manifest-lock* \
 		fedora-coreos-config/image.yaml \
 		fedora-coreos-config/image-base.yaml \
-		fedora-coreos-config/live \
 		fedora-coreos-config/platforms.yaml \
 		.
 	@echo -e "${ORANGE}Copying fedora.repo & fedora-coreos-pool.repo ...${NOCOLOR}"
@@ -52,18 +51,45 @@ update-repo:
 		pushd manifests && \
 		ln -svf ../fedora-coreos-config/manifests/* . && \
 		rm -rvf fedora-coreos.yaml && \
-		cp -rvf ../fedora-coreos-config/manifests/fedora-coreos.yaml \
-		fedora-coreos.yaml && \
+		cp -rvf ../fedora-coreos-config/manifests/fedora-coreos.yaml . && \
 		popd
 	@echo -e "${ORANGE}Linking files from overlay.d ...${NOCOLOR}"
 	mkdir overlay.d && \
 		pushd overlay.d && \
 		ln -svf ../fedora-coreos-config/overlay.d/* . && \
 		popd
+	@echo -e "${ORANGE}Linking and copying files from live ...${NOCOLOR}"
+	mkdir live && \
+		pushd live && \
+		ln -svf ../fedora-coreos-config/live/* . && \
+		rm -rvf EFI && \
+		mkdir EFI && \
+		pushd EFI && \
+		ln -svf ../../fedora-coreos-config/live/EFI/* . && \
+		rm -rvf fedora && \
+		mkdir fedora && \
+		pushd fedora && \
+		ln -svf ../../../fedora-coreos-config/live/EFI/fedora/* . && \
+		rm -rvf grub.cfg && \
+		cp -rvf ../../../fedora-coreos-config/live/EFI/fedora/grub.cfg . && \
+		popd && \
+		popd && \
+		rm -rvf isolinux && \
+		mkdir isolinux && \
+		pushd isolinux && \
+		ln -svf ../../fedora-coreos-config/live/isolinux/* . && \
+		rm -rvf isolinux.cfg && \
+		cp -rvf ../../fedora-coreos-config/live/isolinux/isolinux.cfg . && \
+		popd && \
+		popd
 	@echo -e "${ORANGE}Patching manifest.yaml with releasever ...${NOCOLOR}"
 	sed -i "s/releasever.*/${RELEASEVER}/" manifest.yaml
 	@echo -e "${ORANGE}Including python3 and python3-libs in manifests/fedora-coreos.yaml ...${NOCOLOR}"
 	sed -i 's/^  - python3/#&/' manifests/fedora-coreos.yaml
+	@echo -e "${ORANGE}Patching grub.cfg and isolinux.cfg ...${NOCOLOR}"
+	sed -i 's/Fedora CoreOS (Live)/OpenShift Network Playground/g' live/EFI/fedora/grub.cfg
+	sed -i 's/title Fedora CoreOS/title OpenShift Network Playground/g' live/isolinux/isolinux.cfg
+	sed -i 's#label ^Fedora CoreOS (Live)#label ^Autoinstall on /dev/sda#g' live/isolinux/isolinux.cfg
 
 .PHONY: cosa-init
 

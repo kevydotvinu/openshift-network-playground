@@ -869,7 +869,7 @@ storage:
           192.168.123.95 worker1.ocp.example.local
           192.168.123.1 openshift-network-playground.ocp.example.local lb.ocp.example.local mirror.ocp.example.local proxy.ocp.example.local
           192.168.126.2 api.sno.example.local api-int.sno.example.local node.sno.example.local
-          fd00:dead:beef::2 api.sno.example.local
+          fd00:dead:beef::2 api.sno.example.local api-int.sno.example.local node.sno.example.local
     - path: /etc/zincati/config.d/90-disable-auto-updates.toml
       contents:
         inline: |
@@ -1737,40 +1737,30 @@ storage:
 
           .PHONY: help
 
-          define onp
-          
-            ___  _ __  _ __
-           / _ \| '_ \| '_ \\
-          | (_) | | | | |_) |
-           \___/|_| |_| .__/
-                      | |
-                      |_|
-          
-          endef
-          
-          export onp
-
           help:
-                @echo -e "$${onp}"
+                @echo "OpenShift Network Playground CLI"
+                @echo ""
+                @echo "It includes the administrative commands for managing the ONP."
+                @echo ""
                 @echo "Usage: onp [SUBCOMMAND] [VARIABLE_NAME]=<variable>"
                 @echo ""
                 @echo "Subcommands:"
-                @echo -e "  ssh-pullsecret OCM_TOKEN=<OCM_TOKEN>\tGenerate SSH keys and download pullsecret file."
-                @echo -e "  install-config\t\t\tGenerate install-config.yaml file."
-                @echo -e "  cluster\t\t\t\tCreate an OpenShift cluster."
-                @echo -e "  clean\t\t\t\t\tClean old cluster resources."
-                @echo -e "  go-download\t\t\t\tDownload and install Golang."
-                @echo -e "  kind-download\t\t\t\tDownload and install Kind."
-                @echo -e "  kind-create-onp\t\t\tCreate a Kind cluster."
-                @echo -e "  kind-delete-onp\t\t\tDelete a Kind cluster."
-                @echo -e "  kind-create-ovn\t\t\tCreate an OVN Kind cluster."
-                @echo -e "  kind-delete-ovn\t\t\tCreate an OVN Kind cluster."
-                @echo -e "  sno\t\t\t\t\tCreate an IPv6 single-stack SNO cluster."
-                @echo -e "  onp-files\t\t\t\tClone the ONP sample manifests."
-                @echo -e "  rhcos-livecd\t\t\t\tCreate a RHCOS VM with custom network."
-                @echo -e "  disconnect-cluster\t\t\tDisconnect cluster from internet."
-                @echo -e "  connect-cluster\t\t\tConnect cluster to internet."
-                @echo -e "  services\t\t\t\tList services status."
+                @echo -e "  ssh-pullsecret OCM_TOKEN=<OCM_TOKEN>\tGenerate SSH keys and download pullsecret file"
+                @echo -e "  install-config\t\t\tGenerate install-config.yaml file"
+                @echo -e "  cluster\t\t\t\tCreate an OpenShift cluster"
+                @echo -e "  clean\t\t\t\t\tClean old cluster resources"
+                @echo -e "  go-download\t\t\t\tDownload and install Golang"
+                @echo -e "  kind-download\t\t\t\tDownload and install Kind"
+                @echo -e "  kind-create-onp\t\t\tCreate a Kind cluster"
+                @echo -e "  kind-delete-onp\t\t\tDelete a Kind cluster"
+                @echo -e "  kind-create-ovn\t\t\tCreate an OVN Kind cluster"
+                @echo -e "  kind-delete-ovn\t\t\tCreate an OVN Kind cluster"
+                @echo -e "  sno\t\t\t\t\tCreate an IPv6 single-stack SNO cluster"
+                @echo -e "  onp-files\t\t\t\tClone the ONP sample manifests"
+                @echo -e "  rhcos-livecd NETWORK=newtork=default\tCreate a RHCOS VM with custom network"
+                @echo -e "  disconnect-cluster\t\t\tDisconnect cluster from internet"
+                @echo -e "  connect-cluster\t\t\tConnect cluster to internet"
+                @echo -e "  services\t\t\t\tList services status"
                 @echo ""
                 @echo "Example:"
                 @echo "  onp cluster LOGLEVEL=debug"
@@ -1779,6 +1769,7 @@ storage:
                 @echo -e "  OCM_TOKEN\ttoken from https://cloud.redhat.com/openshift/token"
                 @echo -e "  RELEASE\tstable-4.10, latest-4.9, 4.9.0, etc"
                 @echo -e "  LOGLEVEL\tdebug, info, warn, error"
+                @echo -e "  NETWORK\tnetwork=default, bridge=onp1-dhcp, bridge=onp2-dhcp"
     - path: /home/onp/openshift-network-playground/clean-bootstrap.sh
       mode: 0755
       overwrite: true
@@ -1965,15 +1956,17 @@ storage:
     - path: /home/onp/.bashrc
       append:
         - inline: |
-            alias onp='make --no-print-directory -C /home/onp -f /home/onp/.Makefile'
-            alias konp='kubectl --kubeconfig /home/onp/.kube/onp-kind-config'
-            alias kovn='kubectl --kubeconfig /home/onp/.kube/ovn-kind-config'
+            alias onp='make --no-print-directory -C ${HOME} -f /home/onp/.Makefile'
+            alias konp='kubectl --kubeconfig ${HOME}/.kube/onp-kind-config'
+            alias kovn='kubectl --kubeconfig ${HOME}/.kube/ovn-kind-config'
             alias kind='sudo KIND_EXPERIMENTAL_PROVIDER=podman kind'
+            alias sno='oc --kubeconfig ${HOME}/openshift-network-playground/sno/auth/kubeconfig'
+            alias ssh='ssh -i ${HOME}/openshift-network-playground/id_ed25519 -o StrictHostKeyChecking=no'
             export EDITOR=vi
             export PATH=${PATH}:/usr/local/go/bin
             export PATH=${PATH}:${HOME}/.local/network-tools/debug-scripts
-            export KUBECONFIG=/home/onp/openshift-network-playground/clusterconfigs/auth/kubeconfig
-            sed -i -e 's/      /\t/g' /home/onp/.Makefile
+            export KUBECONFIG=${HOME}/openshift-network-playground/clusterconfigs/auth/kubeconfig
+            sed -i -e 's/      /\t/g' ${HOME}/.Makefile
     - path: /home/onp/openshift-network-playground/worker0.yaml
       mode: 0755
       overwrite: true
