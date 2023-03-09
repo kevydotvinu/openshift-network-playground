@@ -1234,6 +1234,7 @@ storage:
           ADD entrypoint.sh /usr/local/bin/entrypoint.sh
           ADD openssl.cnf.add /etc/ssl/openssl.cnf.add
           ADD squid.conf /etc/squid/squid.conf
+          ADD env /env
           RUN yum install -y squid openssl ca-certificates which && \
               chmod +x /usr/local/bin/entrypoint.sh && \
               cat /etc/ssl/openssl.cnf.add >> /etc/ssl/openssl.cnf
@@ -1352,7 +1353,9 @@ storage:
         inline: |
           #!/bin/sh
           
-          set -e
+          set -xe
+
+          source /env
           
           CHOWN=$(/usr/bin/which chown)
           SQUID=$(/usr/bin/which squid)
@@ -1410,6 +1413,13 @@ storage:
           }
           
           run
+    - path: /opt/openshift-network-playground/proxy/env
+      mode: 0644
+      overwrite: true
+      contents:
+        inline: |
+          CLUSTER_NAME=ocp
+          DOMAIN=example.local
     - path: /opt/openshift-network-playground/proxy/certs/.keepdir
       mode: 0644
       overwrite: true
@@ -1426,10 +1436,10 @@ storage:
       contents:
         inline: |
           SHELL = /bin/bash
-          RELEASE ?= stable-4.12
+          RELEASE ?= stable
           LOGLEVEL ?= info
           SCRIPT_DIR = $(shell cd -- "$( dirname -- "${BASH_SOURCE[0]:-$0}"; )" &> /dev/null && pwd 2> /dev/null; )
-          CONTAINERS = $(shell sudo podman ps --format {{.Names}} | sort | grep -oE '^dhcp|vbmc|webserver' | xargs)
+          CONTAINERS = $(shell sudo podman ps --format {{.Names}} | sort | grep -oE '^dhcp|vbmc|webserver|proxy' | xargs)
           VMS = $(shell sudo virsh list --all --name | grep -oE 'master0|master1|master2|worker0|worker1' | xargs)
           TFF = $(shell ls /tmp/openshift-install-bootstrap-*/terraform.platform.auto.tfvars.json 2>/dev/null | wc -l)
           VIRBR0=$(shell sudo virsh net-info default | awk '/Bridge:/{print $$2}')
@@ -1445,8 +1455,8 @@ storage:
           endif
 
           check-containers:
-          ifneq ($(CONTAINERS),dhcp vbmc webserver)
-                $(error The containerized services (dhcp vbmc webserver) are not ready. Check with 'sudo podman ps' and wait for a while to retry)
+          ifneq ($(CONTAINERS),dhcp vbmc webserver proxy)
+                $(error The containerized services (dhcp vbmc webserver proxy) are not ready. Check with 'sudo podman ps' and wait for a while to retry)
           endif
 
           check-vms:
@@ -1514,7 +1524,7 @@ storage:
 
           .PHONY: deploy
 
-          deploy: check-env clean ssh-pullsecret install-config manifests core-passwd-auth cluster
+          deploy: ssh-pullsecret clean install-config manifests core-passwd-auth cluster
 
           .PHONY: core-passwd-auth
 
@@ -1699,15 +1709,16 @@ storage:
           .PHONY: disconnect-cluster
 
           disconnect-cluster:
-                @echo "Making an iptables rule change to make the OpenShift cluster disconnected"
-                @sudo iptables -D FORWARD -i baremetal -o eno1 -j DROP > /dev/null 2>&1
-                @sudo iptables -A FORWARD -i baremetal -o eno1 -j DROP
+                @echo "Disabling internet for OpenShift cluster ..."
+                @sudo iptables -C FORWARD -i baremetal -o eno1 -j DROP || sudo iptables -A FORWARD -i baremetal -o eno1 -j DROP
+                @echo "OK!"
 
           .PHONY: connect-cluster
 
           connect-cluster:
-                @echo "Making an iptables rule change to make the OpenShift cluster connected"
-                @sudo iptables -D FORWARD -i baremetal -o eno1 -j DROP > /dev/null 2>&1
+                @echo "Enabling internet for OpenShift cluster ..."
+                @sudo iptables -D FORWARD -i baremetal -o eno1 -j DROP > /dev/null 2>&1 || echo "Rule exists!"
+                @echo "OK!"
 
           .PHONY: services
 
@@ -1940,6 +1951,12 @@ storage:
                    deviceName: "/dev/vda"
           pullSecret: '$(cat ${SCRIPT_DIR}/pullsecret)'
           sshKey: '$(cat ${SCRIPT_DIR}/id_ed25519.pub)'
+          proxy:
+            httpProxy: http://proxy.ocp.example.local:3128
+            httpsProxy: http://proxy.ocp.example.local:4128
+            noProxy: example.local,192.168.122.0/24,192.168.123.0/24,192.168.124.0/24,192.168.125.0/24,192.168.126.0/24,172.22.0.0/24
+          additionalTrustBundle: |
+          $(cat /opt/openshift-network-playground/proxy/certs/CA.pem | sed 's/^/    /')
           EOF
           echo "✔ Generated!"
           mkdir -p ${SCRIPT_DIR}/clusterconfigs

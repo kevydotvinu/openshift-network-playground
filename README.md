@@ -45,7 +45,7 @@ curl -LO https://github.com/kevydotvinu/openshift-network-playground/releases/do
 - Enter the release (`stable-4.12`, `4.12.2`, etc) and [OCM API token](https://console.redhat.com/openshift/token/show).
 - Press the `Deploy` button.
 
-> **Info**: To monitor the deployment progress, go to `Services` tab and search for `deploy-cluster.service`.
+> **INFO**: To monitor the deployment progress, go to `Services` tab and search for `deploy-cluster.service`.
 
 ### CLI-based
 ```bash
