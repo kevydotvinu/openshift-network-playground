@@ -1449,11 +1449,6 @@ storage:
           
           all: help
           
-          check-env:
-          ifndef OCM_TOKEN
-                $(error OCM_TOKEN is undefined | Get it from https://cloud.redhat.com/openshift/token)
-          endif
-
           check-containers:
           ifneq ($(CONTAINERS),dhcp vbmc webserver proxy)
                 $(error The containerized services (dhcp vbmc webserver proxy) are not ready. Check with 'sudo podman ps' and wait for a while to retry)
@@ -1471,13 +1466,19 @@ storage:
           
           .PHONY: ssh-pullsecret
           
-          ssh-pullsecret: check-env
-                @echo "Generating SSH keys and pullsecret ..."
-                @openshift-network-playground/ssh-pullsecret.sh $(OCM_TOKEN)
+          ssh-pullsecret:
+          ifneq ($(shell for FILE in ${HOME}/openshift-network-playground/pullsecret ${HOME}/openshift-network-playground/id_ed25519.pub; do test -e $${FILE} && echo -n OK; done),OKOK)
+                ifndef OCM_TOKEN
+                      $(error OCM_TOKEN is undefined | Get it from https://cloud.redhat.com/openshift/token)
+                else
+                      @echo "Generating SSH keys and pullsecret ..."
+                      @openshift-network-playground/ssh-pullsecret.sh $(OCM_TOKEN)
+                endif
+          endif
 
           .PHONY: install-config
 
-          install-config: /home/onp/openshift-network-playground/pullsecret /home/onp/openshift-network-playground/id_ed25519.pub
+          install-config: ssh-pullsecret
                 @openshift-network-playground/install-config.sh $(RELEASE)
 
           .PHONY: manifests
@@ -1494,7 +1495,7 @@ storage:
           
           .PHONY: cluster
           
-          cluster: check-containers check-vms
+          cluster: ssh-pullsecret check-containers check-vms
                 @echo "Creating cluster ..."
                 @/usr/local/bin/openshift-baremetal-install --log-level=${LOGLEVEL} --dir=$(SCRIPT_DIR)/openshift-network-playground/clusterconfigs create cluster
           
@@ -1503,11 +1504,6 @@ storage:
           clean:
                 @echo "Removing old bootstrap resources ..."
                 -@$(SCRIPT_DIR)/openshift-network-playground/clean-bootstrap.sh
-                @echo "Removing installation directory ..."
-                -@rm -rfv $(SCRIPT_DIR)/openshift-network-playground/clusterconfigs
-                @echo "Powering off master nodes ..."
-                -@for i in master0 master1 master2; do sudo virsh destroy $$i; done
-                @echo "!!! IGNORE THE ERRORS !!!"
           
           .PHONY: destroy
           
@@ -1746,6 +1742,11 @@ storage:
                 @echo -e "nat64\t\t${NAT64}"
                 @echo -e "dns64\t\t${DNS64}"
 
+          .PHONY: bootstrap
+
+          bootstrap:
+                @if sudo virsh -q list | grep -q bootstrap; then journalctl -u dhcp | grep PACK | grep $$(sudo virsh -q domiflist $$(sudo virsh -q list | grep bootstrap | awk '{print $$2}') | grep baremetal | awk '{print $$5}') | awk '{print $$9}'; fi
+
           .PHONY: help
 
           help:
@@ -1794,23 +1795,38 @@ storage:
           #
           # Remove old bootstrap resources if any are left over from a previous deployment attempt
           
-          set -xo pipefail
+          set -o pipefail
           
           BOOTSTRAP_RESOURCES=$(sudo virsh pool-list | grep bootstrap | awk '{print $1}' | xargs)
+          MASTER_RESOURCES=$(sudo virsh list --all | grep master | awk '{print $2}' | xargs)
           
           if [ -z ${BOOTSTRAP_RESOURCES} ]; then
                   echo "No bootstrap resources ..."
           else
                   for RESOURCE in ${BOOTSTRAP_RESOURCES}; do
-                          sudo virsh destroy ${RESOURCE}
-                          sudo virsh undefine ${RESOURCE}
-                          sudo virsh pool-start ${RESOURCE}
-                          sudo virsh vol-delete ${RESOURCE} --pool ${RESOURCE}
-                          sudo virsh vol-delete ${RESOURCE}-base --pool ${RESOURCE}
-                          sudo virsh vol-delete ${RESOURCE}.ign --pool ${RESOURCE}
-                          sudo virsh pool-destroy ${RESOURCE}
-                          sudo virsh pool-delete ${RESOURCE}
-                          sudo virsh pool-undefine ${RESOURCE}
+                          sudo virsh -q destroy ${RESOURCE} 2>/dev/null
+                          sudo virsh -q undefine ${RESOURCE} 2>/dev/null
+                          sudo virsh -q pool-start ${RESOURCE} 2>/dev/null
+                          sudo virsh -q vol-delete ${RESOURCE} --pool ${RESOURCE} 2>/dev/null
+                          sudo virsh -q vol-delete ${RESOURCE}-base --pool ${RESOURCE} 2>/dev/null
+                          sudo virsh -q vol-delete ${RESOURCE}.ign --pool ${RESOURCE} 2>/dev/null
+                          sudo virsh -q pool-destroy ${RESOURCE} 2>/dev/null
+                          sudo virsh -q pool-delete ${RESOURCE} 2>/dev/null
+                          sudo virsh -q pool-undefine ${RESOURCE} 2>/dev/null
+                          exit 0
+                  done
+          fi
+
+          echo "Removing installation directory ..."
+          rm -rf ${HOME}/openshift-network-playground/clusterconfigs
+
+          echo "Powering off master nodes ..."
+          if [[ -z ${MASTER_RESOURCES} ]]; then
+                  echo "No master resources ..."
+          else
+                  for i in master0 master1 master2 worker0 worker1; do
+                          sudo virsh -q destroy $i 2>/dev/null
+                          exit 0
                   done
           fi
     - path: /home/onp/openshift-network-playground/ssh-pullsecret.sh
