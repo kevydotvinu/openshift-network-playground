@@ -2175,7 +2175,7 @@ storage:
         inline: |
           #!/bin/bash
           # This script initiates an OpenShift cluster deployment in transient systemd service.
-          sudo systemd-run --uid=onp --unit=deploy-cluster --description='OpenShift cluster deployment' make -C /home/onp/ -f /home/onp/.Makefile deploy RELEASE=${1} OCM_TOKEN=${2}
+          sudo systemd-run --uid=onp --unit=deploy-cluster --remain-after-exit --description='OpenShift cluster deployment' make -C /home/onp/ -f /home/onp/.Makefile deploy RELEASE=${1}
           journalctl -f -u deploy-cluster.service
     - path: /home/onp/.local/share/cockpit/openshift/manifest.json
       mode: 0755
@@ -2215,29 +2215,47 @@ storage:
               <main tabindex="-1">
                   <section>
                       <div id="app">
+                          <h3> OpenShift cluster credentials </h3>
                           <div>
-                              <label for="release">Release</label>
-                              <input id="release" value="4.12.2">
+                              <button id="passwordButton">Show</button>
+                              <span id="passwordResult"></span>
                           </div>
                           <div>
-                              <label for="token">OCM Token</label>
-                              <input id="token" value="">
+                              <pre id="passwordOutput"></pre>
+                          </div>
+                          <h3> Deploy a compact OpenShift cluster </h3>
+                          <div>
+                              <label for="deployRelease">Release</label>
+                              <input id="deployRelease" value="stable">
                           </div>
                           <div>
-                              <button id="deploy">Deploy</button>
-                              <span id="result"></span>
+                              <p>
+                              <label for="deployToken">OCM Token</label>
+                              <input id="deployToken" value="">
+                              </p>
                           </div>
                           <div>
-                              <pre id="output"></pre>
+                              <p>
+                              Get OCM token from <a href="https://cloud.redhat.com/openshift/token" target="_blank">here</a>.
+                              OCM token is only reqired in the first deployment. The pullsecret will be saved locally.
+                              </p>
+                          </div>
+                          <div>
+                              <button id="deployButton">Deploy</button>
+                              <span id="deployResult"></span>
+                          </div>
+                          <div>
+                              <pre id="deployOutput"></pre>
                           </div>
                       </div>
                   </section>
               </main>
-
-              <script src="openshift.js"></script>
+          
+              <script src="deploy.js"></script>
+              <script src="password.js"></script>
           </body>
           </html>
-    - path: /home/onp/.local/share/cockpit/openshift/openshift.js
+    - path: /home/onp/.local/share/cockpit/openshift/deploy.js
       mode: 0755
       overwrite: true
       user:
@@ -2246,40 +2264,83 @@ storage:
         name: onp
       contents:
         inline: |
-          const release = document.getElementById("release");
-          const token = document.getElementById("token");
-          const output = document.getElementById("output");
-          const result = document.getElementById("result");
-          const button = document.getElementById("deploy");
-
+          const deployRelease = document.getElementById("deployRelease");
+          const deployToken = document.getElementById("deployToken");
+          const deployOutput = document.getElementById("deployOutput");
+          const deployResult = document.getElementById("deployResult");
+          const deployButton = document.getElementById("deployButton");
+          
           function deploy_run() {
               /* global cockpit */
-              cockpit.spawn(["/home/onp/.local/share/cockpit/openshift/deploy-cluster.sh", release.value, token.value])
+              cockpit.spawn(["/home/onp/.local/share/cockpit/openshift/deploy-cluster.sh", deployRelease.value, deployToken.value])
                       .stream(deploy_output)
                       .then(deploy_success)
                       .catch(deploy_fail);
-
-              result.innerHTML = "";
-              output.innerHTML = "";
+          
+              deployResult.innerHTML = "";
+              deployOutput.innerHTML = "";
           }
-
+          
           function deploy_success() {
-              result.style.color = "green";
-              result.innerHTML = "success";
+              deployResult.style.color = "green";
+              deployResult.innerHTML = "Deployment started!";
           }
-
+          
           function deploy_fail() {
-              result.style.color = "red";
-              result.innerHTML = "fail";
+              deployResult.style.color = "red";
+              deployResult.innerHTML = "Deployment failed!";
           }
-
+          
           function deploy_output(data) {
-              output.append(document.createTextNode(data));
+              deployOutput.append(document.createTextNode(data));
           }
-
+          
           // Connect the button to starting the "deploy" process
-          button.addEventListener("click", deploy_run);
-
+          deployButton.addEventListener("click", deploy_run);
+          
+          // Send a 'init' message.  This tells integration tests that we are ready to go
+          cockpit.transport.wait(function() { });
+    - path: /home/onp/.local/share/cockpit/openshift/password.js
+      mode: 0755
+      overwrite: true
+      user:
+        name: onp
+      group:
+        name: onp
+      contents:
+        inline: |
+          const passwordOutput = document.getElementById("passwordOutput");
+          const passwordResult = document.getElementById("passwordResult");
+          const passwordButton = document.getElementById("passwordButton");
+          
+          function password_run() {
+              /* global cockpit */
+              cockpit.spawn(["cat", "/home/onp/openshift-network-playground/clusterconfigs/auth/kubeadmin-password"])
+                      .stream(password_output)
+                      .then(password_success)
+                      .catch(password_fail);
+          
+              passwordResult.innerHTML = "";
+              passwordOutput.innerHTML = "";
+          }
+          
+          function password_success() {
+              passwordResult.style.color = "green";
+              passwordResult.innerHTML = "Got kubeadmin password!";
+          }
+          
+          function password_fail() {
+              passwordResult.style.color = "red";
+              passwordResult.innerHTML = "No credentials!";
+          }
+          
+          function password_output(data) {
+              passwordOutput.append(document.createTextNode(data));
+          }
+          
+          // Connect the button to starting the "show" process
+          passwordButton.addEventListener("click", password_run);
+          
           // Send a 'init' message.  This tells integration tests that we are ready to go
           cockpit.transport.wait(function() { });
     - path: /home/onp/openshift-network-playground/sno.sh
