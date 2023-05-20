@@ -1097,7 +1097,7 @@ storage:
           TCONFDIR=/usr/local/etc
           TINT=nat64
           TVMINT=sno0
-          TMAININT=$(ip -o -4 route show default | awk '{print $5}')
+          TMAININT=$(ip -o -4 route show default | awk '{print $5}' | head -n 1)
     - path: /opt/openshift-network-playground/nat64/host.sh
       mode: 0755
       overwrite: true
@@ -1627,14 +1627,13 @@ storage:
 
           .PHONY: sno
 
-          sno: /home/onp/openshift-network-playground/pullsecret /home/onp/openshift-network-playground/id_ed25519.pub
+          sno: ssh-pullsecret
                 @echo "Creating SNO cluster ..."
-                -@rm -rf $(SCRIPT_DIR)/openshift-network-playground/sno
-                -@rm -rf $(SCRIPT_DIR)/openshift-network-playground/sno.yaml
                 @openshift-network-playground/sno.sh ${RELEASE}
                 @/usr/local/bin/openshift-install --log-level=${LOGLEVEL} \
                                                   --dir=$(SCRIPT_DIR)/openshift-network-playground/sno create single-node-ignition-config
                 @sudo podman run --privileged \
+                        --quiet \
                         --pull always \
                         --rm \
                         -v /dev:/dev \
@@ -1645,6 +1644,7 @@ storage:
                         var/home/onp/openshift-network-playground/sno/bootstrap-in-place-for-live-iso.ign \
                         opt/openshift-network-playground/libvirt/sno/rhcos-live.iso
                 @sudo podman run --privileged \
+                        --quiet \
                         --pull always \
                         --rm \
                         -v /dev:/dev \
@@ -1654,11 +1654,8 @@ storage:
                         quay.io/coreos/coreos-installer:release iso network embed -fk \
                         var/home/onp/openshift-network-playground/enp1s0.nmconnection \
                         opt/openshift-network-playground/libvirt/sno/rhcos-live.iso
-                -@sudo virsh destroy sno 2>/dev/null
-                -@sudo virsh undefine sno 2>/dev/null
-                -@rm -f /opt/openshift-network-playground/libvirt/sno/sno.img 2>/dev/null
-                @sudo qemu-img create /opt/openshift-network-playground/libvirt/sno/sno.img 120G
                 @sudo virt-install --name sno \
+                                   --quiet \
                                    --os-variant fedora-coreos-stable \
                                    --vcpu 4 \
                                    --memory 16384 \
@@ -2296,6 +2293,8 @@ storage:
 
           ONPDIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]:-$0}"; )" &> /dev/null && pwd 2> /dev/null; )"
           export VERSION=${1}
+          rm -rf ${ONPDIR}/sno
+          rm -rf ${ONPDIR}/sno.yaml
           echo "Downloading oc binary ..."
           curl -s https://mirror.openshift.com/pub/openshift-v4/clients/ocp/$VERSION/openshift-client-linux.tar.gz | tar zxf - -C ${ONPDIR} oc
           sudo mv ${ONPDIR}/oc /usr/local/bin
@@ -2341,6 +2340,10 @@ storage:
           echo "Copying install-config.yaml file to the installation directory ..."
           cp ${ONPDIR}/sno.yaml ${ONPDIR}/sno/install-config.yaml
           echo "✔ Copied!"
+          sudo virsh -q destroy sno 2>/dev/null || true
+          sudo virsh -q undefine sno 2>/dev/null || true
+          sudo rm -f /opt/openshift-network-playground/libvirt/sno/sno.img
+          sudo qemu-img create /opt/openshift-network-playground/libvirt/sno/sno.img 120G
     - path: /home/onp/openshift-network-playground/sno-restart.sh
       mode: 0755
       overwrite: true
