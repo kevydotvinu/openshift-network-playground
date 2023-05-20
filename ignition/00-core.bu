@@ -1449,6 +1449,16 @@ storage:
           
           all: help
           
+          check-from:
+          ifndef FROM
+                $(error FROM is undefined | Usage: onp store-release FROM=4.x.y)
+          endif
+
+          check-to:
+          ifndef TO
+                $(error TO is undefined | Usage: onp restore-release TO=4.x.y)
+          endif
+
           check-containers:
           ifneq ($(CONTAINERS),dhcp vbmc webserver proxy)
                 $(error The containerized services (dhcp vbmc webserver proxy) are not ready. Check with 'sudo podman ps' and wait for a while to retry)
@@ -1742,10 +1752,28 @@ storage:
                 @echo -e "nat64\t\t${NAT64}"
                 @echo -e "dns64\t\t${DNS64}"
 
-          .PHONY: bootstrap
+          .PHONY: bootstrap-ip
 
-          bootstrap:
+          bootstrap-ip:
                 @if sudo virsh -q list | grep -q bootstrap; then journalctl -u dhcp | grep PACK | grep $$(sudo virsh -q domiflist $$(sudo virsh -q list | grep bootstrap | awk '{print $$2}') | grep baremetal | awk '{print $$5}') | awk '{print $$9}'; fi
+
+          .PHONY: list-releases
+
+          list-releases:
+                  @echo -e "RELEASES"
+                  @ls /opt/openshift-network-playground/ | grep 4[.]
+
+          .PHONY: store-release
+
+          store-release: check-from
+                  @echo -e "Storing ${FROM} release ..."
+                  @${HOME}/openshift-network-playground/store-release.sh ${FROM}
+
+          .PHONY: restore-release
+
+          restore-release: check-to
+                  @echo -e "Restoring ${TO} release ..."
+                  @${HOME}/openshift-network-playground/restore-release.sh ${TO}
 
           .PHONY: help
 
@@ -1773,6 +1801,9 @@ storage:
                 @echo -e "  disconnect-cluster\t\t\tDisconnect cluster from internet"
                 @echo -e "  connect-cluster\t\t\tConnect cluster to internet"
                 @echo -e "  services\t\t\t\tList services status"
+                @echo -e "  bootstrap-ip\t\t\t\tShow bootstrap IP"
+                @echo -e "  store-release FROM=4.x.y\t\tStore OpenShift 4.x.y release"
+                @echo -e "  restore-release TO=4.x.y\t\tRestore OpenShift 4.x.y release"
                 @echo ""
                 @echo "Example:"
                 @echo "  onp cluster LOGLEVEL=debug"
@@ -1782,6 +1813,8 @@ storage:
                 @echo -e "  RELEASE\tstable-4.10, latest-4.9, 4.9.0, etc"
                 @echo -e "  LOGLEVEL\tdebug, info, warn, error"
                 @echo -e "  NETWORK\tnetwork=default, bridge=onp1-dhcp, bridge=onp2-dhcp"
+                @echo -e "  TO\t\t4.10.10, 4.11.11, 4.12.12, etc"
+                @echo -e "  FROM\t\t4.10.10, 4.11.11, 4.12.12, etc"
     - path: /home/onp/openshift-network-playground/clean-bootstrap.sh
       mode: 0755
       overwrite: true
@@ -2451,3 +2484,130 @@ storage:
           }
           
           main
+    - path: /home/onp/openshift-network-playground/store-release.sh
+      mode: 0755
+      overwrite: true
+      user:
+        name: onp
+      group:
+        name: onp
+      contents:
+        inline: |
+          #!/bin/bash
+          RELEASE=$1
+          
+          function check_release() {
+                  if [ -d /opt/openshift-network-playground/${RELEASE} ]; then
+                          echo "Directory named $RELEASE exists. It will be replaced."
+                          read -r -p "Do you want to continue? [y/N] " response
+                                  case "$response" in
+                                          [yY][eE][sS]|[yY])
+                                                  echo "Removing files..."
+                                                  sudo rm -rf /opt/openshift-network-playground/$RELEASE
+                                          ;;
+                                          *)
+                                                  exit 0
+                                          ;;
+                                  esac
+                  fi
+          }
+          
+          function wait_for_shutdown() {
+                  sp='/-\|'
+                  sc=0
+          
+                  spin() {
+                          printf "\r[${sp:sc++:1}] $1"
+                          ((sc==${#sp})) && sc=0
+                  }
+          
+                  endspin() {
+                          printf "\r%s\n" "$@"
+                  }
+          
+                  until [[ $(sudo virsh -q list 2>/dev/null | grep -o master | wc -c) -eq 0 ]]
+                          do spin "Waiting for the shutdown ..."
+                          sleep 0.5
+                  done
+                  endspin
+          }
+          
+          function setup() {
+                  if [[ $(sudo virsh -q list 2>/dev/null | grep -o master | wc -c) != 0 ]]; then
+                          for node in $(oc get nodes -o jsonpath='{.items[*].metadata.name}'); do ssh -i openshift-network-playground/id_ed25519 -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no core@${node} -- sudo shutdown -h 1; done
+                          wait_for_shutdown
+                  fi
+          
+                  sudo mkdir -p /opt/openshift-network-playground/${RELEASE}
+          }
+          
+          function store_release() {
+                  for i in master0 master1 master2;
+                  do
+                          if [ ! -f /opt/openshift-network-playground/${RELEASE}/$i/$i.img ]; then
+                                  sudo sudo mkdir -p /opt/openshift-network-playground/${RELEASE}/$i
+                                  sudo cp /opt/openshift-network-playground/libvirt/$i/$i.img /opt/openshift-network-playground/${RELEASE}/$i/$i.img
+                                  echo "Copied $i.img!"
+                          fi
+                  done
+                  if [ ! -f /opt/openshift-network-playground/${RELEASE}/kubeconfig ]; then
+                          sudo cp ${HOME}/openshift-network-playground/clusterconfigs/auth/kubeconfig /opt/openshift-network-playground/${RELEASE}/
+                          echo "Copied kubeconfig!"
+                          sudo cp ${HOME}/openshift-network-playground/clusterconfigs/auth/kubeadmin-password /opt/openshift-network-playground/${RELEASE}/
+                          echo "Copied kubeadmin-password!"
+                  fi
+          }
+          
+          check_release
+          setup
+          store_release
+    - path: /home/onp/openshift-network-playground/restore-release.sh
+      mode: 0755
+      overwrite: true
+      user:
+        name: onp
+      group:
+        name: onp
+      contents:
+        inline: |
+          #!/bin/bash
+
+          RELEASE=${1}
+          
+          function download_oc() {
+                  echo "Downloading oc binary ..."
+                  curl -# https://mirror.openshift.com/pub/openshift-v4/clients/ocp/$RELEASE/openshift-client-linux.tar.gz | tar xzf /dev/stdin oc
+                  sudo mv oc /usr/local/bin/
+                  echo "✔ Downloaded!"
+          }
+          
+          function setup() {
+                  sudo systemctl restart dhcp
+          }
+          
+          function restore_release() {
+                  for i in master0 master1 master2;
+                  do
+                          if [ -f /opt/openshift-network-playground/${RELEASE}/$i/$i.img ]; then
+                                  sudo virsh -q destroy $i 2>/dev/null
+                                  sudo cp /opt/openshift-network-playground/${RELEASE}/$i/$i.img /opt/openshift-network-playground/libvirt/$i/$i.img
+                                  sudo virsh -q start $i
+                                  echo "$i started!"
+                          else
+                                  echo "No $i.img file in /opt/openshift-network-playground/${RELEASE}/$i/"
+                          fi
+                  done
+                  if [ -f /opt/openshift-network-playground/${RELEASE}/kubeconfig ]; then
+                          mkdir -p openshift-network-playground/clusterconfigs/auth
+                          sudo cp /opt/openshift-network-playground/${RELEASE}/kubeconfig ${HOME}/openshift-network-playground/clusterconfigs/auth/kubeconfig
+                          sudo chown onp:onp ${HOME}/openshift-network-playground/clusterconfigs/auth/kubeconfig
+                          sudo cp /opt/openshift-network-playground/${RELEASE}/kubeadmin-password ${HOME}/openshift-network-playground/clusterconfigs/auth/kubeadmin-password
+                          sudo chown onp:onp ${HOME}/openshift-network-playground/clusterconfigs/auth/kubeadmin-password
+                          download_oc
+                  else
+                          echo "No kubeconfig file in /opt/openshift-network-playground/${RELEASE}/"
+                  fi
+          }
+          
+          restore_release
+          setup
