@@ -1614,7 +1614,7 @@ storage:
                 sudo PATH=${PATH}:/usr/local/go/bin ./kind.sh -ep podman && \
                 mkdir -p ${HOME}/.kube && \
                 sudo cp /root/ovn.conf ${HOME}/.kube/ovn-kind-config && \
-                sudo chown $(id -u):$(id -g) ${HOME}/.kube/ovn-kind-config && \
+                sudo chown $$(id -u):$$(id -g) ${HOME}/.kube/ovn-kind-config && \
                 popd
 
           .PHONY: kind-delete-ovn
