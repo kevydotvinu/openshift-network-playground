@@ -1601,8 +1601,9 @@ storage:
           kind-create-ovn: go-download
                 @echo "Creating OVN kind cluster ..."
                 go env -w GO111MODULE=auto && \
-                (rm -rf ${HOME}/ovn-kubernetes || true) && \
+                (sudo rm -rf ${HOME}/ovn-kubernetes || true) && \
                 git clone https://github.com/ovn-org/ovn-kubernetes ${HOME}/ovn-kubernetes && \
+                sudo pip3 install j2cli && \
                 pushd ${HOME}/ovn-kubernetes/go-controller && \
                 make && \
                 popd && \
@@ -1611,6 +1612,7 @@ storage:
                 popd && \
                 pushd ${HOME}/ovn-kubernetes/contrib && \
                 sudo PATH=${PATH}:/usr/local/go/bin ./kind.sh -ep podman && \
+                mkdir -p ${HOME}/.kube && \
                 sudo cp /root/ovn.conf ${HOME}/.kube/ovn-kind-config && \
                 sudo chown $(id -u):$(id -g) ${HOME}/.kube/ovn-kind-config && \
                 popd
