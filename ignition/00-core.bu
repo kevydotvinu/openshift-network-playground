@@ -1460,8 +1460,8 @@ storage:
           endif
 
           check-containers:
-          ifneq ($(CONTAINERS),dhcp vbmc webserver proxy)
-                $(error The containerized services (dhcp vbmc webserver proxy) are not ready. Check with 'sudo podman ps' and wait for a while to retry)
+          ifneq ($(CONTAINERS),dhcp proxy vbmc webserver)
+                $(error The containerized services (dhcp proxy vbmc webserver) are not ready. Check with 'sudo podman ps' and wait for a while to retry)
           endif
 
           check-vms:
