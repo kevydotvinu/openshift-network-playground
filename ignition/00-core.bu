@@ -1478,12 +1478,12 @@ storage:
           
           ssh-pullsecret:
           ifneq ($(shell for FILE in ${HOME}/openshift-network-playground/pullsecret ${HOME}/openshift-network-playground/id_ed25519.pub; do test -e $${FILE} && echo -n OK; done),OKOK)
-                ifndef OCM_TOKEN
-                      $(error OCM_TOKEN is undefined | Get it from https://cloud.redhat.com/openshift/token)
-                else
-                      @echo "Generating SSH keys and pullsecret ..."
-                      @openshift-network-playground/ssh-pullsecret.sh $(OCM_TOKEN)
-                endif
+          ifndef OCM_TOKEN
+                $(error OCM_TOKEN is undefined | Get it from https://cloud.redhat.com/openshift/token)
+          else
+                @echo "Generating SSH keys and pullsecret ..."
+                @openshift-network-playground/ssh-pullsecret.sh $(OCM_TOKEN)
+          endif
           endif
 
           .PHONY: install-config
@@ -2175,7 +2175,7 @@ storage:
         inline: |
           #!/bin/bash
           # This script initiates an OpenShift cluster deployment in transient systemd service.
-          sudo systemd-run --uid=onp --unit=deploy-cluster --remain-after-exit --description='OpenShift cluster deployment' make -C /home/onp/ -f /home/onp/.Makefile deploy RELEASE=${1}
+          sudo systemd-run --uid=onp --unit=deploy-cluster --remain-after-exit --description='OpenShift cluster deployment' make -C /home/onp/ -f /home/onp/.Makefile deploy RELEASE=${1} OCM_TOKEN=${2}
           journalctl -f -u deploy-cluster.service
     - path: /home/onp/.local/share/cockpit/openshift/manifest.json
       mode: 0755
@@ -2230,7 +2230,7 @@ storage:
                           </div>
                           <div>
                               <p>
-                              <label for="deployToken">OCM Token</label>
+                              <label for="deployToken">OCM token</label>
                               <input id="deployToken" value="">
                               </p>
                           </div>
