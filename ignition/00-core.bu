@@ -2600,7 +2600,7 @@ storage:
           
           function setup() {
                   if [[ $(sudo virsh -q list 2>/dev/null | grep -o master | wc -c) != 0 ]]; then
-                          for node in $(oc get nodes -o jsonpath='{.items[*].metadata.name}'); do ssh -i openshift-network-playground/id_ed25519 -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no core@${node} -- sudo shutdown -h 1; done
+                          for node in $(oc get nodes -o json | jq -r --arg domain ".ocp.example.local" '.items[].metadata.name + $domain'); do ssh -i openshift-network-playground/id_ed25519 -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no core@${node} -- sudo shutdown -h 1; done
                           wait_for_shutdown
                   fi
           
