@@ -1760,7 +1760,7 @@ storage:
 
           list-releases:
                   @echo -e "RELEASES"
-                  @ls /opt/openshift-network-playground/ | grep 4[.]
+                  @ls /opt/openshift-network-playground/ | grep 4[.] || true
 
           .PHONY: store-release
 
