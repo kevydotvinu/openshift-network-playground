@@ -2326,7 +2326,7 @@ storage:
           
           function password_success() {
               passwordResult.style.color = "green";
-              passwordResult.innerHTML = "Got kubeadmin password!";
+              passwordResult.innerHTML = "Found kubeadmin password!";
           }
           
           function password_fail() {
