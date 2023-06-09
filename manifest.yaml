@@ -23,6 +23,8 @@ packages:
   - NetworkManager-ovs
   - toolbox
   - python3-pip
+  - zsh
+  - tmux
 
 repos:
   - fedora
