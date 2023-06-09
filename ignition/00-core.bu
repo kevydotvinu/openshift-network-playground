@@ -2315,7 +2315,7 @@ storage:
           
           function password_run() {
               /* global cockpit */
-              cockpit.spawn(["cat", "/home/onp/openshift-network-playground/clusterconfigs/auth/kubeadmin-password"])
+              cockpit.spawn(["/home/onp/.local/share/cockpit/openshift/password.sh"])
                       .stream(password_output)
                       .then(password_success)
                       .catch(password_fail);
@@ -2326,7 +2326,7 @@ storage:
           
           function password_success() {
               passwordResult.style.color = "green";
-              passwordResult.innerHTML = "Found kubeadmin password!";
+              passwordResult.innerHTML = "Found credentials!";
           }
           
           function password_fail() {
@@ -2343,6 +2343,33 @@ storage:
           
           // Send a 'init' message.  This tells integration tests that we are ready to go
           cockpit.transport.wait(function() { });
+    - path: /home/onp/.local/share/cockpit/openshift/password.sh
+      mode: 0755
+      overwrite: true
+      user:
+        name: onp
+      group:
+        name: onp
+      contents:
+        inline: |
+          #!/bin/bash
+
+          set -eou pipefail
+
+          PASSWORD=$(cat /home/onp/openshift-network-playground/clusterconfigs/auth/kubeadmin-password)
+          IP=$(ip r s default | awk '{print $9}')
+
+          cat << EOF
+          Console
+          URL      : https://console-openshift-console.apps.ocp.example.local
+          username : kubeadmin
+          password : ${PASSWORD}
+          DNS      : echo "${IP} console-openshift-console.apps.ocp.example.local oauth-openshift.apps.ocp.example.local" | sudo tee -a /etc/hosts
+
+          CLI
+          command : oc login -u kubeadmin -p ${PASSWORD} https://api.ocp.example.local:6443
+          DNS     : echo "${IP} api.ocp.example.local" | sudo tee -a /etc/hosts
+          EOF
     - path: /home/onp/openshift-network-playground/sno.sh
       mode: 0755
       overwrite: true
