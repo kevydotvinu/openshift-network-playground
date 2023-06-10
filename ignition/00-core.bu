@@ -2605,8 +2605,19 @@ storage:
       contents:
         inline: |
           #!/bin/bash
-          RELEASE=$1
-          
+          RELEASE=${1}
+
+          function check_size() {
+                  SIZE=$(du -cs /opt/openshift-network-playground/libvirt/master* | tail -n1 | awk '{print $1}')
+                  SIZEH=$(du -csh /opt/openshift-network-playground/libvirt/master* | tail -n1 | awk '{print $1}')
+                  FREE=$(df -P /opt | sed -n 2p | awk '{print $4}')
+                  FREEH=$(df -Ph /opt | sed -n 2p | awk '{print $4}')
+                  if [[ ${SIZE} -gt ${FREE} ]]; then
+                          echo "Error: /opt does not have enough space - Have: ${FREEH} Need: ${SIZEH}"
+                          exit 0
+                  fi
+          }
+
           function check_release() {
                   if [ -d /opt/openshift-network-playground/${RELEASE} ]; then
                           echo "Directory named $RELEASE exists. It will be replaced."
@@ -2669,6 +2680,7 @@ storage:
                   fi
           }
           
+          check_size
           check_release
           setup
           store_release
