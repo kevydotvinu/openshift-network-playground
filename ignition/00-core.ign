@@ -693,6 +693,20 @@
           "name": "onp"
         },
         "overwrite": true,
+        "path": "/home/onp/.zshenv",
+        "user": {
+          "name": "onp"
+        },
+        "contents": {
+          "source": "data:,alias%20onp%3D'make%20--no-print-directory%20-C%20%24%7BHOME%7D%20-f%20%2Fhome%2Fonp%2F.Makefile'%0Aalias%20konp%3D'kubectl%20--kubeconfig%20%24%7BHOME%7D%2F.kube%2Fonp-kind-config'%0Aalias%20kovn%3D'kubectl%20--kubeconfig%20%24%7BHOME%7D%2F.kube%2Fovn-kind-config'%0Aalias%20kind%3D'sudo%20KIND_EXPERIMENTAL_PROVIDER%3Dpodman%20kind'%0Aalias%20sno%3D'oc%20--kubeconfig%20%24%7BHOME%7D%2Fopenshift-network-playground%2Fsno%2Fauth%2Fkubeconfig'%0Aalias%20ssh%3D'ssh%20-i%20%24%7BHOME%7D%2Fopenshift-network-playground%2Fid_ed25519%20-o%20StrictHostKeyChecking%3Dno'%0Aexport%20EDITOR%3Dvi%0Aexport%20PATH%3D%24%7BPATH%7D%3A%2Fusr%2Flocal%2Fgo%2Fbin%0Aexport%20PATH%3D%24%7BPATH%7D%3A%24%7BHOME%7D%2F.local%2Fnetwork-tools%2Fdebug-scripts%0Aexport%20KUBECONFIG%3D%24%7BHOME%7D%2Fopenshift-network-playground%2Fclusterconfigs%2Fauth%2Fkubeconfig%0Ased%20-i%20-e%20's%2F%20%20%20%20%20%20%2F%5Ct%2Fg'%20%24%7BHOME%7D%2F.Makefile%0A"
+        },
+        "mode": 420
+      },
+      {
+        "group": {
+          "name": "onp"
+        },
+        "overwrite": true,
         "path": "/home/onp/openshift-network-playground/worker0.yaml",
         "user": {
           "name": "onp"

@@ -2030,6 +2030,26 @@ storage:
             export PATH=${PATH}:${HOME}/.local/network-tools/debug-scripts
             export KUBECONFIG=${HOME}/openshift-network-playground/clusterconfigs/auth/kubeconfig
             sed -i -e 's/      /\t/g' ${HOME}/.Makefile
+    - path: /home/onp/.zshenv
+      mode: 0644
+      overwrite: true
+      user:
+        name: onp
+      group:
+        name: onp
+      contents:
+        inline: |
+            alias onp='make --no-print-directory -C ${HOME} -f /home/onp/.Makefile'
+            alias konp='kubectl --kubeconfig ${HOME}/.kube/onp-kind-config'
+            alias kovn='kubectl --kubeconfig ${HOME}/.kube/ovn-kind-config'
+            alias kind='sudo KIND_EXPERIMENTAL_PROVIDER=podman kind'
+            alias sno='oc --kubeconfig ${HOME}/openshift-network-playground/sno/auth/kubeconfig'
+            alias ssh='ssh -i ${HOME}/openshift-network-playground/id_ed25519 -o StrictHostKeyChecking=no'
+            export EDITOR=vi
+            export PATH=${PATH}:/usr/local/go/bin
+            export PATH=${PATH}:${HOME}/.local/network-tools/debug-scripts
+            export KUBECONFIG=${HOME}/openshift-network-playground/clusterconfigs/auth/kubeconfig
+            sed -i -e 's/      /\t/g' ${HOME}/.Makefile
     - path: /home/onp/openshift-network-playground/worker0.yaml
       mode: 0755
       overwrite: true
