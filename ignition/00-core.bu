@@ -1836,16 +1836,15 @@ storage:
                   echo "No bootstrap resources ..."
           else
                   for RESOURCE in ${BOOTSTRAP_RESOURCES}; do
-                          sudo virsh -q destroy ${RESOURCE} 2>/dev/null
-                          sudo virsh -q undefine ${RESOURCE} 2>/dev/null
-                          sudo virsh -q pool-start ${RESOURCE} 2>/dev/null
-                          sudo virsh -q vol-delete ${RESOURCE} --pool ${RESOURCE} 2>/dev/null
-                          sudo virsh -q vol-delete ${RESOURCE}-base --pool ${RESOURCE} 2>/dev/null
-                          sudo virsh -q vol-delete ${RESOURCE}.ign --pool ${RESOURCE} 2>/dev/null
-                          sudo virsh -q pool-destroy ${RESOURCE} 2>/dev/null
-                          sudo virsh -q pool-delete ${RESOURCE} 2>/dev/null
-                          sudo virsh -q pool-undefine ${RESOURCE} 2>/dev/null
-                          exit 0
+                          sudo virsh -q destroy ${RESOURCE} 2>/dev/null || true
+                          sudo virsh -q undefine ${RESOURCE} 2>/dev/null || true
+                          sudo virsh -q pool-start ${RESOURCE} 2>/dev/null || true
+                          sudo virsh -q vol-delete ${RESOURCE} --pool ${RESOURCE} 2>/dev/null || true
+                          sudo virsh -q vol-delete ${RESOURCE}-base --pool ${RESOURCE} 2>/dev/null || true
+                          sudo virsh -q vol-delete ${RESOURCE}.ign --pool ${RESOURCE} 2>/dev/null || true
+                          sudo virsh -q pool-destroy ${RESOURCE} 2>/dev/null || true
+                          sudo virsh -q pool-delete ${RESOURCE} 2>/dev/null || true
+                          sudo virsh -q pool-undefine ${RESOURCE} 2>/dev/null || true
                   done
           fi
 
@@ -1857,8 +1856,7 @@ storage:
                   echo "No master resources ..."
           else
                   for i in master0 master1 master2 worker0 worker1; do
-                          sudo virsh -q destroy $i 2>/dev/null
-                          exit 0
+                          sudo virsh -q destroy $i 2>/dev/null || true
                   done
           fi
     - path: /home/onp/openshift-network-playground/ssh-pullsecret.sh
