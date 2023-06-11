@@ -444,7 +444,7 @@
         "overwrite": true,
         "path": "/opt/openshift-network-playground/dhcp/dnsmasq.conf",
         "contents": {
-          "source": "data:,no-daemon%0Ainterface%3Dbaremetal%0Adhcp-range%3D192.168.123.2%2C192.168.123.254%2C255.255.255.0%0Aexcept-interface%3Dlo%0Abind-interfaces%0Alog-dhcp%0Adhcp-authoritative%0Alog-async%0Adhcp-host%3D52%3A54%3A00%3A11%3A22%3Aa1%2Cmaster0.ocp.example.local%2C192.168.123.91%0Adhcp-host%3D52%3A54%3A00%3A11%3A22%3Aa2%2Cmaster1.ocp.example.local%2C192.168.123.92%0Adhcp-host%3D52%3A54%3A00%3A11%3A22%3Aa3%2Cmaster2.ocp.example.local%2C192.168.123.93%0Adhcp-host%3D52%3A54%3A00%3A11%3A22%3Aa4%2Cworker0.ocp.example.local%2C192.168.123.94%0Adhcp-host%3D52%3A54%3A00%3A11%3A22%3Aa5%2Cworker1.ocp.example.local%2C192.168.123.95%0A"
+          "source": "data:,no-daemon%0Ainterface%3Dbaremetal%0Adhcp-range%3D192.168.123.2%2C192.168.123.254%2C255.255.255.0%0Aexcept-interface%3Dlo%0Abind-interfaces%0Alog-dhcp%0Adhcp-authoritative%0Alog-async%0Adhcp-host%3D52%3A54%3A00%3A11%3A22%3Aa1%2C192.168.123.91%0Adhcp-host%3D52%3A54%3A00%3A11%3A22%3Aa2%2C192.168.123.92%0Adhcp-host%3D52%3A54%3A00%3A11%3A22%3Aa3%2C192.168.123.93%0Adhcp-host%3D52%3A54%3A00%3A11%3A22%3Aa4%2C192.168.123.94%0Adhcp-host%3D52%3A54%3A00%3A11%3A22%3Aa5%2C192.168.123.95%0A"
         },
         "mode": 420
       },
