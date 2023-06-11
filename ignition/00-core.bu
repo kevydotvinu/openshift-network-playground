@@ -944,11 +944,11 @@ storage:
           log-dhcp
           dhcp-authoritative
           log-async
-          dhcp-host=52:54:00:11:22:a1,master0.ocp.example.local,192.168.123.91
-          dhcp-host=52:54:00:11:22:a2,master1.ocp.example.local,192.168.123.92
-          dhcp-host=52:54:00:11:22:a3,master2.ocp.example.local,192.168.123.93
-          dhcp-host=52:54:00:11:22:a4,worker0.ocp.example.local,192.168.123.94
-          dhcp-host=52:54:00:11:22:a5,worker1.ocp.example.local,192.168.123.95
+          dhcp-host=52:54:00:11:22:a1,192.168.123.91
+          dhcp-host=52:54:00:11:22:a2,192.168.123.92
+          dhcp-host=52:54:00:11:22:a3,192.168.123.93
+          dhcp-host=52:54:00:11:22:a4,192.168.123.94
+          dhcp-host=52:54:00:11:22:a5,192.168.123.95
     - path: /opt/openshift-network-playground/pxe/Containerfile
       mode: 0644
       overwrite: true
