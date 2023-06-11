@@ -1479,7 +1479,7 @@ storage:
           ssh-pullsecret:
           ifneq ($(shell for FILE in ${HOME}/openshift-network-playground/pullsecret ${HOME}/openshift-network-playground/id_ed25519.pub; do test -e $${FILE} && echo -n OK; done),OKOK)
           ifndef OCM_TOKEN
-                $(error OCM_TOKEN is undefined | Get it from https://cloud.redhat.com/openshift/token)
+                $(error OCM_TOKEN is undefined | Get it from https://cloud.redhat.com/openshift/token/show)
           else
                 @echo "Generating SSH keys and pullsecret ..."
                 @openshift-network-playground/ssh-pullsecret.sh $(OCM_TOKEN)
@@ -1808,7 +1808,7 @@ storage:
                 @echo "  onp cluster LOGLEVEL=debug"
                 @echo ""
                 @echo "Variables:"
-                @echo -e "  OCM_TOKEN\ttoken from https://cloud.redhat.com/openshift/token"
+                @echo -e "  OCM_TOKEN\ttoken from https://cloud.redhat.com/openshift/token/show"
                 @echo -e "  RELEASE\tstable-4.10, latest-4.9, 4.9.0, etc"
                 @echo -e "  LOGLEVEL\tdebug, info, warn, error"
                 @echo -e "  NETWORK\tnetwork=default, bridge=onp1-dhcp, bridge=onp2-dhcp"
@@ -1875,7 +1875,7 @@ storage:
           
           function USAGE {
                   echo "Usage: $0 '<OCM API Token>'"
-                  echo "You need to authenticate using a Bearer token, which you can get from the link: https://cloud.redhat.com/openshift/token"
+                  echo "You need to authenticate using a Bearer token, which you can get from the link: https://cloud.redhat.com/openshift/token/show"
                   exit 1
           }
           
@@ -2254,7 +2254,7 @@ storage:
                           </div>
                           <div>
                               <p>
-                              Get OCM token from <a href="https://cloud.redhat.com/openshift/token" target="_blank">here</a>.
+                              Get OCM token from <a href="https://cloud.redhat.com/openshift/token/show" target="_blank">here</a>.
                               OCM token is only reqired in the first deployment. The pullsecret will be saved locally.
                               </p>
                           </div>
