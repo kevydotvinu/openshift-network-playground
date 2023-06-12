@@ -849,8 +849,10 @@ storage:
       contents:
         inline: |
           address=/.apps.ocp.example.local/192.168.123.89
-          address=/.apps.sno.example.local/192.168.124.2
-          address=/.apps.sno.example.local/fd00:dead:beef::2
+          address=/.apps.sno4.example.local/192.168.124.2
+          address=/.apps.sno64.example.local/192.168.124.3
+          address=/.apps.sno6.example.local/fd00:dead:beef::2
+          address=/.apps.sno64.example.local/fd00:dead:beef::3
           addn-hosts=/etc/hosts
     - path: /etc/hosts
       mode: 0644
@@ -859,7 +861,7 @@ storage:
         name: root
       contents:
         inline: |
-          127.0.0.1 localhost localhost.localdomain openshift-network-playground.ocp.example.local
+          127.0.0.1 localhost localhost.localdomain onp.ocp.example.local
           192.168.123.88 api.ocp.example.local
           192.168.123.90 bootstrap.ocp.example.local
           192.168.123.91 master0.ocp.example.local
@@ -867,9 +869,11 @@ storage:
           192.168.123.93 master2.ocp.example.local
           192.168.123.94 worker0.ocp.example.local
           192.168.123.95 worker1.ocp.example.local
-          192.168.123.1 openshift-network-playground.ocp.example.local lb.ocp.example.local mirror.ocp.example.local proxy.ocp.example.local
-          192.168.126.2 api.sno.example.local api-int.sno.example.local node.sno.example.local
-          fd00:dead:beef::2 api.sno.example.local api-int.sno.example.local node.sno.example.local
+          192.168.123.1 onp.ocp.example.local lb.ocp.example.local mirror.ocp.example.local proxy.ocp.example.local
+          192.168.126.2 api.sno4.example.local api-int.sno4.example.local node.sno4.example.local
+          192.168.126.3 api.sno64.example.local api-int.sno64.example.local node.sno64.example.local
+          fd00:dead:beef::2 api.sno6.example.local api-int.sno6.example.local node.sno6.example.local
+          fd00:dead:beef::3 api.sno64.example.local api-int.sno64.example.local node.sno64.example.local
     - path: /etc/zincati/config.d/90-disable-auto-updates.toml
       contents:
         inline: |
@@ -1128,9 +1132,9 @@ storage:
           FROM fedora
           MAINTAINER "Vinu K" <vkochuku@redhat.com>
           COPY named.conf \
-              sno.example.local.forward \
-              sno.example.local.reverse \
-              sno.example.local.reverse.v6 \
+              example.local.forward \
+              example.local.reverse.v4 \
+              example.local.reverse.v6 \
               /
           RUN yum install -y bind
           ENTRYPOINT ["/usr/sbin/named", "-c", "/named.conf", "-g", "-u", "named"]
@@ -1152,78 +1156,85 @@ storage:
           recursion yes;
           };
           
-          zone "sno.example.local" IN {
+          zone "example.local" IN {
                   type master;
-                  file "/sno.example.local.forward";
+                  file "/example.local.forward";
           };
           
           zone "126.168.192.in-addr.arpa" IN {
                   type master;
-                  file "/sno.example.local.reverse";
+                  file "/example.local.reverse.v4";
           };
           
           zone "0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.f.e.e.b.d.a.e.d.0.0.d.f.ip6.arpa" IN {
                   type master;
-                  file "/sno.example.local.reverse.v6";
+                  file "/example.local.reverse.v6";
           };
-    - path: /opt/openshift-network-playground/dns64/sno.example.local.forward
+    - path: /opt/openshift-network-playground/dns64/example.local.forward
       mode: 0644
       overwrite: true
       contents:
         inline: |
           $TTL 86400
-          @               IN      SOA     ns1.sno.example.local. root (
+          @               IN      SOA     example.local. root.example.local (
                                           2001062501  ; serial
                                           21600       ; refresh after 6 hours
                                           3600        ; retry after 1 hour
                                           604800      ; expire after 1 week
                                           86400 )     ; minimum TTL of 1 day
-                          IN      NS      ns1.sno.example.local.
+                          IN      NS      ns1.example.local.
           
           ns1             IN      A       192.168.126.1
-                          IN      AAAA    fd00:dead:beef::1
-          dns             IN      A       192.168.126.1
-                          IN      AAAA    fd00:dead:beef::1
-          node            IN      A       192.168.126.2
-                          IN      AAAA    fd00:dead:beef::2
-          api             IN      A       192.168.126.2
-                          IN      AAAA    fd00:dead:beef::2
-          api-int         IN      A       192.168.126.2
-                          IN      AAAA    fd00:dead:beef::2
-          *.apps          IN      A       192.168.126.2
-                          IN      AAAA    fd00:dead:beef::2
-    - path: /opt/openshift-network-playground/dns64/sno.example.local.reverse
+          node.sno4       IN      A       192.168.126.2
+          node.sno6       IN      AAAA    fd00:dead:beef::2
+          node.sno64      IN      A       192.168.126.3
+                          IN      AAAA    fd00:dead:beef::3
+          api.sno4        IN      A       192.168.126.2
+          api.sno6        IN      AAAA    fd00:dead:beef::2
+          api.sno64       IN      A       192.168.126.3
+                          IN      AAAA    fd00:dead:beef::3
+          api-int.sno4    IN      A       192.168.126.2
+          api-int.sno6    IN      AAAA    fd00:dead:beef::2
+          api-int.sno64   IN      A       192.168.126.3
+                          IN      AAAA    fd00:dead:beef::3
+          *.apps.sno4     IN      A       192.168.126.2
+          *.apps.sno6     IN      AAAA    fd00:dead:beef::2
+          *.apps.sno64    IN      A       192.168.126.3
+                          IN      AAAA    fd00:dead:beef::3
+    - path: /opt/openshift-network-playground/dns64/example.local.reverse.v4
       mode: 0644
       overwrite: true
       contents:
         inline: |
           $TTL 86400
-          @       IN      SOA     ns1.sno.example.local. root (
+          @       IN      SOA     example.local. root.example.local (
                                           2001062501  ; serial
                                           21600       ; refresh after 6 hours
                                           3600        ; retry after 1 hour
                                           604800      ; expire after 1 week
                                           86400 )     ; minimum TTL of 1 day
-                  IN      NS      ns1.sno.example.local.
+                  IN      NS      ns1.example.local.
           
-          1       IN      PTR     ns1.sno.example.local.
-          2       IN      PTR     node.sno.example.local.
-    - path: /opt/openshift-network-playground/dns64/sno.example.local.reverse.v6
+          1       IN      PTR     ns1.example.local.
+          2       IN      PTR     node.sno4.example.local.
+          3       IN      PTR     node.sno64.example.local.
+    - path: /opt/openshift-network-playground/dns64/example.local.reverse.v6
       mode: 0644
       overwrite: true
       contents:
         inline: |
           $TTL 86400
-          @       IN      SOA     ns1.sno.example.local. root (
+          @       IN      SOA     example.local. root.example.local (
                                           2001062501  ; serial
                                           21600       ; refresh after 6 hours
                                           3600        ; retry after 1 hour
                                           604800      ; expire after 1 week
                                           86400 )     ; minimum TTL of 1 day
-                  IN      NS      ns1.sno.example.local.
+                  IN      NS      ns1.example.local.
           
-          1       IN      PTR     ns1.sno.example.local.
-          2       IN      PTR     node.sno.example.local.
+          1       IN      PTR     ns1.example.local.
+          2       IN      PTR     node.sno6.example.local.
+          3       IN      PTR     node.sno64.example.local.
     - path: /opt/openshift-network-playground/proxy/Containerfile
       mode: 0644
       overwrite: true
@@ -1627,50 +1638,140 @@ storage:
                 sudo rm -rf ${HOME}/.kube/ovn-kind-config && \
                 popd
 
-          .PHONY: sno
+          .PHONY: sno4
 
-          sno: ssh-pullsecret
-                @echo "Creating SNO cluster ..."
-                @openshift-network-playground/sno.sh ${RELEASE}
+          sno4: ssh-pullsecret
+                @echo "Creating SNO4 cluster ..."
+                @openshift-network-playground/sno.sh ${RELEASE} sno4
                 @/usr/local/bin/openshift-install --log-level=${LOGLEVEL} \
-                                                  --dir=$(SCRIPT_DIR)/openshift-network-playground/sno create single-node-ignition-config
+                                                  --dir=$(SCRIPT_DIR)/openshift-network-playground/sno4 create single-node-ignition-config
                 @sudo podman run --privileged \
-                        --quiet \
-                        --pull always \
-                        --rm \
-                        -v /dev:/dev \
-                        -v /run/udev:/run/udev \
-                        -v /:/data \
-                        -w /data \
-                        quay.io/coreos/coreos-installer:release iso ignition embed -fi \
-                        var/home/onp/openshift-network-playground/sno/bootstrap-in-place-for-live-iso.ign \
-                        opt/openshift-network-playground/libvirt/sno/rhcos-live.iso
+                                 --quiet \
+                                 --pull always \
+                                 --rm \
+                                 --volume /dev:/dev \
+                                 --volume /run/udev:/run/udev \
+                                 --volume /:/data \
+                                 --workdir /data \
+                                 quay.io/coreos/coreos-installer:release iso ignition embed -fi \
+                                 var/home/onp/openshift-network-playground/sno4/bootstrap-in-place-for-live-iso.ign \
+                                 opt/openshift-network-playground/libvirt/sno4/rhcos-live.iso
                 @sudo podman run --privileged \
-                        --quiet \
-                        --pull always \
-                        --rm \
-                        -v /dev:/dev \
-                        -v /run/udev:/run/udev \
-                        -v /:/data \
-                        -w /data \
-                        quay.io/coreos/coreos-installer:release iso network embed -fk \
-                        var/home/onp/openshift-network-playground/enp1s0.nmconnection \
-                        opt/openshift-network-playground/libvirt/sno/rhcos-live.iso
-                @sudo virt-install --name sno \
+                                 --quiet \
+                                 --pull always \
+                                 --rm \
+                                 --volume /dev:/dev \
+                                 --volume /run/udev:/run/udev \
+                                 --volume /:/data \
+                                 --workdir /data \
+                                 quay.io/coreos/coreos-installer:release iso network embed -fk \
+                                 var/home/onp/openshift-network-playground/sno4-enp1s0.nmconnection \
+                                 opt/openshift-network-playground/libvirt/sno4/rhcos-live.iso
+                @sudo virt-install --name sno4 \
                                    --quiet \
                                    --os-variant fedora-coreos-stable \
                                    --vcpu 4 \
                                    --memory 16384 \
                                    --boot menu=on \
                                    --pxe \
-                                   --disk /opt/openshift-network-playground/libvirt/sno/sno.img,bus=scsi \
-                                   --cdrom /opt/openshift-network-playground/libvirt/sno/rhcos-live.iso \
+                                   --disk /opt/openshift-network-playground/libvirt/sno4/sno4.img,bus=scsi \
+                                   --cdrom /opt/openshift-network-playground/libvirt/sno4/rhcos-live.iso \
                                    --network bridge=sno0 \
                                    --noautoconsole \
                                    --graphics spice,listen=0.0.0.0
-                @$(SCRIPT_DIR)/openshift-network-playground/sno-restart.sh
+                @$(SCRIPT_DIR)/openshift-network-playground/sno-restart.sh sno4
                 @/usr/local/bin/openshift-install --log-level=${LOGLEVEL} \
-                                                  --dir=$(SCRIPT_DIR)/openshift-network-playground/sno wait-for install-complete
+                                                  --dir=$(SCRIPT_DIR)/openshift-network-playground/sno4 wait-for install-complete
+
+          .PHONY: sno6
+
+          sno6: ssh-pullsecret
+                @echo "Creating SNO6 cluster ..."
+                @openshift-network-playground/sno.sh ${RELEASE} sno6
+                @/usr/local/bin/openshift-install --log-level=${LOGLEVEL} \
+                                                  --dir=$(SCRIPT_DIR)/openshift-network-playground/sno6 create single-node-ignition-config
+                @sudo podman run --privileged \
+                                 --quiet \
+                                 --pull always \
+                                 --rm \
+                                 --volume /dev:/dev \
+                                 --volume /run/udev:/run/udev \
+                                 --volume /:/data \
+                                 --workdir /data \
+                                 quay.io/coreos/coreos-installer:release iso ignition embed -fi \
+                                 var/home/onp/openshift-network-playground/sno6/bootstrap-in-place-for-live-iso.ign \
+                                 opt/openshift-network-playground/libvirt/sno6/rhcos-live.iso
+                @sudo podman run --privileged \
+                                 --quiet \
+                                 --pull always \
+                                 --rm \
+                                 --volume /dev:/dev \
+                                 --volume /run/udev:/run/udev \
+                                 --volume /:/data \
+                                 --workdir /data \
+                                 quay.io/coreos/coreos-installer:release iso network embed -fk \
+                                 var/home/onp/openshift-network-playground/sno6-enp1s0.nmconnection \
+                                 opt/openshift-network-playground/libvirt/sno6/rhcos-live.iso
+                @sudo virt-install --name sno6 \
+                                   --quiet \
+                                   --os-variant fedora-coreos-stable \
+                                   --vcpu 4 \
+                                   --memory 16384 \
+                                   --boot menu=on \
+                                   --pxe \
+                                   --disk /opt/openshift-network-playground/libvirt/sno4/sno4.img,bus=scsi \
+                                   --cdrom /opt/openshift-network-playground/libvirt/sno4/rhcos-live.iso \
+                                   --network bridge=sno0 \
+                                   --noautoconsole \
+                                   --graphics spice,listen=0.0.0.0
+                @$(SCRIPT_DIR)/openshift-network-playground/sno-restart.sh sno6
+                @/usr/local/bin/openshift-install --log-level=${LOGLEVEL} \
+                                                  --dir=$(SCRIPT_DIR)/openshift-network-playground/sno6 wait-for install-complete
+
+          .PHONY: sno64
+
+          sno64: ssh-pullsecret
+                @echo "Creating SNO64 cluster ..."
+                @openshift-network-playground/sno.sh ${RELEASE} sno64
+                @/usr/local/bin/openshift-install --log-level=${LOGLEVEL} \
+                                                  --dir=$(SCRIPT_DIR)/openshift-network-playground/sno64 create single-node-ignition-config
+                @sudo podman run --privileged \
+                                 --quiet \
+                                 --pull always \
+                                 --rm \
+                                 --volume /dev:/dev \
+                                 --volume /run/udev:/run/udev \
+                                 --volume /:/data \
+                                 --workdir /data \
+                                 quay.io/coreos/coreos-installer:release iso ignition embed -fi \
+                                 var/home/onp/openshift-network-playground/sno64/bootstrap-in-place-for-live-iso.ign \
+                                 opt/openshift-network-playground/libvirt/sno64/rhcos-live.iso
+                @sudo podman run --privileged \
+                                 --quiet \
+                                 --pull always \
+                                 --rm \
+                                 --volume /dev:/dev \
+                                 --volume /run/udev:/run/udev \
+                                 --volume /:/data \
+                                 --workdir /data \
+                                 quay.io/coreos/coreos-installer:release iso network embed -fk \
+                                 var/home/onp/openshift-network-playground/sno64-enp1s0.nmconnection \
+                                 opt/openshift-network-playground/libvirt/sno64/rhcos-live.iso
+                @sudo virt-install --name sno64 \
+                                   --quiet \
+                                   --os-variant fedora-coreos-stable \
+                                   --vcpu 4 \
+                                   --memory 16384 \
+                                   --boot menu=on \
+                                   --pxe \
+                                   --disk /opt/openshift-network-playground/libvirt/sno4/sno64.img,bus=scsi \
+                                   --cdrom /opt/openshift-network-playground/libvirt/sno64/rhcos-live.iso \
+                                   --network bridge=sno0 \
+                                   --noautoconsole \
+                                   --graphics spice,listen=0.0.0.0
+                @$(SCRIPT_DIR)/openshift-network-playground/sno-restart.sh sno64
+                @/usr/local/bin/openshift-install --log-level=${LOGLEVEL} \
+                                                  --dir=$(SCRIPT_DIR)/openshift-network-playground/sno64 wait-for install-complete
 
           .PHONY: network-tools
 
@@ -2023,7 +2124,9 @@ storage:
             alias konp='kubectl --kubeconfig ${HOME}/.kube/onp-kind-config'
             alias kovn='kubectl --kubeconfig ${HOME}/.kube/ovn-kind-config'
             alias kind='sudo KIND_EXPERIMENTAL_PROVIDER=podman kind'
-            alias sno='oc --kubeconfig ${HOME}/openshift-network-playground/sno/auth/kubeconfig'
+            alias sno4='oc --kubeconfig ${HOME}/openshift-network-playground/sno4/auth/kubeconfig'
+            alias sno6='oc --kubeconfig ${HOME}/openshift-network-playground/sno6/auth/kubeconfig'
+            alias sno64='oc --kubeconfig ${HOME}/openshift-network-playground/sno64/auth/kubeconfig'
             alias ssh='ssh -i ${HOME}/openshift-network-playground/id_ed25519 -o StrictHostKeyChecking=no'
             export EDITOR=vi
             export PATH=${PATH}:/usr/local/go/bin
@@ -2398,11 +2501,13 @@ storage:
       contents:
         inline: |
           set -euo pipefail
-
+          
           ONPDIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]:-$0}"; )" &> /dev/null && pwd 2> /dev/null; )"
-          export VERSION=${1}
-          rm -rf ${ONPDIR}/sno
-          rm -rf ${ONPDIR}/sno.yaml
+          VERSION=${1}
+          NAME=${2}
+          
+          rm -rf ${ONPDIR}/${NAME}
+          rm -rf ${ONPDIR}/${NAME}.yaml
           echo "Downloading oc binary ..."
           curl -s https://mirror.openshift.com/pub/openshift-v4/clients/ocp/$VERSION/openshift-client-linux.tar.gz | tar zxf - -C ${ONPDIR} oc
           sudo mv ${ONPDIR}/oc /usr/local/bin
@@ -2412,15 +2517,49 @@ storage:
           sudo mv ${ONPDIR}/openshift-install /usr/local/bin
           echo "✔ Downloaded!"
           echo "Downloading RHCOS ISO ..."
-          sudo mkdir -p /opt/openshift-network-playground/libvirt/sno
-          sudo curl -sLo /opt/openshift-network-playground/libvirt/sno/rhcos-live.iso $(/usr/local/bin/openshift-install coreos print-stream-json | grep location | grep x86_64 | grep iso | cut -d\" -f4)
+          sudo mkdir -p /opt/openshift-network-playground/libvirt/${NAME}
+          sudo rm -f /opt/openshift-network-playground/libvirt/sno4/rhcos-live.iso
+          sudo rm -f /opt/openshift-network-playground/libvirt/sno6/rhcos-live.iso
+          sudo rm -f /opt/openshift-network-playground/libvirt/sno64/rhcos-live.iso
+          sudo curl -sLo /opt/openshift-network-playground/libvirt/${NAME}/rhcos-live.iso $(/usr/local/bin/openshift-install coreos print-stream-json | grep location | grep x86_64 | grep iso | cut -d\" -f4)
           echo "✔ Downloaded!"
           echo "Generating install-config.yaml file ..."
-          cat << EOF > ${ONPDIR}/sno.yaml
+          case ${NAME} in
+          sno4)
+          cat << EOF > ${ONPDIR}/${NAME}.yaml
           apiVersion: v1
           baseDomain: example.local
           metadata:
-            name: sno
+            name: ${NAME}
+          networking:
+            clusterNetwork:
+            - cidr: 10.128.0.0/14
+              hostPrefix: 23
+            machineNetwork:
+            - cidr: 192.168.123.0/24
+            networkType: OVNKubernetes
+            serviceNetwork:
+            - 172.30.0.0/16
+          compute:
+          - name: worker
+            replicas: 0
+          controlPlane:
+            name: master
+            replicas: 1
+          platform:
+            none: {}
+          bootstrapInPlace:
+            installationDisk: /dev/sda
+          pullSecret: '$(cat ${ONPDIR}/pullsecret)'
+          sshKey: '$(cat ${ONPDIR}/id_ed25519.pub)'
+          EOF
+          ;;
+          sno6)
+          cat << EOF > ${ONPDIR}/${NAME}.yaml
+          apiVersion: v1
+          baseDomain: example.local
+          metadata:
+            name: ${NAME}
           networking:
             machineNetwork:
             - cidr: fd00:dead:beef::/96
@@ -2428,7 +2567,7 @@ storage:
             - cidr: fd01::/48
               hostPrefix: 64
             serviceNetwork:
-              - fd02::/112
+            - fd02::/112
             networkType: OVNKubernetes
           compute:
           - name: worker
@@ -2443,15 +2582,58 @@ storage:
           pullSecret: '$(cat ${ONPDIR}/pullsecret)'
           sshKey: '$(cat ${ONPDIR}/id_ed25519.pub)'
           EOF
+          ;;
+          sno64)
+          cat << EOF > ${ONPDIR}/${NAME}.yaml
+          apiVersion: v1
+          baseDomain: example.local
+          metadata:
+            name: ${NAME}
+          networking:
+            machineNetwork:
+            - cidr: 192.168.123.0/24
+            - cidr: fd00:dead:beef::/96
+            clusterNetwork:
+            - cidr: 10.128.0.0/14
+              hostPrefix: 23
+            - cidr: fd01::/48
+              hostPrefix: 64
+            serviceNetwork:
+            - 172.30.0.0/16
+            - fd02::/112
+            networkType: OVNKubernetes
+          compute:
+          - name: worker
+            replicas: 0
+          controlPlane:
+            name: master
+            replicas: 1
+          platform:
+            none: {}
+          bootstrapInPlace:
+            installationDisk: /dev/sda
+          pullSecret: '$(cat ${ONPDIR}/pullsecret)'
+          sshKey: '$(cat ${ONPDIR}/id_ed25519.pub)'
+          EOF
+          ;;
+          *) # do nothing
+          ;;
+          esac
           echo "✔ Generated!"
-          mkdir -p ${ONPDIR}/sno
+          mkdir -p ${ONPDIR}/${NAME}
           echo "Copying install-config.yaml file to the installation directory ..."
-          cp ${ONPDIR}/sno.yaml ${ONPDIR}/sno/install-config.yaml
+          cp ${ONPDIR}/${NAME}.yaml ${ONPDIR}/${NAME}/install-config.yaml
           echo "✔ Copied!"
-          sudo virsh -q destroy sno 2>/dev/null || true
-          sudo virsh -q undefine sno 2>/dev/null || true
-          sudo rm -f /opt/openshift-network-playground/libvirt/sno/sno.img
-          sudo qemu-img create /opt/openshift-network-playground/libvirt/sno/sno.img 120G
+          sudo virsh -q destroy sno4 2>/dev/null || true
+          sudo virsh -q destroy sno6 2>/dev/null || true
+          sudo virsh -q destroy sno64 2>/dev/null || true
+          sudo virsh -q undefine sno4 2>/dev/null || true
+          sudo virsh -q undefine sno6 2>/dev/null || true
+          sudo virsh -q undefine sno64 2>/dev/null || true
+          sudo rm -f /opt/openshift-network-playground/libvirt/sno4/sno4.img
+          sudo rm -f /opt/openshift-network-playground/libvirt/sno6/sno6.img
+          sudo rm -f /opt/openshift-network-playground/libvirt/sno64/sno64.img
+          sudo qemu-img create /opt/openshift-network-playground/libvirt/${NAME}/${NAME}.img 120G
     - path: /home/onp/openshift-network-playground/sno-restart.sh
       mode: 0755
       overwrite: true
@@ -2462,35 +2644,37 @@ storage:
       contents:
         inline: |
           #!/bin/bash
-
+          
+          NAME=${1}
+          
           function WAIT_FOR_REBOOT {
           sp='/-\|'
           sc=0
-
+          
           spin() {
              printf "\r[${sp:sc++:1}] $1"
              ((sc==${#sp})) && sc=0
           }
-
+          
           endspin() {
              printf "\r%s\n" "$@"
           }
-
-          until [[ $(sudo virsh -q list | grep -o sno | wc -c) -eq 0 ]]
+          
+          until [[ $(sudo virsh -q list | grep -o ${NAME} | wc -c) -eq 0 ]]
           do spin "Waiting for the installation and restart ..."
           sleep 0.5
           done
           endspin
           }
-
+          
           function START_NODE {
-                  sudo virsh start sno > /dev/null
+                  sudo virsh start ${NAME} > /dev/null
                   echo "[✔] Installation completed!"
           }
-
+          
           WAIT_FOR_REBOOT
           START_NODE
-    - path: /home/onp/openshift-network-playground/enp1s0.nmconnection
+    - path: /home/onp/openshift-network-playground/sno4-enp1s0.nmconnection
       mode: 0755
       overwrite: true
       user:
@@ -2504,13 +2688,58 @@ storage:
           type=ethernet
           autoconnect=yes
           interface-name=enp1s0
-          [ipv4]
+          [ipv6]
           method=disabled
+          [ipv4]
+          method=manual
+          addresses=192.168.126.2/24
+          dns=192.168.126.1
+          gateway=192.168.126.1
+    - path: /home/onp/openshift-network-playground/sno6-enp1s0.nmconnection
+      mode: 0755
+      overwrite: true
+      user:
+        name: onp
+      group:
+        name: onp
+      contents:
+        inline: |
+          [connection]
+          id=ens3
+          type=ethernet
+          autoconnect=yes
+          interface-name=enp1s0
           [ipv6]
           method=manual
           addresses=fd00:dead:beef::2/96
           dns=fd00:dead:beef::1
           gateway=fd00:dead:beef::1
+          [ipv4]
+          method=disabled
+    - path: /home/onp/openshift-network-playground/sno64-enp1s0.nmconnection
+      mode: 0755
+      overwrite: true
+      user:
+        name: onp
+      group:
+        name: onp
+      contents:
+        inline: |
+          [connection]
+          id=ens3
+          type=ethernet
+          autoconnect=yes
+          interface-name=enp1s0
+          [ipv6]
+          method=manual
+          addresses=fd00:dead:beef::3/96
+          dns=fd00:dead:beef::1
+          gateway=fd00:dead:beef::1
+          [ipv4]
+          method=manual
+          addresses=192.168.126.3/24
+          dns=192.168.126.1
+          gateway=192.168.126.1
     - path: /home/onp/openshift-network-playground/fcos.sh
       mode: 0755
       overwrite: true
