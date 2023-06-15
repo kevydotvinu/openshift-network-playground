@@ -1875,6 +1875,12 @@ storage:
                   @echo -e "Restoring ${TO} release ..."
                   @${HOME}/openshift-network-playground/restore-release.sh ${TO}
 
+          .PHONY: openshift-sdn
+
+          openshift-sdn: $(SCRIPT_DIR)/openshift-network-playground/clusterconfigs/install-config.yaml
+                  @echo -e "Switching OpenShift cluster networkType from OVNKubernetes to OpenShiftSDN ..."
+                  @sed -i 's/OVNKubernetes/OpenShiftSDN/g' $(SCRIPT_DIR)/openshift-network-playground/clusterconfigs/install-config.yaml
+
           .PHONY: help
 
           help:
