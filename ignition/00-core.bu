@@ -1862,33 +1862,33 @@ storage:
           .PHONY: list-releases
 
           list-releases:
-                  @echo -e "RELEASES"
-                  @ls /opt/openshift-network-playground/ | grep 4[.] || true
+                @echo -e "RELEASES"
+                @ls /opt/openshift-network-playground/ | grep 4[.] || true
 
           .PHONY: store-release
 
           store-release: check-from
-                  @echo -e "Storing ${FROM} release ..."
-                  @${HOME}/openshift-network-playground/store-release.sh ${FROM}
+                @echo -e "Storing ${FROM} release ..."
+                @${HOME}/openshift-network-playground/store-release.sh ${FROM}
 
           .PHONY: restore-release
 
           restore-release: check-to
-                  @echo -e "Restoring ${TO} release ..."
-                  @${HOME}/openshift-network-playground/restore-release.sh ${TO}
+                @echo -e "Restoring ${TO} release ..."
+                @${HOME}/openshift-network-playground/restore-release.sh ${TO}
 
           .PHONY: openshift-sdn
 
           openshift-sdn: $(SCRIPT_DIR)/openshift-network-playground/clusterconfigs/install-config.yaml
-                  @echo -e "Switching OpenShift cluster networkType from OVNKubernetes to OpenShiftSDN ..."
-                  @sed -i 's/OVNKubernetes/OpenShiftSDN/g' $(SCRIPT_DIR)/openshift-network-playground/clusterconfigs/install-config.yaml
+                @echo -e "Switching OpenShift cluster networkType from OVNKubernetes to OpenShiftSDN ..."
+                @sed -i 's/OVNKubernetes/OpenShiftSDN/g' $(SCRIPT_DIR)/openshift-network-playground/clusterconfigs/install-config.yaml
 
           .PHONY: rhcos
 
           BUTANE=${HOME}/openshift-network-playground/core-passwd.bu
 
           rhcos: ssh-pullsecret
-                  @sudo ${HOME}/openshift-network-playground/rhcos.sh ${BUTANE}
+                @${HOME}/openshift-network-playground/rhcos.sh ${BUTANE}
 
           .PHONY: help
 
@@ -3000,8 +3000,9 @@ storage:
           CMD=openshift-baremetal-install
           PULLSECRET=${HOME}/openshift-network-playground/pullsecret
           DIRECTORY=/opt/openshift-network-playground/libvirt/rhcos
-          
-          sudo podman run --interactive --rm quay.io/coreos/butane:release --raw --strict < ${BUTANE} > ${DIRECTORY}/${IGNITION_NAME}.ign
+         
+          sudo mkdir -p ${DIRECTORY}
+          podman run --interactive --rm quay.io/coreos/butane:release --raw --strict < ${BUTANE} | sudo tee ${DIRECTORY}/${IGNITION_NAME}.ign > /dev/null
           
           echo "Downloading oc binary ..."
           if [ ! -f "${DIRECTORY}/oc" ] || [ "$(${DIRECTORY}/oc version --client -o json | jq -r .releaseClientVersion)" != "${RELEASE}" ]; then
@@ -3025,8 +3026,8 @@ storage:
           echo "✔ Downloaded!"
           
           echo "Extracting image ..."
-          gunzip -c ${DIRECTORY}/${RHCOS_QEMU_NAME} > ${DIRECTORY}/${RHCOS_QEMU_NAME%.*}
-          cp ${DIRECTORY}/${RHCOS_QEMU_NAME%.*} ${DIRECTORY}/rhcos.qcow2
+          gunzip -c ${DIRECTORY}/${RHCOS_QEMU_NAME} | sudo tee ${DIRECTORY}/${RHCOS_QEMU_NAME%.*} > /dev/null
+          sudo cp ${DIRECTORY}/${RHCOS_QEMU_NAME%.*} ${DIRECTORY}/rhcos.qcow2
           echo "✔ Extracted!"
           
           DISK=${DIRECTORY}/rhcos.qcow2
