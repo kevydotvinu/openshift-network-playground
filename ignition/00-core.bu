@@ -1793,8 +1793,10 @@ storage:
           rhcos-livecd:
                   @echo "Creating RHCOS live CD ..."
                   @sudo mkdir -p /opt/openshift-network-playground/libvirt/rhcos-livecd
-                  @sudo curl -# -o /opt/openshift-network-playground/libvirt/rhcos-livecd/rhcos-livecd.iso \
-                  https://mirror.openshift.com/pub/openshift-v4/dependencies/rhcos/latest/rhcos-live.x86_64.iso
+                  @if [ ! -f /opt/openshift-network-playground/libvirt/rhcos-livecd/rhcos-livecd.iso ]; then \
+                  sudo curl -# -o /opt/openshift-network-playground/libvirt/rhcos-livecd/rhcos-livecd.iso \
+                  https://mirror.openshift.com/pub/openshift-v4/dependencies/rhcos/latest/rhcos-live.x86_64.iso; \
+                  fi
                   -@sudo virsh destroy rhcos-livecd >/dev/null 2>&1
                   -@sudo virsh undefine rhcos-livecd >/dev/null 2>&1
                   @echo "Press TAB and type console=ttyS0 in the next screen ..."
