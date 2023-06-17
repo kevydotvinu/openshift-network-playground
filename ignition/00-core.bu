@@ -1912,7 +1912,8 @@ storage:
                 @echo -e "  kind-delete-ovn\t\t\tCreate an OVN Kind cluster"
                 @echo -e "  sno\t\t\t\t\tCreate an IPv6 single-stack SNO cluster"
                 @echo -e "  onp-files\t\t\t\tClone the ONP sample manifests"
-                @echo -e "  rhcos-livecd NETWORK=newtork=default\tCreate a RHCOS VM with custom network"
+                @echo -e "  rhcos-livecd NETWORK=newtork=default\tCreate a RHCOS Live CD"
+                @echo -e "  rhcos BUTANE=file.bu\t\t\tCreate a RHCOS VM with custom butane"
                 @echo -e "  disconnect-cluster\t\t\tDisconnect cluster from internet"
                 @echo -e "  connect-cluster\t\t\tConnect cluster to internet"
                 @echo -e "  services\t\t\t\tList services status"
@@ -1930,6 +1931,7 @@ storage:
                 @echo -e "  NETWORK\tnetwork=default, bridge=onp1-dhcp, bridge=onp2-dhcp"
                 @echo -e "  TO\t\t4.10.10, 4.11.11, 4.12.12, etc"
                 @echo -e "  FROM\t\t4.10.10, 4.11.11, 4.12.12, etc"
+                @echo -e "  BUTANE\tfile.bu"
     - path: /home/onp/openshift-network-playground/clean-bootstrap.sh
       mode: 0755
       overwrite: true
