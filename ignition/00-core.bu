@@ -1881,6 +1881,13 @@ storage:
                   @echo -e "Switching OpenShift cluster networkType from OVNKubernetes to OpenShiftSDN ..."
                   @sed -i 's/OVNKubernetes/OpenShiftSDN/g' $(SCRIPT_DIR)/openshift-network-playground/clusterconfigs/install-config.yaml
 
+          .PHONY: rhcos
+
+          BUTANE=${HOME}/openshift-network-playground/core-passwd.bu
+
+          rhcos: ssh-pullsecret
+                  @sudo ${HOME}/openshift-network-playground/rhcos.sh ${BUTANE}
+
           .PHONY: help
 
           help:
@@ -2969,3 +2976,108 @@ storage:
           
           restore_release
           setup
+    - path: /home/onp/openshift-network-playground/rhcos.sh
+      mode: 0755
+      overwrite: true
+      user:
+        name: onp
+      group:
+        name: onp
+      contents:
+        inline: |
+          #!/bin/bash
+          # The script only needs the butane file as an arg
+          
+          set -eou pipefail
+          
+          BUTANE=$(readlink -f ${1})
+          IGNITION_NAME=$(basename -- ${BUTANE})
+          IGNITION_NAME=${IGNITION_NAME%.*}
+          RELEASE=$(grep 4[.][0-9] ${BUTANE} | awk '{print $2}')
+          RELEASE_IMAGE=$(curl -s https://mirror.openshift.com/pub/openshift-v4/clients/ocp/${RELEASE}/release.txt | grep 'Pull From: quay.io' | awk -F ' ' '{print $3}')
+          CMD=openshift-baremetal-install
+          PULLSECRET=${HOME}/openshift-network-playground/pullsecret
+          DIRECTORY=/opt/openshift-network-playground/libvirt/rhcos
+          
+          sudo podman run --interactive --rm quay.io/coreos/butane:release --raw --strict < ${BUTANE} > ${DIRECTORY}/${IGNITION_NAME}.ign
+          
+          echo "Downloading oc binary ..."
+          if [ ! -f "${DIRECTORY}/oc" ] || [ "$(${DIRECTORY}/oc version --client -o json | jq -r .releaseClientVersion)" != "${RELEASE}" ]; then
+          curl -s https://mirror.openshift.com/pub/openshift-v4/clients/ocp/${RELEASE}/openshift-client-linux.tar.gz | tar zxf - -C ${DIRECTORY} oc
+          fi
+          echo "✔ Downloaded!"
+          
+          echo "Downloading openshift-install binary ..."
+          if [ ! -f "${DIRECTORY}/openshift-baremetal-install" ] || [ "$(${DIRECTORY}/openshift-baremetal-install version | head -n 1 | awk '{print $2}')" != "${RELEASE}" ]; then
+          ${DIRECTORY}/oc adm release extract --registry-config "${PULLSECRET}" --command=${CMD} --to "${DIRECTORY}" ${RELEASE_IMAGE}
+          fi
+          echo "✔ Downloaded!"
+          
+          RHCOS_QEMU_URI=$(${DIRECTORY}/openshift-baremetal-install coreos print-stream-json | jq -r --arg ARCH "$(arch)" '.architectures[$ARCH].artifacts.qemu.formats["qcow2.gz"].disk.location')
+          RHCOS_QEMU_NAME=${RHCOS_QEMU_URI##*/}
+          echo "Downloading image ..."
+          
+          if [ ! -f "${DIRECTORY}/${RHCOS_QEMU_NAME}" ]; then
+          curl -#L ${RHCOS_QEMU_URI} -o ${DIRECTORY}/${RHCOS_QEMU_NAME}
+          fi
+          echo "✔ Downloaded!"
+          
+          echo "Extracting image ..."
+          gunzip -c ${DIRECTORY}/${RHCOS_QEMU_NAME} > ${DIRECTORY}/${RHCOS_QEMU_NAME%.*}
+          cp ${DIRECTORY}/${RHCOS_QEMU_NAME%.*} ${DIRECTORY}/rhcos.qcow2
+          echo "✔ Extracted!"
+          
+          DISK=${DIRECTORY}/rhcos.qcow2
+          VM_NAME=$(basename -- ${DISK})
+          VM_NAME=${VM_NAME%.*}
+          
+          sudo virsh -q destroy ${VM_NAME} > /dev/null || true
+          sudo virsh -q undefine ${VM_NAME} > /dev/null || true
+          sudo virt-install --name ${VM_NAME} \
+                            --vcpus 2 \
+                            --ram 2048 \
+                            --os-variant fedora-coreos-stable \
+                            --import --network bridge=baremetal \
+                            --qemu-commandline="-fw_cfg name=opt/com.coreos/config,file=${DIRECTORY}/${IGNITION_NAME}.ign" \
+                            --disk ${DISK} \
+                            --graphics spice,listen=0.0.0.0 \
+                            --video virtio \
+                            --channel spicevmc \
+                            --console pty \
+                            --serial pty \
+                            --noautoconsole
+          sudo virsh console ${VM_NAME}
+    - path: /home/onp/openshift-network-playground/core-passwd.bu
+      mode: 0644
+      overwrite: true
+      user:
+        name: onp
+      group:
+        name: onp
+      contents:
+        inline: |
+          variant: openshift
+          version: 4.13.0
+          metadata:
+            labels:
+              machineconfiguration.openshift.io/role: onp
+            name: core-passwd
+          storage:
+            files:
+            - path: /etc/ssh/sshd_config.d/99-onp.conf
+              mode: 0644
+              overwrite: true
+              contents:
+                inline: |
+                  PasswordAuthentication yes
+          systemd:
+            units:
+            - name: onp.service
+              enabled: true
+              contents: |
+                [Service]
+                Type=oneshot
+                ExecStart=/usr/bin/sh -c '/usr/bin/echo "Core@123" | /usr/bin/passwd --stdin core'
+                RemainAfterExit=yes
+                [Install]
+                WantedBy=multi-user.target
