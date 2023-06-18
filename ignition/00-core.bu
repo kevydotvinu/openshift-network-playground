@@ -2249,6 +2249,10 @@ storage:
             labels:
               machineconfiguration.openshift.io/role: master
             name: 99-master-onp
+          openshift:
+            kernel_arguments:
+            - console=ttyS0
+            - console=tty0
           storage:
             files:
             - path: /etc/ssh/sshd_config.d/99-onp.conf
@@ -2283,6 +2287,10 @@ storage:
             labels:
               machineconfiguration.openshift.io/role: worker
             name: 99-worker-onp
+          openshift:
+            kernel_arguments:
+            - console=ttyS0
+            - console=tty0
           storage:
             files:
             - path: /etc/ssh/sshd_config.d/99-onp.conf
