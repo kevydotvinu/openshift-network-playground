@@ -3016,13 +3016,13 @@ storage:
           
           echo "Downloading oc binary ..."
           if [ ! -f "${DIRECTORY}/oc" ] || [ "$(${DIRECTORY}/oc version --client -o json | jq -r .releaseClientVersion)" != "${RELEASE}" ]; then
-          curl -s https://mirror.openshift.com/pub/openshift-v4/clients/ocp/${RELEASE}/openshift-client-linux.tar.gz | tar zxf - -C ${DIRECTORY} oc
+          curl -s https://mirror.openshift.com/pub/openshift-v4/clients/ocp/${RELEASE}/openshift-client-linux.tar.gz | sudo tar zxf - -C ${DIRECTORY} oc
           fi
           echo "✔ Downloaded!"
           
           echo "Downloading openshift-install binary ..."
           if [ ! -f "${DIRECTORY}/openshift-baremetal-install" ] || [ "$(${DIRECTORY}/openshift-baremetal-install version | head -n 1 | awk '{print $2}')" != "${RELEASE}" ]; then
-          ${DIRECTORY}/oc adm release extract --registry-config "${PULLSECRET}" --command=${CMD} --to "${DIRECTORY}" ${RELEASE_IMAGE}
+          sudo ${DIRECTORY}/oc adm release extract --registry-config "${PULLSECRET}" --command=${CMD} --to "${DIRECTORY}" ${RELEASE_IMAGE}
           fi
           echo "✔ Downloaded!"
           
@@ -3031,7 +3031,7 @@ storage:
           echo "Downloading image ..."
           
           if [ ! -f "${DIRECTORY}/${RHCOS_QEMU_NAME}" ]; then
-          curl -#L ${RHCOS_QEMU_URI} -o ${DIRECTORY}/${RHCOS_QEMU_NAME}
+          sudo curl -#L ${RHCOS_QEMU_URI} -o ${DIRECTORY}/${RHCOS_QEMU_NAME}
           fi
           echo "✔ Downloaded!"
           
