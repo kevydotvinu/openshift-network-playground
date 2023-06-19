@@ -2253,6 +2253,15 @@ storage:
             kernel_arguments:
             - console=ttyS0
             - console=tty0
+          systemd:
+            units:
+              - name: serial-getty@ttyS0.service
+                dropins:
+                - name: autologin-core.conf
+                  contents: |
+                    [Service]
+                    ExecStart=
+                    ExecStart=-/usr/sbin/agetty --autologin core --noclear %I $TERM
           storage:
             files:
             - path: /etc/ssh/sshd_config.d/99-onp.conf
@@ -2261,17 +2270,6 @@ storage:
               contents:
                 inline: |
                   PasswordAuthentication yes
-          systemd:
-            units:
-            - name: onp.service
-              enabled: true
-              contents: |
-                [Service]
-                Type=oneshot
-                ExecStart=/usr/bin/sh -c '/usr/bin/echo "Core@123" | /usr/bin/passwd --stdin core'
-                RemainAfterExit=yes
-                [Install]
-                WantedBy=multi-user.target
     - path: /home/onp/openshift-network-playground/99_openshift-machineconfig_99-worker-core-passwd-auth.bu
       mode: 0755
       overwrite: true
@@ -2291,6 +2289,15 @@ storage:
             kernel_arguments:
             - console=ttyS0
             - console=tty0
+          systemd:
+            units:
+              - name: serial-getty@ttyS0.service
+                dropins:
+                - name: autologin-core.conf
+                  contents: |
+                    [Service]
+                    ExecStart=
+                    ExecStart=-/usr/sbin/agetty --autologin core --noclear %I $TERM
           storage:
             files:
             - path: /etc/ssh/sshd_config.d/99-onp.conf
@@ -2299,17 +2306,6 @@ storage:
               contents:
                 inline: |
                   PasswordAuthentication yes
-          systemd:
-            units:
-            - name: onp.service
-              enabled: true
-              contents: |
-                [Service]
-                Type=oneshot
-                ExecStart=/usr/bin/sh -c '/usr/bin/echo "Core@123" | /usr/bin/passwd --stdin core'
-                RemainAfterExit=yes
-                [Install]
-                WantedBy=multi-user.target
     - path: /home/onp/.local/share/cockpit/openshift/deploy-cluster.sh
       mode: 0755
       overwrite: true
