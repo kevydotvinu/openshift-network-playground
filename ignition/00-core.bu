@@ -2503,7 +2503,7 @@ storage:
           set -eou pipefail
 
           PASSWORD=$(cat /home/onp/openshift-network-playground/clusterconfigs/auth/kubeadmin-password)
-          IP=$(ip r s default | awk '{print $9}')
+          IP=$(/usr/sbin/ip r s default | awk '{print $9}' | head -n 1)
 
           cat << EOF
           Console
