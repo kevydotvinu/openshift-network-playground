@@ -1719,8 +1719,8 @@ storage:
                                    --memory 16384 \
                                    --boot menu=on \
                                    --pxe \
-                                   --disk /opt/openshift-network-playground/libvirt/sno4/sno4.img,bus=scsi \
-                                   --cdrom /opt/openshift-network-playground/libvirt/sno4/rhcos-live.iso \
+                                   --disk /opt/openshift-network-playground/libvirt/sno6/sno6.img,bus=scsi \
+                                   --cdrom /opt/openshift-network-playground/libvirt/sno6/rhcos-live.iso \
                                    --network bridge=sno0 \
                                    --noautoconsole \
                                    --graphics spice,listen=0.0.0.0
@@ -1764,7 +1764,7 @@ storage:
                                    --memory 16384 \
                                    --boot menu=on \
                                    --pxe \
-                                   --disk /opt/openshift-network-playground/libvirt/sno4/sno64.img,bus=scsi \
+                                   --disk /opt/openshift-network-playground/libvirt/sno64/sno64.img,bus=scsi \
                                    --cdrom /opt/openshift-network-playground/libvirt/sno64/rhcos-live.iso \
                                    --network bridge=sno0 \
                                    --noautoconsole \
