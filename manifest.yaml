@@ -25,6 +25,8 @@ packages:
   - python3-pip
   - zsh
   - tmux
+  - cloud-utils
+  - langpacks-en
 
 repos:
   - fedora
