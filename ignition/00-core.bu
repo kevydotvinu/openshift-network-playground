@@ -1453,8 +1453,20 @@ storage:
           CONTAINERS = $(shell sudo podman ps --format {{.Names}} | sort | grep -oE '^dhcp|vbmc|webserver|proxy' | xargs)
           VMS = $(shell sudo virsh list --all --name | grep -oE 'master0|master1|master2|worker0|worker1' | xargs)
           TFF = $(shell ls /tmp/openshift-install-bootstrap-*/terraform.platform.auto.tfvars.json 2>/dev/null | wc -l)
-          VIRBR0=$(shell sudo virsh net-info default | awk '/Bridge:/{print $$2}')
-          VIRBR0MAC=$(shell ip a s ${VIRBR0} | awk '/ether /{print $$2}' | cut -f1-4 -d':')
+          VIRBR0 = $(shell sudo virsh net-info default | awk '/Bridge:/{print $$2}')
+          VIRBR0MAC = $(shell ip a s ${VIRBR0} | awk '/ether /{print $$2}' | cut -f1-4 -d':')
+          NETWORK =? baremetal
+          BAREMETAL_DHCP = $$(sudo systemctl is-active dhcp)
+          VBMC = $$(sudo systemctl is-active vbmc)
+          WEBSERVER = $$(sudo systemctl is-active webserver)
+          ONP1_DHCP = $$(sudo systemctl is-active onp1-dhcp)
+          ONP2_DHCP = $$(sudo systemctl is-active onp2-dhcp)
+          COCKPIT = $$(sudo systemctl is-active cockpit)
+          PXE = $$(sudo systemctl is-active pxe)
+          PROXY = $$(sudo systemctl is-active proxy)
+          NAT64 = $$(sudo systemctl is-active nat64)
+          DNS64 = $$(sudo systemctl is-active dns64)
+          BUTANE = ${HOME}/openshift-network-playground/core-passwd.bu
 
           .PHONY: all
           
@@ -1788,8 +1800,6 @@ storage:
 
           .PHONY: rhcos-livecd
 
-          NETWORK?=network=default
-
           rhcos-livecd:
                   @echo "Creating RHCOS live CD ..."
                   @sudo mkdir -p /opt/openshift-network-playground/libvirt/rhcos-livecd
@@ -1802,7 +1812,7 @@ storage:
                   @echo "Press TAB and type console=ttyS0 in the next screen ..."
                   @sleep 5s
                   @sudo virt-install --name rhcos-livecd \
-                                     --network ${NETWORK} \
+                                     --network bridge=${NETWORK} \
                                      --pxe \
                                      --boot menu=on \
                                      --memory 2096 \
@@ -1830,24 +1840,14 @@ storage:
 
           .PHONY: services
 
-          BAREMETAL-DHCP=$$(sudo systemctl is-active dhcp)
-          VBMC=$$(sudo systemctl is-active vbmc)
-          WEBSERVER=$$(sudo systemctl is-active webserver)
-          ONP1-DHCP=$$(sudo systemctl is-active onp1-dhcp)
-          ONP2-DHCP=$$(sudo systemctl is-active onp2-dhcp)
-          COCKPIT=$$(sudo systemctl is-active cockpit)
-          PXE=$$(sudo systemctl is-active pxe)
-          PROXY=$$(sudo systemctl is-active proxy)
-          NAT64=$$(sudo systemctl is-active nat64)
-          DNS64=$$(sudo systemctl is-active dns64)
           
           services:
                 @echo -e "SERVICE\t\tIS-ACTIVE"
-                @echo -e "baremetal-dhcp\t${BAREMETAL-DHCP}"
+                @echo -e "baremetal-dhcp\t${BAREMETAL_DHCP}"
                 @echo -e "vbmc\t\t${VBMC}"
                 @echo -e "webserver\t${WEBSERVER}"
-                @echo -e "onp1-dhcp\t${ONP1-DHCP}"
-                @echo -e "onp2-dhcp\t${ONP2-DHCP}"
+                @echo -e "onp1-dhcp\t${ONP1_DHCP}"
+                @echo -e "onp2-dhcp\t${ONP2_DHCP}"
                 @echo -e "cockpit\t\t${COCKPIT}"
                 @echo -e "pxe\t\t${PXE}"
                 @echo -e "proxy\t\t${PROXY}"
@@ -1885,8 +1885,6 @@ storage:
 
           .PHONY: rhcos
 
-          BUTANE=${HOME}/openshift-network-playground/core-passwd.bu
-
           rhcos: ssh-pullsecret
                 @${HOME}/openshift-network-playground/rhcos.sh ${BUTANE}
 
@@ -1912,7 +1910,7 @@ storage:
                 @echo -e "  kind-delete-ovn\t\t\tCreate an OVN Kind cluster"
                 @echo -e "  sno\t\t\t\t\tCreate an IPv6 single-stack SNO cluster"
                 @echo -e "  onp-files\t\t\t\tClone the ONP sample manifests"
-                @echo -e "  rhcos-livecd NETWORK=newtork=default\tCreate a RHCOS Live CD"
+                @echo -e "  rhcos-livecd NETWORK=baremetal\tCreate a RHCOS Live CD"
                 @echo -e "  rhcos BUTANE=file.bu\t\t\tCreate a RHCOS VM with custom butane"
                 @echo -e "  disconnect-cluster\t\t\tDisconnect cluster from internet"
                 @echo -e "  connect-cluster\t\t\tConnect cluster to internet"
@@ -1928,7 +1926,7 @@ storage:
                 @echo -e "  OCM_TOKEN\ttoken from https://cloud.redhat.com/openshift/token/show"
                 @echo -e "  RELEASE\tstable-4.10, latest-4.9, 4.9.0, etc"
                 @echo -e "  LOGLEVEL\tdebug, info, warn, error"
-                @echo -e "  NETWORK\tnetwork=default, bridge=onp1-dhcp, bridge=onp2-dhcp"
+                @echo -e "  NETWORK\tbaremetal, onp1, onp2, sno0"
                 @echo -e "  TO\t\t4.10.10, 4.11.11, 4.12.12, etc"
                 @echo -e "  FROM\t\t4.10.10, 4.11.11, 4.12.12, etc"
                 @echo -e "  BUTANE\tfile.bu"
