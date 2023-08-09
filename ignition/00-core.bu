@@ -3160,7 +3160,8 @@ storage:
           
           sudo rm -rf ${DIRECTORY}
           sudo mkdir -p ${DIRECTORY}
-          sudo cloud-localds -v -m local --network-config=${CLOUDINIT_NETWORK_CONFIG} ${DIRECTORY}/seed.iso ${CLOUDINIT_USER_DATA}
+          sudo cloud-localds -m local --network-config=${CLOUDINIT_NETWORK_CONFIG} ${DIRECTORY}/seed.iso ${CLOUDINIT_USER_DATA}
+          echo "Downloading ${VM_NAME} image ..."
           sudo curl -#Lo ${DISK} ${IMAGE}
           
           sudo virsh -q destroy ${VM_NAME} > /dev/null || true
