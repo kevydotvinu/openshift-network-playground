@@ -926,6 +926,7 @@ storage:
           MEMORY=${5:-16384}
           NETWORK1=bridge=provisioning,mac=$MAC1
           NETWORK2=bridge=baremetal,mac=$MAC2
+          HOST_IP=$(/usr/sbin/ip r | grep default | awk '{print $9}' | head -n 1)
           
           if virsh list | grep $VM_NAME 2>&1>/dev/null; then virsh destroy $VM_NAME 2>/dev/null; virsh undefine $VM_NAME 2>/dev/null; fi
           if virsh list --all | grep $VM_NAME 2>&1>/dev/null; then virsh undefine $VM_NAME 2>/dev/null; fi
@@ -940,7 +941,7 @@ storage:
                   --network $NETWORK2 \
                   --pxe \
                   --boot network,hd \
-                  --graphics spice,listen=0.0.0.0 \
+                  --graphics spice,listen=${HOST_IP} \
                   --video virtio \
                   --channel spicevmc \
                   --console pty,target.type=virtio \
@@ -1503,6 +1504,7 @@ storage:
           UBUNTU_CLOUDINIT_USER ?= ${HOME}/openshift-network-playground/ubuntu-user-data.yaml
           UBUNTU_CLOUDINIT_NETWORK ?= ${HOME}/openshift-network-playground/ubuntu-network-dhcp-v1.yaml
           UBUNTU_IMAGE ?= https://cloud-images.ubuntu.com/jammy/current/jammy-server-cloudimg-amd64.img
+          HOST_IP=$(/usr/sbin/ip r | grep default | awk '{print $9}' | head -n 1)
 
           .PHONY: all
           
@@ -1726,7 +1728,7 @@ storage:
                                    --cdrom /opt/openshift-network-playground/libvirt/sno4/rhcos-live.iso \
                                    --network bridge=sno0 \
                                    --noautoconsole \
-                                   --graphics spice,listen=0.0.0.0
+                                   --graphics spice,listen=${HOST_IP}
                 @$(SCRIPT_DIR)/openshift-network-playground/sno-restart.sh sno4
                 @/usr/local/bin/openshift-install --log-level=${LOGLEVEL} \
                                                   --dir=$(SCRIPT_DIR)/openshift-network-playground/sno4 wait-for install-complete
@@ -1771,7 +1773,7 @@ storage:
                                    --cdrom /opt/openshift-network-playground/libvirt/sno6/rhcos-live.iso \
                                    --network bridge=sno0 \
                                    --noautoconsole \
-                                   --graphics spice,listen=0.0.0.0
+                                   --graphics spice,listen=${HOST_IP}
                 @$(SCRIPT_DIR)/openshift-network-playground/sno-restart.sh sno6
                 @/usr/local/bin/openshift-install --log-level=${LOGLEVEL} \
                                                   --dir=$(SCRIPT_DIR)/openshift-network-playground/sno6 wait-for install-complete
@@ -1816,7 +1818,7 @@ storage:
                                    --cdrom /opt/openshift-network-playground/libvirt/sno64/rhcos-live.iso \
                                    --network bridge=sno0 \
                                    --noautoconsole \
-                                   --graphics spice,listen=0.0.0.0
+                                   --graphics spice,listen=${HOST_IP}
                 @$(SCRIPT_DIR)/openshift-network-playground/sno-restart.sh sno64
                 @/usr/local/bin/openshift-install --log-level=${LOGLEVEL} \
                                                   --dir=$(SCRIPT_DIR)/openshift-network-playground/sno64 wait-for install-complete
@@ -1857,7 +1859,7 @@ storage:
                                      --os-variant fedora-coreos-stable \
                                      --cdrom /opt/openshift-network-playground/libvirt/rhcos-livecd/rhcos-livecd.iso \
                                      --noautoconsole \
-                                     --graphics spice,listen=0.0.0.0
+                                     --graphics spice,listen=${HOST_IP}
                   @sudo virsh console rhcos-livecd
 
           .PHONY: disconnect-cluster
@@ -2865,6 +2867,7 @@ storage:
                   STREAM="stable"
                   DISK_GB="10"
                   IGNITION_DEVICE_ARG=(--qemu-commandline="-fw_cfg name=opt/com.coreos/config,file=${IGNITION_CONFIG}")
+                  HOST_IP=$(/usr/sbin/ip r | grep default | awk '{print $9}' | head -n 1)
           
                   sudo cp ${DIR}/fedora-coreos-* ${DIR}/fcos.qcow2
                   sudo virsh destroy fcos > /dev/null 2>&1 || :
@@ -2877,7 +2880,7 @@ storage:
                           --boot menu=on \
                           --os-variant=fedora-coreos-${STREAM} \
                           --import \
-                          --graphics spice,listen=0.0.0.0 \
+                          --graphics spice,listen=${HOST_IP} \
                           --noautoconsole \
                           --disk=size=${DISK_GB} \
                           --network network=default \
@@ -3054,6 +3057,7 @@ storage:
           CMD=openshift-baremetal-install
           PULLSECRET=${HOME}/openshift-network-playground/pullsecret
           DIRECTORY=/opt/openshift-network-playground/libvirt/rhcos
+          HOST_IP=$(/usr/sbin/ip r | grep default | awk '{print $9}' | head -n 1)
          
           sudo mkdir -p ${DIRECTORY}
           podman run --interactive --rm quay.io/coreos/butane:release --raw --strict < ${BUTANE} | sudo tee ${DIRECTORY}/${IGNITION_NAME}.ign > /dev/null
@@ -3097,7 +3101,7 @@ storage:
                             --import --network bridge=baremetal \
                             --qemu-commandline="-fw_cfg name=opt/com.coreos/config,file=${DIRECTORY}/${IGNITION_NAME}.ign" \
                             --disk ${DISK} \
-                            --graphics spice,listen=0.0.0.0 \
+                            --graphics spice,listen=${HOST_IP} \
                             --video virtio \
                             --channel spicevmc \
                             --console pty \
@@ -3158,7 +3162,7 @@ storage:
           CLOUDINIT_USER_DATA=${3}
           CLOUDINIT_NETWORK_CONFIG=${4}
           IMAGE=${5}
-          HOST_IP=$(ip r s default | awk '{print $9}')
+          HOST_IP=$(/usr/sbin/ip r | grep default | awk '{print $9}' | head -n 1)
           ONP_DIR=/home/onp/openshift-network-playground
           
           VM_NAME=$(basename -- ${DIRECTORY})
