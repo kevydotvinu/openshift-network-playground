@@ -1940,6 +1940,24 @@ storage:
           ubuntu:
                   @${HOME}/openshift-network-playground/vm.sh ${NETWORK} ${UBUNTU_DIR} ${UBUNTU_CLOUDINIT_USER} ${UBUNTU_CLOUDINIT_NETWORK} ${UBUNTU_IMAGE}
 
+          .PHONY: store-sno4-release
+
+          store-sno4-release: check-from
+                  @echo -e "Storing ${FROM} release ..."
+                  @${HOME}/openshift-network-playground/store-sno4-release.sh ${FROM}
+
+          .PHONY: restore-sno4-release
+
+          restore-sno4-release: check-from
+                  @echo -e "Restoring ${FROM} release ..."
+                  @${HOME}/openshift-network-playground/restore-sno4-release.sh ${FROM}
+
+          .PHONY: list-sno4-releases
+
+          list-sno4-releases:
+                  @echo -e "RELEASES"
+                  @ls /opt/openshift-network-playground/sno4-backup | grep 4[.] || true
+
           .PHONY: help
 
           help:
@@ -1970,6 +1988,10 @@ storage:
                 @echo -e "  bootstrap-ip\t\t\t\tShow bootstrap IP"
                 @echo -e "  store-release FROM=4.x.y\t\tStore OpenShift 4.x.y release"
                 @echo -e "  restore-release TO=4.x.y\t\tRestore OpenShift 4.x.y release"
+                @echo -e "  list-releases\t\t\t\tList stored OpenShift releases"
+                @echo -e "  store-sno4-release FROM=4.x.y\t\tStore single node OpenShift 4.x.y release"
+                @echo -e "  restore-sno4-release TO=4.x.y\t\tRestore single node OpenShift 4.x.y release"
+                @echo -e "  list-sno4-releases\t\t\t\tList stored single node OpenShift releases"
                 @echo ""
                 @echo "Example:"
                 @echo "  onp cluster LOGLEVEL=debug"
@@ -3595,3 +3617,142 @@ storage:
           module github.com/kevydotvinu/reverse-proxy
           
           go 1.20
+    - path: /home/onp/openshift-network-playground/store-sno4-release.sh
+      mode: 0644
+      overwrite: true
+      user:
+        name: onp
+      group:
+        name: onp
+      contents:
+        inline: |
+          #!/bin/bash
+          RELEASE=${1}
+
+          function check_size() {
+                  SIZE=$(du -cs /opt/openshift-network-playground/libvirt/sno4 | tail -n1 | awk '{print $1}')
+                  SIZEH=$(du -csh /opt/openshift-network-playground/libvirt/sno4 | tail -n1 | awk '{print $1}')
+                  FREE=$(df -P /opt | sed -n 2p | awk '{print $4}')
+                  FREEH=$(df -Ph /opt | sed -n 2p | awk '{print $4}')
+                  if [[ ${SIZE} -gt ${FREE} ]]; then
+                          echo "Error: /opt does not have enough space - Have: ${FREEH} Need: ${SIZEH}"
+                          exit 0
+                  fi
+          }
+
+          function check_release() {
+                  if [ -d /opt/openshift-network-playground/sno4-backup/${RELEASE} ]; then
+                          echo "Directory named $RELEASE exists. It will be replaced."
+                          read -r -p "Do you want to continue? [y/N] " response
+                                  case "$response" in
+                                          [yY][eE][sS]|[yY])
+                                                  echo "Removing files..."
+                                                  sudo rm -rf /opt/openshift-network-playground/sno4-backup/$RELEASE
+                                          ;;
+                                          *)
+                                                  exit 0
+                                          ;;
+                                  esac
+                  fi
+          }
+
+          function wait_for_shutdown() {
+                  sp='/-\|'
+                  sc=0
+
+                  spin() {
+                          printf "\r[${sp:sc++:1}] $1"
+                          ((sc==${#sp})) && sc=0
+                  }
+
+                  endspin() {
+                          printf "\r%s\n" "$@"
+                  }
+
+                  until [[ $(sudo virsh -q list 2>/dev/null | grep -o sno4 | wc -c) -eq 0 ]]
+                          do spin "Waiting for the shutdown ..."
+                          sleep 0.5
+                  done
+                  endspin
+          }
+
+          function setup() {
+                  if [[ $(sudo virsh -q list 2>/dev/null | grep -o sno4 | wc -c) != 0 ]]; then
+                          for node in node.sno4.example.local; do ssh -i openshift-network-playground/id_ed25519 -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no core@${node} -- sudo shutdown -h 1; done
+                          wait_for_shutdown
+                  fi
+
+                  sudo mkdir -p /opt/openshift-network-playground/sno4-backup/${RELEASE}
+          }
+
+          function store_release() {
+                  for i in sno4;
+                  do
+                          if [ ! -f /opt/openshift-network-playground/sno4-backup/${RELEASE}/$i.img ]; then
+                                  sudo sudo mkdir -p /opt/openshift-network-playground/sno4-backup/${RELEASE}
+                                  sudo cp /opt/openshift-network-playground/libvirt/$i/$i.img /opt/openshift-network-playground/sno4-backup/${RELEASE}/$i.img
+                                  echo "Copied $i.img!"
+                          fi
+                  done
+                  if [ ! -f /opt/openshift-network-playground/sno4-backup/${RELEASE}/kubeconfig ]; then
+                          sudo cp ${HOME}/openshift-network-playground/sno4/auth/kubeconfig /opt/openshift-network-playground/sno4-backup/${RELEASE}/
+                          echo "Copied kubeconfig!"
+                          sudo cp ${HOME}/openshift-network-playground/sno4/auth/kubeadmin-password /opt/openshift-network-playground/sno4-backup/${RELEASE}/
+                          echo "Copied kubeadmin-password!"
+                  fi
+          }
+
+          check_size
+          check_release
+          setup
+          store_release
+    - path: /home/onp/openshift-network-playground/restore-sno4-release.sh
+      mode: 0644
+      overwrite: true
+      user:
+        name: onp
+      group:
+        name: onp
+      contents:
+        inline: |
+          #!/bin/bash
+
+          RELEASE=${1}
+
+          function download_oc() {
+                  echo "Downloading oc binary ..."
+                  curl -# https://mirror.openshift.com/pub/openshift-v4/clients/ocp/$RELEASE/openshift-client-linux.tar.gz | tar xzf /dev/stdin oc
+                  sudo mv oc /usr/local/bin/
+                  echo "✔ Downloaded!"
+          }
+
+          function setup() {
+                  sudo systemctl restart dhcp
+          }
+
+          function restore_release() {
+                  for i in sno4;
+                  do
+                          if [ -f /opt/openshift-network-playground/sno4-backup/${RELEASE}/$i.img ]; then
+                                  sudo virsh -q destroy $i 2>/dev/null
+                                  sudo cp /opt/openshift-network-playground/sno4-backup/${RELEASE}/$i.img /opt/openshift-network-playground/libvirt/$i/$i.img
+                                  sudo virsh -q start $i
+                                  echo "$i started!"
+                          else
+                                  echo "No $i.img file in /opt/openshift-network-playground/sno4-backup/${RELEASE}/"
+                          fi
+                  done
+                  if [ -f /opt/openshift-network-playground/sno4-backup/${RELEASE}/kubeconfig ]; then
+                          mkdir -p openshift-network-playground/sno4/auth
+                          sudo cp /opt/openshift-network-playground/sno4-backup/${RELEASE}/kubeconfig ${HOME}/openshift-network-playground/sno4/auth/kubeconfig
+                          sudo chown onp:onp ${HOME}/openshift-network-playground/sno4/auth/kubeconfig
+                          sudo cp /opt/openshift-network-playground/sno4-backup/${RELEASE}/kubeadmin-password ${HOME}/openshift-network-playground/sno4/auth/kubeadmin-password
+                          sudo chown onp:onp ${HOME}/openshift-network-playground/sno4/auth/kubeadmin-password
+                          download_oc
+                  else
+                          echo "No kubeconfig file in /opt/openshift-network-playground/sno4-backup/${RELEASE}/"
+                  fi
+          }
+
+          restore_release
+          # setup
