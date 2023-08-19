@@ -1492,13 +1492,17 @@ storage:
           DNS64 = $$(sudo systemctl is-active dns64)
           BUTANE = ${HOME}/openshift-network-playground/core-passwd.bu
           FEDORA_DIR = /opt/openshift-network-playground/libvirt/fedora
-          FEDORA_CLOUDINIT_USER = ${HOME}/openshift-network-playground/fedora-user-data.yaml
-          FEDORA_CLOUDINIT_NETWORK = ${HOME}/openshift-network-playground/fedora-network-config-v1.yaml
-          FEDORA_IMAGE = https://download.fedoraproject.org/pub/fedora/linux/releases/38/Cloud/x86_64/images/Fedora-Cloud-Base-38-1.6.x86_64.qcow2
+          FEDORA_CLOUDINIT_USER ?= ${HOME}/openshift-network-playground/fedora-user-data.yaml
+          FEDORA_CLOUDINIT_NETWORK ?= ${HOME}/openshift-network-playground/fedora-network-dhcp-v1.yaml
+          FEDORA_IMAGE ?= https://download.fedoraproject.org/pub/fedora/linux/releases/38/Cloud/x86_64/images/Fedora-Cloud-Base-38-1.6.x86_64.qcow2
           VYOS_DIR = /opt/openshift-network-playground/libvirt/vyos
-          VYOS_CLOUDINIT_USER = ${HOME}/openshift-network-playground/vyos-user-data.yaml
-          VYOS_CLOUDINIT_NETWORK = ${HOME}/openshift-network-playground/vyos-network-config-v2.yaml
-          VYOS_IMAGE = https://s3-us.vyos.io/1.2.9-S1/vyos-1.2.9-S1-10G-qemu.qcow2
+          VYOS_CLOUDINIT_USER ?= ${HOME}/openshift-network-playground/vyos-user-data.yaml
+          VYOS_CLOUDINIT_NETWORK ?= ${HOME}/openshift-network-playground/vyos-network-dhcp-v1.yaml
+          VYOS_IMAGE ?= https://s3-us.vyos.io/1.2.9-S1/vyos-1.2.9-S1-10G-qemu.qcow2
+          UBUNTU_DIR = /opt/openshift-network-playground/libvirt/ubuntu
+          UBUNTU_CLOUDINIT_USER ?= ${HOME}/openshift-network-playground/ubuntu-user-data.yaml
+          UBUNTU_CLOUDINIT_NETWORK ?= ${HOME}/openshift-network-playground/ubuntu-network-dhcp-v1.yaml
+          UBUNTU_IMAGE ?= https://cloud-images.ubuntu.com/jammy/current/jammy-server-cloudimg-amd64.img
 
           .PHONY: all
           
@@ -1928,6 +1932,11 @@ storage:
           
           vyos:
                   @${HOME}/openshift-network-playground/vm.sh ${NETWORK} ${VYOS_DIR} ${VYOS_CLOUDINIT_USER} ${VYOS_CLOUDINIT_NETWORK} ${VYOS_IMAGE}
+
+          .PHONY: ubuntu
+
+          ubuntu:
+                  @${HOME}/openshift-network-playground/vm.sh ${NETWORK} ${UBUNTU_DIR} ${UBUNTU_CLOUDINIT_USER} ${UBUNTU_CLOUDINIT_NETWORK} ${UBUNTU_IMAGE}
 
           .PHONY: help
 
@@ -3139,7 +3148,7 @@ storage:
       contents:
         inline: |
           #!/bin/bash
-          # The script needs userdata, networkdata, network, directory and image as an args
+          # The script needs userdata, networkdata, network and directory as an args
           
           set -eou pipefail
           
@@ -3193,7 +3202,7 @@ storage:
           #cloud-config
           preserve_hostname: False
           hostname: fedora
-          fqdn: fedora.sno6.example.local
+          fqdn: fedora.onp.example.local
           packages:
             - cloud-initramfs-growroot
           output:
@@ -3206,7 +3215,45 @@ storage:
               groups: sudo
               shell: /bin/bash
           ssh_pwauth: True
-    - path: /home/onp/openshift-network-playground/fedora-network-data-v1.yaml
+    - path: /home/onp/openshift-network-playground/fedora-network-dhcp-v1.yaml
+      mode: 0644
+      overwrite: true
+      user:
+        name: onp
+      group:
+        name: onp
+      contents:
+        inline: |
+          network:
+            version: 1
+            config:
+            - type: physical
+              name: eth0
+              subnets:
+                - type: dhcp
+    - path: /home/onp/openshift-network-playground/fedora-network-static-v1.yaml
+      mode: 0644
+      overwrite: true
+      user:
+        name: onp
+      group:
+        name: onp
+      contents:
+        inline: |
+          network:
+            version: 1
+            config:
+              - type: physical
+                name: eth0
+                subnets:
+                  - type: static
+                    address: 192.168.123.100
+                    gateway: 192.168.123.1
+                    dns_nameservers:
+                      - 192.168.124.1
+                    dns_search:
+                      - example.local
+    - path: /home/onp/openshift-network-playground/fedora-network-static6-v1.yaml
       mode: 0644
       overwrite: true
       user:
@@ -3227,7 +3274,7 @@ storage:
                     dns_nameservers:
                       - fd00:dead:beef::1
                     dns_search:
-                      - sno6.example.local
+                      - example.local
     - path: /home/onp/openshift-network-playground/vyos-user-data.yaml
       mode: 0644
       overwrite: true
@@ -3250,7 +3297,7 @@ storage:
             - set interfaces ethernet eth2 address '192.168.26.1/24'
             - set interfaces ethernet eth2 description 'Comming through VLAN 26'
             - set protocols static route 0.0.0.0/0 next-hop '198.51.100.1'
-    - path: /home/onp/openshift-network-playground/vyos-network-data-v2.yaml
+    - path: /home/onp/openshift-network-playground/vyos-network-dhcp-v1.yaml
       mode: 0644
       overwrite: true
       user:
@@ -3259,14 +3306,120 @@ storage:
         name: onp
       contents:
         inline: |
-          version: 2
-          ethernets:
-            eth0:
-              dhcp4: false
-              dhcp6: false
-            eth1:
-              dhcp4: false
-              dhcp6: false
+          network:
+            version: 1
+            config:
+            - type: physical
+              name: eth0
+              subnets:
+                - type: dhcp
+    - path: /home/onp/openshift-network-playground/vyos-network-static-v1.yaml
+      mode: 0644
+      overwrite: true
+      user:
+        name: onp
+      group:
+        name: onp
+      contents:
+        inline: |
+          network:
+            version: 1
+            config:
+              - type: physical
+                name: eth0
+                subnets:
+                  - type: static
+                    address: 192.168.123.101
+                    gateway: 192.168.123.1
+                    dns_nameservers:
+                      - 192.168.123.1
+                    dns_search:
+                      - example.local
+    - path: /home/onp/openshift-network-playground/ubuntu-user-data.yaml
+      mode: 0644
+      overwrite: true
+      user:
+        name: onp
+      group:
+        name: onp
+      contents:
+        inline: |
+          #cloud-config
+          preserve_hostname: False
+          hostname: ubuntu
+          fqdn: ubuntu.onp.example.local
+          packages:
+            - cloud-initramfs-growroot
+          output:
+            all: ">> /var/log/cloud-init.log"
+          users:
+            - name: onp
+              plain_text_passwd: 'Onp@123'
+              lock-passwd: False
+              sudo: ['ALL=(ALL) NOPASSWD:ALL']
+              groups: sudo
+              shell: /bin/bash
+          ssh_pwauth: True
+    - path: /home/onp/openshift-network-playground/ubuntu-network-dhcp-v1.yaml
+      mode: 0644
+      overwrite: true
+      user:
+        name: onp
+      group:
+        name: onp
+      contents:
+        inline: |
+          network:
+            version: 1
+            config:
+            - type: physical
+              name: enp1s0
+              subnets:
+                - type: dhcp
+    - path: /home/onp/openshift-network-playground/ubuntu-network-static-v1.yaml
+      mode: 0644
+      overwrite: true
+      user:
+        name: onp
+      group:
+        name: onp
+      contents:
+        inline: |
+          network:
+            version: 1
+            config:
+              - type: physical
+                name: enp1s0
+                subnets:
+                  - type: static
+                    address: 192.168.123.103
+                    gateway: 192.168.123.1
+                    dns_nameservers:
+                      - 192.168.123.1
+                    dns_search:
+                      - example.local
+    - path: /home/onp/openshift-network-playground/ubuntu-network-static6-v1.yaml
+      mode: 0644
+      overwrite: true
+      user:
+        name: onp
+      group:
+        name: onp
+      contents:
+        inline: |
+          network:
+            version: 1
+            config:
+              - type: physical
+                name: enp1s0
+                subnets:
+                  - type: static
+                    address: fd00:dead:beef::6/96
+                    gateway: fd00:dead:beef::1
+                    dns_nameservers:
+                      - fd00:dead:beef::1
+                    dns_search:
+                      - example.local
     - path: /opt/openshift-network-playground/reverse-proxy/Containerfile
       mode: 0644
       overwrite: true
