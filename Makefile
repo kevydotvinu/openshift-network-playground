@@ -15,9 +15,9 @@ ifndef REGPASS
 	$(error REGPASS is undefined)
 endif
 
-check-tag:
-ifndef TAG
-	$(error TAG is undefined)
+check-version:
+ifndef VERSION
+	$(error VERSION is undefined)
 endif
 
 .PHONY: generate-ignition
@@ -195,7 +195,20 @@ boot-iso:
 changelog:
 	@hack/changelog.sh
 
-.PHONY: release-tag
+.PHONY: release
 
-release-tag: check-tag
-	git tag -s ${TAG} -m ${TAG}
+release: check-version
+	git checkout main
+	git fetch origin main
+	git merge origin main
+	git checkout -b release-${VERSION}
+	make update-repo
+	git add .
+	git commit -m "ci: Release ${VERSION}"
+	git push origin release-${VERSION}
+
+.PHONY: tag
+
+tag: check-version
+	git tag -s ${VERSION} -m ${VERSION}
+	git push origin ${TAG}
