@@ -1,0 +1,36 @@
+name: Build ISO
+on:
+  workflow_dispatch:
+  create:
+    branches:
+      - 'release-v*'
+jobs:
+  build-iso:
+    name: Build ISO
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          submodules: recursive
+      - name: Build ISO
+        run: |
+          make cosa-init
+          make build-iso
+          make customize-iso
+      - name: Set ISO absolute path
+        run: |
+          iso_path=$(readlink -f $(dirname $(pwd))/cosa/builds/latest/x86_64/*.iso)
+          echo "ISO_PATH=${iso_path}" >> $GITHUB_ENV
+      - name: Show ISO_PATH
+        run: |
+          echo "${{ env.ISO_PATH }}"
+      - name: Generate Changelog
+        run: |
+          changelog=$(make changelog)
+          echo "CHANGELOG=${changelog}" >> $GITHUB_ENV
+      - name: Show CHANGELOG
+        run: |
+          echo "${{ env.CHANGELOG }}"
