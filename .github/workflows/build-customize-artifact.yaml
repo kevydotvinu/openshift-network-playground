@@ -29,11 +29,8 @@ jobs:
         run: |
           iso_path=$(readlink -f $(dirname $(pwd))/cosa/builds/latest/x86_64/*.iso)
           echo "ISO_PATH=${iso_path}" >> $GITHUB_ENV
-      - name: Upload assets
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
         with:
-          asset_path: ${{ env.ISO_PATH }}
-          asset_name: onp-${{ github.ref_name }}-x86_64.iso
-          asset_content_type: application/octet-stream
+          name: onp-${{ github.ref_name }}-x86_64.iso
+          path: ${{ env.ISO_PATH }}
