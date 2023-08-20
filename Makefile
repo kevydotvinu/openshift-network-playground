@@ -15,6 +15,11 @@ ifndef REGPASS
 	$(error REGPASS is undefined)
 endif
 
+check-tag:
+ifndef TAG
+	$(error TAG is undefined)
+endif
+
 .PHONY: generate-ignition
 
 generate-ignition:
@@ -184,3 +189,13 @@ boot-iso:
 	@echo -e "${ORANGE}Booting ISO image ...${NOCOLOR}"
 	@qemu-img create ../onp.img 60G
 	@virt-install --name onp --vcpu 2 --memory 4000 --disk ../onp.img --cdrom ../cosa/builds/latest/x86_64/*.iso --noautoconsole --graphics spice,listen=0.0.0.0 --boot menu=on
+
+.PHONY: changelog
+
+changelog:
+	@hack/changelog.sh
+
+.PHONY: release-tag
+
+release-tag: check-tag
+	git tag -s ${TAG} -m ${TAG}
