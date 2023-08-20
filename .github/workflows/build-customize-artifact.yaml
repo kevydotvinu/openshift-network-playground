@@ -1,0 +1,39 @@
+name: Build and artifact ISO
+on:
+  workflow_dispatch:
+jobs:
+  build-customize-iso:
+    name: Build and customize ISO
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          submodules: recursive
+          fetch-depth: 0
+      - name: Generate changelog
+        run: |
+          changelog=$(make changelog | base64 -w0)
+          echo "CHANGELOG=${changelog}" >> $GITHUB_ENV
+      - name: Show changelog
+        run: |
+          echo ${{ env.CHANGELOG }} | base64 -d
+      - name: Build ISO
+        run: |
+          make cosa-init
+          make build-iso
+          make customize-iso
+      - name: Set ISO absolute path
+        run: |
+          iso_path=$(readlink -f $(dirname $(pwd))/cosa/builds/latest/x86_64/*.iso)
+          echo "ISO_PATH=${iso_path}" >> $GITHUB_ENV
+      - name: Upload assets
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          asset_path: ${{ env.ISO_PATH }}
+          asset_name: onp-${{ github.ref_name }}-x86_64.iso
+          asset_content_type: application/octet-stream
