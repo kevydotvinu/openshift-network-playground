@@ -27,6 +27,7 @@ packages:
   - tmux
   - cloud-utils
   - langpacks-en
+  - genisoimage
 
 repos:
   - fedora
