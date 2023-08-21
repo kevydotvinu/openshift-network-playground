@@ -1,4 +1,10 @@
 # OpenShift Network Playground (onp)
+[![licence](https://img.shields.io/github/license/kevydotvinu/openshift-network-playground)](https://github.com/kevydotvinu/openshift-network-playground/blob/master/LICENSE)
+[![downloads](https://img.shields.io/github/downloads/kevydotvinu/openshift-network-playground/total)](https://github.com/kevydotvinu/openshift-network-playground/releases)
+[![artifact](https://img.shields.io/github/actions/workflow/status/kevydotvinu/openshift-network-playground/build-customize-artifact.yaml)](https://github.com/kevydotvinu/openshift-network-playground/actions/workflows/build-customize-artifact.yaml)
+[![issues](https://img.shields.io/github/issues/kevydotvinu/openshift-network-playground)](https://github.com/kevydotvinu/openshift-network-playground/issues)
+[![pullrequests](https://img.shields.io/github/issues-pr/kevydotvinu/openshift-network-playground)](https://github.com/kevydotvinu/openshift-network-playground/pulls)
+[![openshiftlab](https://img.shields.io/badge/openshift%20-lab-orange)](https://github.com/kevydotvinu/openshift-network-playground)
 
 The OpenShift Network Playground is both web-based and cli-based interface built for advanced OpenShift users that makes it easy to quickly build and test different OpenShift network scenarios.
 
