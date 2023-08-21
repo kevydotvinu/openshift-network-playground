@@ -1472,7 +1472,7 @@ storage:
           RELEASE ?= stable
           LOGLEVEL ?= info
           SCRIPT_DIR = $(shell cd -- "$( dirname -- "${BASH_SOURCE[0]:-$0}"; )" &> /dev/null && pwd 2> /dev/null; )
-          CONTAINERS = $(shell sudo podman ps --format {{.Names}} | sort | grep -oE '^dhcp$|^vbmc$|^webserver$|^proxy$' | xargs)
+          CONTAINERS = $(shell sudo podman ps --format {{.Names}} | sort | grep -oE '^dhcp$$|^vbmc$$|^webserver$$|^proxy$$' | xargs)
           VMS = $(shell sudo virsh list --all --name | grep -oE 'master0|master1|master2|worker0|worker1' | xargs)
           TFF = $(shell ls /tmp/openshift-install-bootstrap-*/terraform.platform.auto.tfvars.json 2>/dev/null | wc -l)
           VIRBR0 = $(shell sudo virsh net-info default | awk '/Bridge:/{print $$2}')
