@@ -1477,7 +1477,7 @@ storage:
           TFF = $(shell ls /tmp/openshift-install-bootstrap-*/terraform.platform.auto.tfvars.json 2>/dev/null | wc -l)
           VIRBR0 = $(shell sudo virsh net-info default | awk '/Bridge:/{print $$2}')
           VIRBR0MAC = $(shell ip a s ${VIRBR0} | awk '/ether /{print $$2}' | cut -f1-4 -d':')
-          NETWORK =? baremetal
+          NETWORK ?= baremetal
           BAREMETAL_DHCP = $$(sudo systemctl is-active dhcp)
           VBMC = $$(sudo systemctl is-active vbmc)
           WEBSERVER = $$(sudo systemctl is-active webserver)
