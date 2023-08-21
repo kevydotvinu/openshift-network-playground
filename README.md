@@ -32,7 +32,7 @@ Copy it from [here](https://console.redhat.com/openshift/token/show).
 ## Installation
 - Download the ISO.
 ```bash
-curl -LO https://github.com/kevydotvinu/openshift-network-playground/releases/download/v0.1.0/onp-v0.1.0-x86_64.iso
+curl -LO $(curl -s https://api.github.com/repos/kevydotvinu/openshift-network-playground/releases/latest | grep "browser_download_url.*\.iso" | cut -d : -f 2,3 | tr -d \")
 ```
 - Boot it and wait for the installation to complete (Monitor the progress in the machine console).
 > **WARNING**: The ISO boot will erase ALL the data on the `/dev/sda` disk and install OpenShift Network Playground automatically.
