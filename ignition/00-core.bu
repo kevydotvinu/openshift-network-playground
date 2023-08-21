@@ -572,9 +572,6 @@ storage:
           /usr/sbin/iptables -t nat -I POSTROUTING -s 192.168.124.0/24 ! -d 192.168.124.0/24 -j MASQUERADE
           /usr/sbin/iptables -t nat -I POSTROUTING -s 192.168.125.0/24 ! -d 192.168.125.0/24 -j MASQUERADE
           /usr/bin/echo 1 > /proc/sys/net/ipv6/conf/$(ip -o -4 route show default | awk '{print $5}')/disable_ipv6
-          /usr/sbin/iptables -t nat -I PREROUTING -p tcp -i $(/usr/sbin/ip r | grep default | awk '{print $5}' | head -n 1) --dport 443 -j DNAT --to-destination 192.168.123.89:443
-          /usr/sbin/iptables -t nat -I PREROUTING -p tcp -i $(/usr/sbin/ip r | grep default | awk '{print $5}' | head -n 1) --dport 80 -j DNAT --to-destination 192.168.123.89:80
-          /usr/sbin/iptables -t nat -I PREROUTING -p tcp -i $(/usr/sbin/ip r | grep default | awk '{print $5}' | head -n 1) --dport 6443 -j DNAT --to-destination 192.168.123.88:6443
           /usr/bin/test -f /opt/openshift-network-playground/vbmc/ssh/id_rsa || (ssh-keygen -N '' -f /opt/openshift-network-playground/vbmc/ssh/id_rsa && mkdir -p /home/onp/.ssh && cp /opt/openshift-network-playground/vbmc/ssh/id_rsa.pub /home/onp/.ssh/authorized_keys && chown onp:onp -R /home/onp/.ssh)
           /usr/bin/test -f /opt/openshift-network-playground/cockpit-ws.done || (/usr/bin/test -d /usr/share/cockpit && podman container runlabel --name cockpit-ws RUN quay.io/cockpit/ws && podman container runlabel INSTALL quay.io/cockpit/ws && systemctl enable --now cockpit.service && touch /opt/openshift-network-playground/cockpit-ws.done)
           /usr/bin/chown -R onp:onp /home/onp/.local
@@ -873,8 +870,8 @@ storage:
       contents:
         inline: |
           address=/.apps.ocp.example.local/192.168.123.89
-          address=/.apps.sno4.example.local/192.168.124.2
-          address=/.apps.sno64.example.local/192.168.124.3
+          address=/.apps.sno4.example.local/192.168.126.2
+          address=/.apps.sno64.example.local/192.168.126.3
           address=/.apps.sno6.example.local/fd00:dead:beef::2
           address=/.apps.sno64.example.local/fd00:dead:beef::3
           addn-hosts=/etc/hosts
