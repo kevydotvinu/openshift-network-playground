@@ -60,3 +60,8 @@ onp deploy RELEASE=<release> OCM_TOKEN=<token>
 ```
 ## Single-stack IPv6 cluster architecture
 ![Single-stack IPv6 cluster architecture](../media/onp-ipv6.png?raw=true)
+
+## Sponsor
+Many thanks to **JetBrains** for Open Source development license(s).
+
+[![JetBrains Logo (Main) logo](https://resources.jetbrains.com/storage/products/company/brand/logos/jb_beam.svg)](https://jb.gg/OpenSourceSupport)
