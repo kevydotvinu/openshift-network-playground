@@ -212,3 +212,8 @@ release: check-version
 tag: check-version
 	git tag -s ${VERSION} -m ${VERSION}
 	git push origin ${VERSION}
+
+.PHONY: submodule
+
+submodule:
+	git submodule update --init --recursive
