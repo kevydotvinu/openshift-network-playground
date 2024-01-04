@@ -102,6 +102,7 @@ cosa-init:
 	@echo -e "${ORANGE}Initializing CoreOS assembler ...${NOCOLOR}"
 	-rm -rf ../cosa
 	mkdir ../cosa
+	podman pull quay.io/coreos-assembler/coreos-assembler:latest
 	source ${DIR}/env && \
 		pushd ../cosa && \
 		unset COREOS_ASSEMBLER_CONFIG_GIT && \
