@@ -1489,15 +1489,18 @@ storage:
           NAT64 = $$(sudo systemctl is-active nat64)
           DNS64 = $$(sudo systemctl is-active dns64)
           BUTANE = ${HOME}/openshift-network-playground/core-passwd.bu
-          FEDORA_DIR = /opt/openshift-network-playground/libvirt/fedora
+          FEDORA_VM_NAME ?= fedora
+          FEDORA_DIR = /opt/openshift-network-playground/libvirt/${FEDORA_VM_NAME}
           FEDORA_CLOUDINIT_USER ?= ${HOME}/openshift-network-playground/fedora-user-data.yaml
           FEDORA_CLOUDINIT_NETWORK ?= ${HOME}/openshift-network-playground/fedora-network-dhcp-v1.yaml
           FEDORA_IMAGE ?= https://download.fedoraproject.org/pub/fedora/linux/releases/38/Cloud/x86_64/images/Fedora-Cloud-Base-38-1.6.x86_64.qcow2
-          VYOS_DIR = /opt/openshift-network-playground/libvirt/vyos
+          VYOS_VM_NAME ?= vyos
+          VYOS_DIR = /opt/openshift-network-playground/libvirt/${VYOS_VM_NAME}
           VYOS_CLOUDINIT_USER ?= ${HOME}/openshift-network-playground/vyos-user-data.yaml
           VYOS_CLOUDINIT_NETWORK ?= ${HOME}/openshift-network-playground/vyos-network-dhcp-v1.yaml
           VYOS_IMAGE ?= https://legacy-lts-images.vyos.io/1.2.9-S1/vyos-1.2.9-S1-10G-qemu.qcow2
-          UBUNTU_DIR = /opt/openshift-network-playground/libvirt/ubuntu
+          UBUNTU_VM_NAME ?= ubuntu
+          UBUNTU_DIR = /opt/openshift-network-playground/libvirt/${UBUNTU_VM_NAME}
           UBUNTU_CLOUDINIT_USER ?= ${HOME}/openshift-network-playground/ubuntu-user-data.yaml
           UBUNTU_CLOUDINIT_NETWORK ?= ${HOME}/openshift-network-playground/ubuntu-network-dhcp-v1.yaml
           UBUNTU_IMAGE ?= https://cloud-images.ubuntu.com/jammy/current/jammy-server-cloudimg-amd64.img
@@ -1925,17 +1928,17 @@ storage:
           .PHONY: fedora
           
           fedora:
-                  @${HOME}/openshift-network-playground/vm.sh ${NETWORK} ${FEDORA_DIR} ${FEDORA_CLOUDINIT_USER} ${FEDORA_CLOUDINIT_NETWORK} ${FEDORA_IMAGE}
+                  @${HOME}/openshift-network-playground/vm.sh ${NETWORK} ${FEDORA_DIR} ${FEDORA_CLOUDINIT_USER} ${FEDORA_CLOUDINIT_NETWORK} ${FEDORA_IMAGE} ${FEDORA_VM_NAME}
           
           .PHONY: vyos
           
           vyos:
-                  @${HOME}/openshift-network-playground/vm.sh ${NETWORK} ${VYOS_DIR} ${VYOS_CLOUDINIT_USER} ${VYOS_CLOUDINIT_NETWORK} ${VYOS_IMAGE}
+                  @${HOME}/openshift-network-playground/vm.sh ${NETWORK} ${VYOS_DIR} ${VYOS_CLOUDINIT_USER} ${VYOS_CLOUDINIT_NETWORK} ${VYOS_IMAGE} ${VYOS_VM_NAME}
 
           .PHONY: ubuntu
 
           ubuntu:
-                  @${HOME}/openshift-network-playground/vm.sh ${NETWORK} ${UBUNTU_DIR} ${UBUNTU_CLOUDINIT_USER} ${UBUNTU_CLOUDINIT_NETWORK} ${UBUNTU_IMAGE}
+                  @${HOME}/openshift-network-playground/vm.sh ${NETWORK} ${UBUNTU_DIR} ${UBUNTU_CLOUDINIT_USER} ${UBUNTU_CLOUDINIT_NETWORK} ${UBUNTU_IMAGE} ${UBUNTU_VM_NAME}
 
           .PHONY: store-sno4-release
 
@@ -3184,8 +3187,7 @@ storage:
           HOST_IP=$(/usr/sbin/ip r | grep default | awk '{print $9}' | head -n 1)
           ONP_DIR=/home/onp/openshift-network-playground
           
-          VM_NAME=$(basename -- ${DIRECTORY})
-          VM_NAME=${VM_NAME%.*}
+          VM_NAME=${6}
           IMAGE_NAME=$(basename -- ${IMAGE})
           EXTENSION=${IMAGE_NAME##*.}
           DISK=${DIRECTORY}/${VM_NAME}.${EXTENSION}
