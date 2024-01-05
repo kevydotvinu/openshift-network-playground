@@ -1006,7 +1006,7 @@
           "name": "onp"
         },
         "contents": {
-          "source": "data:,%23cloud-config%0Apreserve_hostname%3A%20False%0Ahostname%3A%20fedora%0Afqdn%3A%20fedora.onp.example.local%0Apackages%3A%0A%20%20-%20cloud-initramfs-growroot%0Aoutput%3A%0A%20%20all%3A%20%22%3E%3E%20%2Fvar%2Flog%2Fcloud-init.log%22%0Ausers%3A%0A%20%20-%20name%3A%20onp%0A%20%20%20%20plain_text_passwd%3A%20'Onp%40123'%0A%20%20%20%20lock-passwd%3A%20False%0A%20%20%20%20sudo%3A%20%5B'ALL%3D(ALL)%20NOPASSWD%3AALL'%5D%0A%20%20%20%20groups%3A%20sudo%0A%20%20%20%20shell%3A%20%2Fbin%2Fbash%0Assh_pwauth%3A%20True%0A"
+          "source": "data:,%23cloud-config%0Apreserve_hostname%3A%20False%0Ahostname%3A%20fedora%0Afqdn%3A%20fedora.onp.example.local%0Apackages%3A%0A%20%20-%20cloud-utils-growpart%0Aoutput%3A%0A%20%20all%3A%20%22%3E%3E%20%2Fvar%2Flog%2Fcloud-init.log%22%0Ausers%3A%0A%20%20-%20name%3A%20onp%0A%20%20%20%20plain_text_passwd%3A%20'Onp%40123'%0A%20%20%20%20lock-passwd%3A%20False%0A%20%20%20%20sudo%3A%20%5B'ALL%3D(ALL)%20NOPASSWD%3AALL'%5D%0A%20%20%20%20groups%3A%20sudo%0A%20%20%20%20shell%3A%20%2Fbin%2Fbash%0Assh_pwauth%3A%20True%0A"
         },
         "mode": 420
       },

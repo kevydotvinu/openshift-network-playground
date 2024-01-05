@@ -3227,7 +3227,7 @@ storage:
           hostname: fedora
           fqdn: fedora.onp.example.local
           packages:
-            - cloud-initramfs-growroot
+            - cloud-utils-growpart
           output:
             all: ">> /var/log/cloud-init.log"
           users:
