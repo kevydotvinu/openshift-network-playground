@@ -1496,7 +1496,7 @@ storage:
           VYOS_DIR = /opt/openshift-network-playground/libvirt/vyos
           VYOS_CLOUDINIT_USER ?= ${HOME}/openshift-network-playground/vyos-user-data.yaml
           VYOS_CLOUDINIT_NETWORK ?= ${HOME}/openshift-network-playground/vyos-network-dhcp-v1.yaml
-          VYOS_IMAGE ?= https://s3-us.vyos.io/1.2.9-S1/vyos-1.2.9-S1-10G-qemu.qcow2
+          VYOS_IMAGE ?= https://legacy-lts-images.vyos.io/1.2.9-S1/vyos-1.2.9-S1-10G-qemu.qcow2
           UBUNTU_DIR = /opt/openshift-network-playground/libvirt/ubuntu
           UBUNTU_CLOUDINIT_USER ?= ${HOME}/openshift-network-playground/ubuntu-user-data.yaml
           UBUNTU_CLOUDINIT_NETWORK ?= ${HOME}/openshift-network-playground/ubuntu-network-dhcp-v1.yaml
