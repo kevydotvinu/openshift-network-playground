@@ -147,6 +147,7 @@ systemd:
         Restart=on-failure
         TimeoutStopSec=70
         ExecStartPre=/bin/rm -f %t/%n.ctr-id
+        ExecStartPre=-/usr/bin/podman rm webserver
         ExecStart=/usr/bin/podman run \
                 --cidfile=%t/%n.ctr-id \
                 --cgroups=no-conmon \
@@ -179,6 +180,7 @@ systemd:
         TimeoutStopSec=70
         TimeoutStartSec=600
         ExecStartPre=/usr/bin/rm -f %t/%n.ctr-id
+        ExecStartPre=-/usr/bin/podman rm vbmc
         ExecStartPre=/usr/bin/rm -vf /opt/openshift-network-playground/vbmc/config/master.pid
         ExecStart=/usr/bin/podman run \
                 --cidfile=%t/%n.ctr-id \
@@ -215,6 +217,7 @@ systemd:
         TimeoutStartSec=180
         TimeoutStopSec=70
         ExecStartPre=-/usr/bin/rm -f %t/%n.ctr-id
+        ExecStartPre=-/usr/bin/podman rm dhcp
         ExecStartPre=/usr/bin/podman build --net host --tag localhost/dhcp /opt/openshift-network-playground/dhcp
         ExecStart=/usr/bin/podman run --cidfile=%t/%n.ctr-id --cgroups=no-conmon --rm --sdnotify=conmon --name dhcp -d --net host --cap-add NET_ADMIN,NET_RAW localhost/dhcp
         ExecStop=/usr/bin/podman stop --ignore --cidfile=%t/%n.ctr-id
@@ -239,6 +242,7 @@ systemd:
         TimeoutStartSec=180
         TimeoutStopSec=70
         ExecStartPre=-/usr/bin/rm -f %t/%n.ctr-id
+        ExecStartPre=-/usr/bin/podman rm onp1-dhcp
         ExecStartPre=/usr/bin/podman build --net host --tag localhost/onp1-dhcp /opt/openshift-network-playground/onp1-dhcp
         ExecStart=/usr/bin/podman run --cidfile=%t/%n.ctr-id --cgroups=no-conmon --rm --sdnotify=conmon --name onp1-dhcp -d --net host --cap-add NET_ADMIN,NET_RAW localhost/onp1-dhcp
         ExecStop=/usr/bin/podman stop --ignore --cidfile=%t/%n.ctr-id
@@ -263,6 +267,7 @@ systemd:
         TimeoutStartSec=180
         TimeoutStopSec=70
         ExecStartPre=-/usr/bin/rm -f %t/%n.ctr-id
+        ExecStartPre=-/usr/bin/podman rm onp2-dhcp
         ExecStartPre=/usr/bin/podman build --net host --tag localhost/onp2-dhcp /opt/openshift-network-playground/onp2-dhcp
         ExecStart=/usr/bin/podman run --cidfile=%t/%n.ctr-id --cgroups=no-conmon --rm --sdnotify=conmon --name onp2-dhcp -d --net host --cap-add NET_ADMIN,NET_RAW localhost/onp2-dhcp
         ExecStop=/usr/bin/podman stop --ignore --cidfile=%t/%n.ctr-id
@@ -287,6 +292,7 @@ systemd:
         TimeoutStartSec=180
         TimeoutStopSec=70
         ExecStartPre=-/usr/bin/rm -f %t/%n.ctr-id
+        ExecStartPre=-/usr/bin/podman rm pxe
         ExecStartPre=/usr/bin/podman build --net host --tag localhost/pxe /opt/openshift-network-playground/pxe
         ExecStart=/usr/bin/podman run --cidfile=%t/%n.ctr-id --cgroups=no-conmon --rm --sdnotify=conmon --name pxe -d --net host --cap-add NET_ADMIN,NET_RAW localhost/pxe
         ExecStop=/usr/bin/podman stop --ignore --cidfile=%t/%n.ctr-id
@@ -326,6 +332,7 @@ systemd:
         TimeoutStartSec=180
         TimeoutStopSec=70
         ExecStartPre=-/usr/bin/rm -f %t/%n.ctr-id
+        ExecStartPre=-/usr/bin/podman rm nat64
         ExecStartPre=/usr/bin/podman build --net host --tag localhost/nat64 /opt/openshift-network-playground/nat64
         ExecStart=/usr/bin/podman run --cidfile=%t/%n.ctr-id --cgroups=no-conmon --rm --sdnotify=conmon --name nat64 --detach --net host --privileged localhost/nat64
         ExecStartPost=/opt/openshift-network-playground/nat64/host.sh
@@ -351,6 +358,7 @@ systemd:
         TimeoutStartSec=180
         TimeoutStopSec=70
         ExecStartPre=-/usr/bin/rm -f %t/%n.ctr-id
+        ExecStartPre=-/usr/bin/podman rm dns64
         ExecStartPre=/usr/bin/podman build --net host --tag localhost/dns64 /opt/openshift-network-playground/dns64
         ExecStart=/usr/bin/podman run --cidfile=%t/%n.ctr-id --cgroups=no-conmon --rm --sdnotify=conmon --name dns64 -d --net host --cap-add NET_ADMIN,NET_RAW localhost/dns64
         ExecStop=/usr/bin/podman stop --ignore --cidfile=%t/%n.ctr-id
@@ -375,6 +383,7 @@ systemd:
         TimeoutStartSec=180
         TimeoutStopSec=70
         ExecStartPre=-/usr/bin/rm -f %t/%n.ctr-id
+        ExecStartPre=-/usr/bin/podman rm proxy
         ExecStartPre=/usr/bin/podman build --net host --tag localhost/proxy /opt/openshift-network-playground/proxy
         ExecStart=/usr/bin/podman run --cidfile=%t/%n.ctr-id --cgroups=no-conmon --rm --sdnotify=conmon --name proxy -d --net host --volume /opt/openshift-network-playground/proxy/certs:/etc/squid-cert --cap-add NET_ADMIN,NET_RAW localhost/proxy
         ExecStop=/usr/bin/podman stop --ignore --cidfile=%t/%n.ctr-id
@@ -399,6 +408,7 @@ systemd:
         TimeoutStartSec=180
         TimeoutStopSec=70
         ExecStartPre=-/usr/bin/rm -f %t/%n.ctr-id
+        ExecStartPre=-/usr/bin/podman rm reverse-proxy
         ExecStartPre=/usr/bin/podman build --net host --tag localhost/reverse-proxy /opt/openshift-network-playground/reverse-proxy
         ExecStart=/usr/bin/podman run --cidfile=%t/%n.ctr-id --cgroups=no-conmon --rm --sdnotify=conmon --name reverse-proxy -d --net host --cap-add NET_ADMIN,NET_RAW localhost/reverse-proxy
         ExecStop=/usr/bin/podman stop --ignore --cidfile=%t/%n.ctr-id
