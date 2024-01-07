@@ -23,29 +23,33 @@ conditional-include:
   - if: basearch != "s390x"
     # And remove some cruft from grub2
     include: grub2-removals.yaml
-  - if: basearch == "ppc64le"
-    # Need OSTree autopruning on ppc64le (because kernels aren't compressed)
-    # until we increase the size of /boot.
-    # https://github.com/coreos/fedora-coreos-tracker/issues/1247#issuecomment-1355314761
-    # https://github.com/coreos/fedora-coreos-tracker/issues/1495#issuecomment-1561765705
-    include: ostree-autoprune.yaml
+  - if:
+      - releasever >= 40
+    include: ostree-bls.yaml
   - if:
       - basearch == "aarch64"
-      - releasever >= 39
-    # In F39+ we will stop removing the qcom dtb files and thus we'll leverage OSTree autopruning
-    # so that we don't run into https://github.com/coreos/fedora-coreos-tracker/issues/1464
-    # again. OSTree autopruning is new so we're selectively enabling it before making it the default.
-    include: ostree-autoprune.yaml
-  - if:
-      - basearch == "aarch64"
-      - releasever == 38
-    # Remove qcom dtb on F38 files since autopruning isn't in place yet
+    # Remove qcom dtb to help us overcome https://github.com/coreos/fedora-coreos-tracker/issues/1637
     include: aarch64-drop-qcom-dtb-files.yaml
   - if:
       - releasever == 38
     # Modularity is going away in F39+ so we'll only include
     # the fedora-repos-modular package in <39.
     include: fedora-modularity.yaml
+  - if: releasever >= 39
+    # https://fedoraproject.org/wiki/Changes/EnableFwupdRefreshByDefault
+    # Merge with overlay.d/15fcos/usr/lib/systemd/system-preset/45-fcos.preset
+    # once Fedora 39 is released to all streams
+    include: enable-fwupd-refresh-timer.yaml
+  - if: releasever >= 39
+    # https://github.com/coreos/fedora-coreos-tracker/issues/1362
+    # Merge with manifests/system-configuration.yaml once Fedora 39 is released
+    # to all streams
+    include: audit.yaml
+  - if: releasever >= 39
+    # https://github.com/coreos/fedora-coreos-tracker/issues/1567
+    # Merge with manifests/fedora-coreos.yaml once Fedora 39 is released
+    # to all streams
+    include: bash-color-prompt.yaml
 
 ostree-layers:
   - overlay/15fcos
@@ -176,6 +180,8 @@ exclude-packages:
   # Let's make sure initscripts doesn't get pulled back in
   # https://github.com/coreos/fedora-coreos-tracker/issues/220#issuecomment-611566254
   - initscripts
+  # nor /usr/sbin/service
+  - initscripts-service
   # For (datacenter/cloud oriented) servers, we want to see the details by default.
   # https://lists.fedoraproject.org/archives/list/devel@lists.fedoraproject.org/thread/HSMISZ3ETWQ4ETVLWZQJ55ARZT27AAV3/
   - plymouth

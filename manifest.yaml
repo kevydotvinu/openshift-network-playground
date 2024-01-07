@@ -2,7 +2,7 @@ variables:
   stream: stable
   prod: false
 
-releasever: 38
+releasever: 39
 
 ref: onp/${basearch}/coreos/${stream}
 include: manifests/fedora-coreos.yaml
