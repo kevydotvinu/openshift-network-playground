@@ -1225,27 +1225,27 @@
         "name": "host-configure.service"
       },
       {
-        "contents": "[Unit]\nWants=libvirtd.socket\nAfter=libvirtd.socket\nRequires=libvirtd.socket\nConditionPathExists=!/opt/openshift-network-playground/master0.done\n\n[Service]\nTimeout=0\nType=oneshot\nExecStart=/opt/openshift-network-playground/libvirt/create-vm.sh master0 52:54:00:11:22:b1 52:54:00:11:22:a1\nExecStartPost=/usr/bin/touch /opt/openshift-network-playground/master0.done\nRemainAfterExit=yes\n\n[Install]\nWantedBy=basic.target\n",
+        "contents": "[Unit]\nWants=libvirtd.socket\nAfter=network-online.target\nRequires=libvirtd.socket\nConditionPathExists=!/opt/openshift-network-playground/master0.done\n\n[Service]\nTimeout=0\nType=oneshot\nExecStart=/opt/openshift-network-playground/libvirt/create-vm.sh master0 52:54:00:11:22:b1 52:54:00:11:22:a1\nExecStartPost=/usr/bin/touch /opt/openshift-network-playground/master0.done\nRemainAfterExit=yes\n\n[Install]\nWantedBy=basic.target\n",
         "enabled": true,
         "name": "master0.service"
       },
       {
-        "contents": "[Unit]\nWants=libvirtd.socket\nAfter=libvirtd.socket\nRequires=libvirtd.socket\nConditionPathExists=!/opt/openshift-network-playground/master1.done\n\n[Service]\nTimeout=0\nType=oneshot\nExecStart=/opt/openshift-network-playground/libvirt/create-vm.sh master1 52:54:00:11:22:b2 52:54:00:11:22:a2\nExecStartPost=/usr/bin/touch /opt/openshift-network-playground/master1.done\nRemainAfterExit=yes\n\n[Install]\nWantedBy=basic.target\n",
+        "contents": "[Unit]\nWants=libvirtd.socket\nAfter=network-online.target\nRequires=libvirtd.socket\nConditionPathExists=!/opt/openshift-network-playground/master1.done\n\n[Service]\nTimeout=0\nType=oneshot\nExecStart=/opt/openshift-network-playground/libvirt/create-vm.sh master1 52:54:00:11:22:b2 52:54:00:11:22:a2\nExecStartPost=/usr/bin/touch /opt/openshift-network-playground/master1.done\nRemainAfterExit=yes\n\n[Install]\nWantedBy=basic.target\n",
         "enabled": true,
         "name": "master1.service"
       },
       {
-        "contents": "[Unit]\nWants=libvirtd.socket\nAfter=libvirtd.socket\nRequires=libvirtd.socket\nConditionPathExists=!/opt/openshift-network-playground/master2.done\n\n[Service]\nTimeout=0\nType=oneshot\nExecStart=/opt/openshift-network-playground/libvirt/create-vm.sh master2 52:54:00:11:22:b3 52:54:00:11:22:a3\nExecStartPost=/usr/bin/touch /opt/openshift-network-playground/master2.done\nRemainAfterExit=yes\n\n[Install]\nWantedBy=basic.target\n",
+        "contents": "[Unit]\nWants=libvirtd.socket\nAfter=network-online.target\nRequires=libvirtd.socket\nConditionPathExists=!/opt/openshift-network-playground/master2.done\n\n[Service]\nTimeout=0\nType=oneshot\nExecStart=/opt/openshift-network-playground/libvirt/create-vm.sh master2 52:54:00:11:22:b3 52:54:00:11:22:a3\nExecStartPost=/usr/bin/touch /opt/openshift-network-playground/master2.done\nRemainAfterExit=yes\n\n[Install]\nWantedBy=basic.target\n",
         "enabled": true,
         "name": "master2.service"
       },
       {
-        "contents": "[Unit]\nWants=libvirtd.socket\nAfter=libvirtd.socket\nRequires=libvirtd.socket\nConditionPathExists=!/opt/openshift-network-playground/worker0.done\n\n[Service]\nTimeout=0\nType=oneshot\nExecStart=/opt/openshift-network-playground/libvirt/create-vm.sh worker0 52:54:00:11:22:b4 52:54:00:11:22:a4 2 8192\nExecStartPost=/usr/bin/touch /opt/openshift-network-playground/worker0.done\nRemainAfterExit=yes\n\n[Install]\nWantedBy=basic.target\n",
+        "contents": "[Unit]\nWants=libvirtd.socket\nAfter=network-online.target\nRequires=libvirtd.socket\nConditionPathExists=!/opt/openshift-network-playground/worker0.done\n\n[Service]\nTimeout=0\nType=oneshot\nExecStart=/opt/openshift-network-playground/libvirt/create-vm.sh worker0 52:54:00:11:22:b4 52:54:00:11:22:a4 2 8192\nExecStartPost=/usr/bin/touch /opt/openshift-network-playground/worker0.done\nRemainAfterExit=yes\n\n[Install]\nWantedBy=basic.target\n",
         "enabled": true,
         "name": "worker0.service"
       },
       {
-        "contents": "[Unit]\nWants=libvirtd.socket\nAfter=libvirtd.socket\nRequires=libvirtd.socket\nConditionPathExists=!/opt/openshift-network-playground/worker1.done\n\n[Service]\nTimeout=0\nType=oneshot\nExecStart=/opt/openshift-network-playground/libvirt/create-vm.sh worker1 52:54:00:11:22:b5 52:54:00:11:22:a5 2 8192\nExecStartPost=/usr/bin/touch /opt/openshift-network-playground/worker1.done\nRemainAfterExit=yes\n\n[Install]\nWantedBy=basic.target\n",
+        "contents": "[Unit]\nWants=libvirtd.socket\nAfter=network-online.target\nRequires=libvirtd.socket\nConditionPathExists=!/opt/openshift-network-playground/worker1.done\n\n[Service]\nTimeout=0\nType=oneshot\nExecStart=/opt/openshift-network-playground/libvirt/create-vm.sh worker1 52:54:00:11:22:b5 52:54:00:11:22:a5 2 8192\nExecStartPost=/usr/bin/touch /opt/openshift-network-playground/worker1.done\nRemainAfterExit=yes\n\n[Install]\nWantedBy=basic.target\n",
         "enabled": true,
         "name": "worker1.service"
       },
