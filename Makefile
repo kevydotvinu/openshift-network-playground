@@ -211,8 +211,8 @@ release: check-version
 .PHONY: tag
 
 tag: check-version
-	git tag -s ${VERSION} -m ${VERSION}
-	git push origin ${VERSION}
+	git tag -f -s ${VERSION} -m ${VERSION}
+	git push -f origin ${VERSION}
 
 .PHONY: submodule
 
