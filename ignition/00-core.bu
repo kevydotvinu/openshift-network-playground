@@ -879,11 +879,11 @@ storage:
         name: root
       contents:
         inline: |
-          address=/.apps.ocp.example.local/192.168.123.89
-          address=/.apps.sno4.example.local/192.168.126.2
-          address=/.apps.sno64.example.local/192.168.126.3
-          address=/.apps.sno6.example.local/fd00:dead:beef::2
-          address=/.apps.sno64.example.local/fd00:dead:beef::3
+          address=/.apps.ocp.onp.local/192.168.123.89
+          address=/.apps.sno4.onp.local/192.168.126.2
+          address=/.apps.sno64.onp.local/192.168.126.3
+          address=/.apps.sno6.onp.local/fd00:dead:beef::2
+          address=/.apps.sno64.onp.local/fd00:dead:beef::3
           addn-hosts=/etc/hosts
     - path: /etc/hosts
       mode: 0644
@@ -892,19 +892,19 @@ storage:
         name: root
       contents:
         inline: |
-          127.0.0.1 localhost localhost.localdomain onp.ocp.example.local
-          192.168.123.88 api.ocp.example.local
-          192.168.123.90 bootstrap.ocp.example.local
-          192.168.123.91 master0.ocp.example.local
-          192.168.123.92 master1.ocp.example.local
-          192.168.123.93 master2.ocp.example.local
-          192.168.123.94 worker0.ocp.example.local
-          192.168.123.95 worker1.ocp.example.local
-          192.168.123.1 onp.ocp.example.local lb.ocp.example.local mirror.ocp.example.local proxy.ocp.example.local
-          192.168.126.2 api.sno4.example.local api-int.sno4.example.local node.sno4.example.local
-          192.168.126.3 api.sno64.example.local api-int.sno64.example.local node.sno64.example.local
-          fd00:dead:beef::2 api.sno6.example.local api-int.sno6.example.local node.sno6.example.local
-          fd00:dead:beef::3 api.sno64.example.local api-int.sno64.example.local node.sno64.example.local
+          127.0.0.1 localhost localhost.localdomain onp.ocp.onp.local
+          192.168.123.88 api.ocp.onp.local
+          192.168.123.90 bootstrap.ocp.onp.local
+          192.168.123.91 master0.ocp.onp.local
+          192.168.123.92 master1.ocp.onp.local
+          192.168.123.93 master2.ocp.onp.local
+          192.168.123.94 worker0.ocp.onp.local
+          192.168.123.95 worker1.ocp.onp.local
+          192.168.123.1 onp.ocp.onp.local lb.ocp.onp.local mirror.ocp.onp.local proxy.ocp.onp.local
+          192.168.126.2 api.sno4.onp.local api-int.sno4.onp.local node.sno4.onp.local
+          192.168.126.3 api.sno64.onp.local api-int.sno64.onp.local node.sno64.onp.local
+          fd00:dead:beef::2 api.sno6.onp.local api-int.sno6.onp.local node.sno6.onp.local
+          fd00:dead:beef::3 api.sno64.onp.local api-int.sno64.onp.local node.sno64.onp.local
     - path: /etc/zincati/config.d/90-disable-auto-updates.toml
       contents:
         inline: |
@@ -1164,9 +1164,9 @@ storage:
           FROM fedora
           MAINTAINER "Vinu K" <vkochuku@redhat.com>
           COPY named.conf \
-              example.local.forward \
-              example.local.reverse.v4 \
-              example.local.reverse.v6 \
+              onp.local.forward \
+              onp.local.reverse.v4 \
+              onp.local.reverse.v6 \
               /
           RUN yum install -y bind
           ENTRYPOINT ["/usr/sbin/named", "-c", "/named.conf", "-g", "-u", "named"]
@@ -1188,33 +1188,33 @@ storage:
           recursion yes;
           };
           
-          zone "example.local" IN {
+          zone "onp.local" IN {
                   type master;
-                  file "/example.local.forward";
+                  file "/onp.local.forward";
           };
           
           zone "126.168.192.in-addr.arpa" IN {
                   type master;
-                  file "/example.local.reverse.v4";
+                  file "/onp.local.reverse.v4";
           };
           
           zone "0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.f.e.e.b.d.a.e.d.0.0.d.f.ip6.arpa" IN {
                   type master;
-                  file "/example.local.reverse.v6";
+                  file "/onp.local.reverse.v6";
           };
-    - path: /opt/openshift-network-playground/dns64/example.local.forward
+    - path: /opt/openshift-network-playground/dns64/onp.local.forward
       mode: 0644
       overwrite: true
       contents:
         inline: |
           $TTL 86400
-          @               IN      SOA     example.local. root.example.local (
+          @               IN      SOA     onp.local. root.onp.local (
                                           2001062501  ; serial
                                           21600       ; refresh after 6 hours
                                           3600        ; retry after 1 hour
                                           604800      ; expire after 1 week
                                           86400 )     ; minimum TTL of 1 day
-                          IN      NS      ns1.example.local.
+                          IN      NS      ns1.onp.local.
           
           ns1             IN      A       192.168.126.1
           node.sno4       IN      A       192.168.126.2
@@ -1233,40 +1233,40 @@ storage:
           *.apps.sno6     IN      AAAA    fd00:dead:beef::2
           *.apps.sno64    IN      A       192.168.126.3
                           IN      AAAA    fd00:dead:beef::3
-    - path: /opt/openshift-network-playground/dns64/example.local.reverse.v4
+    - path: /opt/openshift-network-playground/dns64/onp.local.reverse.v4
       mode: 0644
       overwrite: true
       contents:
         inline: |
           $TTL 86400
-          @       IN      SOA     example.local. root.example.local (
+          @       IN      SOA     onp.local. root.onp.local (
                                           2001062501  ; serial
                                           21600       ; refresh after 6 hours
                                           3600        ; retry after 1 hour
                                           604800      ; expire after 1 week
                                           86400 )     ; minimum TTL of 1 day
-                  IN      NS      ns1.example.local.
+                  IN      NS      ns1.onp.local.
           
-          1       IN      PTR     ns1.example.local.
-          2       IN      PTR     node.sno4.example.local.
-          3       IN      PTR     node.sno64.example.local.
-    - path: /opt/openshift-network-playground/dns64/example.local.reverse.v6
+          1       IN      PTR     ns1.onp.local.
+          2       IN      PTR     node.sno4.onp.local.
+          3       IN      PTR     node.sno64.onp.local.
+    - path: /opt/openshift-network-playground/dns64/onp.local.reverse.v6
       mode: 0644
       overwrite: true
       contents:
         inline: |
           $TTL 86400
-          @       IN      SOA     example.local. root.example.local (
+          @       IN      SOA     onp.local. root.onp.local (
                                           2001062501  ; serial
                                           21600       ; refresh after 6 hours
                                           3600        ; retry after 1 hour
                                           604800      ; expire after 1 week
                                           86400 )     ; minimum TTL of 1 day
-                  IN      NS      ns1.example.local.
+                  IN      NS      ns1.onp.local.
           
-          1       IN      PTR     ns1.example.local.
-          2       IN      PTR     node.sno6.example.local.
-          3       IN      PTR     node.sno64.example.local.
+          1       IN      PTR     ns1.onp.local.
+          2       IN      PTR     node.sno6.onp.local.
+          3       IN      PTR     node.sno64.onp.local.
     - path: /opt/openshift-network-playground/proxy/Containerfile
       mode: 0644
       overwrite: true
@@ -1462,7 +1462,7 @@ storage:
       contents:
         inline: |
           CLUSTER_NAME=ocp
-          DOMAIN=example.local
+          DOMAIN=onp.local
     - path: /opt/openshift-network-playground/proxy/certs/.keepdir
       mode: 0644
       overwrite: true
@@ -2142,7 +2142,7 @@ storage:
           echo "Generating install-config.yaml file ..."
           cat << EOF > ${SCRIPT_DIR}/install-config.yaml
           apiVersion: v1
-          baseDomain: example.local
+          baseDomain: onp.local
           metadata:
             name: ocp
           networking:
@@ -2198,9 +2198,9 @@ storage:
           pullSecret: '$(cat ${SCRIPT_DIR}/pullsecret)'
           sshKey: '$(cat ${SCRIPT_DIR}/id_ed25519.pub)'
           proxy:
-            httpProxy: http://proxy.ocp.example.local:3128
-            httpsProxy: http://proxy.ocp.example.local:4128
-            noProxy: example.local,192.168.122.0/24,192.168.123.0/24,192.168.124.0/24,192.168.125.0/24,192.168.126.0/24,172.22.0.0/24
+            httpProxy: http://proxy.ocp.onp.local:3128
+            httpsProxy: http://proxy.ocp.onp.local:4128
+            noProxy: onp.local,192.168.122.0/24,192.168.123.0/24,192.168.124.0/24,192.168.125.0/24,192.168.126.0/24,172.22.0.0/24
           additionalTrustBundle: |
           $(cat /opt/openshift-network-playground/proxy/certs/CA.pem | sed 's/^/    /')
           EOF
@@ -2585,14 +2585,14 @@ storage:
 
           cat << EOF
           Console
-          URL      : https://console-openshift-console.apps.ocp.example.local
+          URL      : https://console-openshift-console.apps.ocp.onp.local
           username : kubeadmin
           password : ${PASSWORD}
-          DNS      : echo "${IP} console-openshift-console.apps.ocp.example.local oauth-openshift.apps.ocp.example.local" | sudo tee -a /etc/hosts
+          DNS      : echo "${IP} console-openshift-console.apps.ocp.onp.local oauth-openshift.apps.ocp.onp.local" | sudo tee -a /etc/hosts
 
           CLI
-          command : oc login -u kubeadmin -p ${PASSWORD} https://api.ocp.example.local:6443
-          DNS     : echo "${IP} api.ocp.example.local" | sudo tee -a /etc/hosts
+          command : oc login -u kubeadmin -p ${PASSWORD} https://api.ocp.onp.local:6443
+          DNS     : echo "${IP} api.ocp.onp.local" | sudo tee -a /etc/hosts
           EOF
     - path: /home/onp/openshift-network-playground/sno.sh
       mode: 0755
@@ -2631,7 +2631,7 @@ storage:
           sno4)
           cat << EOF > ${ONPDIR}/${NAME}.yaml
           apiVersion: v1
-          baseDomain: example.local
+          baseDomain: onp.local
           metadata:
             name: ${NAME}
           networking:
@@ -2660,7 +2660,7 @@ storage:
           sno6)
           cat << EOF > ${ONPDIR}/${NAME}.yaml
           apiVersion: v1
-          baseDomain: example.local
+          baseDomain: onp.local
           metadata:
             name: ${NAME}
           networking:
@@ -2689,7 +2689,7 @@ storage:
           sno64)
           cat << EOF > ${ONPDIR}/${NAME}.yaml
           apiVersion: v1
-          baseDomain: example.local
+          baseDomain: onp.local
           metadata:
             name: ${NAME}
           networking:
@@ -3237,7 +3237,7 @@ storage:
           #cloud-config
           preserve_hostname: False
           hostname: fedora
-          fqdn: fedora.onp.example.local
+          fqdn: fedora.onp.onp.local
           packages:
             - cloud-utils-growpart
           output:
@@ -3287,7 +3287,7 @@ storage:
                     dns_nameservers:
                       - 192.168.124.1
                     dns_search:
-                      - example.local
+                      - onp.local
     - path: /home/onp/openshift-network-playground/fedora-network-static6-v1.yaml
       mode: 0644
       overwrite: true
@@ -3309,7 +3309,7 @@ storage:
                     dns_nameservers:
                       - fd00:dead:beef::1
                     dns_search:
-                      - example.local
+                      - onp.local
     - path: /home/onp/openshift-network-playground/vyos-user-data.yaml
       mode: 0644
       overwrite: true
@@ -3369,7 +3369,7 @@ storage:
                     dns_nameservers:
                       - 192.168.123.1
                     dns_search:
-                      - example.local
+                      - onp.local
     - path: /home/onp/openshift-network-playground/ubuntu-user-data.yaml
       mode: 0644
       overwrite: true
@@ -3382,7 +3382,7 @@ storage:
           #cloud-config
           preserve_hostname: False
           hostname: ubuntu
-          fqdn: ubuntu.onp.example.local
+          fqdn: ubuntu.onp.onp.local
           packages:
             - cloud-initramfs-growroot
           output:
@@ -3432,7 +3432,7 @@ storage:
                     dns_nameservers:
                       - 192.168.123.1
                     dns_search:
-                      - example.local
+                      - onp.local
     - path: /home/onp/openshift-network-playground/ubuntu-network-static6-v1.yaml
       mode: 0644
       overwrite: true
@@ -3454,7 +3454,7 @@ storage:
                     dns_nameservers:
                       - fd00:dead:beef::1
                     dns_search:
-                      - example.local
+                      - onp.local
     - path: /opt/openshift-network-playground/reverse-proxy/Containerfile
       mode: 0644
       overwrite: true
@@ -3469,7 +3469,7 @@ storage:
                           -keyout reverse-proxy.key \
                           -out reverse-proxy.crt \
                           -days 365 \
-                          -subj "/C=IN/ST=Maharashtra/L=Mumbai/O=ONP/CN=onp.ocp.example.local"
+                          -subj "/C=IN/ST=Maharashtra/L=Mumbai/O=ONP/CN=onp.ocp.onp.local"
           
           COPY main.go go.mod .
           ENTRYPOINT ["go", "run", "main.go"]
@@ -3687,7 +3687,7 @@ storage:
 
           function setup() {
                   if [[ $(sudo virsh -q list 2>/dev/null | grep -o sno4 | wc -c) != 0 ]]; then
-                          for node in node.sno4.example.local; do ssh -i openshift-network-playground/id_ed25519 -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no core@${node} -- sudo shutdown -h 1; done
+                          for node in node.sno4.onp.local; do ssh -i openshift-network-playground/id_ed25519 -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no core@${node} -- sudo shutdown -h 1; done
                           wait_for_shutdown
                   fi
 
