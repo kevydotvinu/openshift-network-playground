@@ -1933,7 +1933,7 @@ storage:
           .PHONY: rhcos
 
           rhcos: ssh-pullsecret
-                @${HOME}/openshift-network-playground/rhcos.sh ${BUTANE}
+                @${HOME}/openshift-network-playground/rhcos.sh ${BUTANE} ${NETWORK}
 
           .PHONY: fedora
           
@@ -3082,6 +3082,8 @@ storage:
           set -eou pipefail
           
           BUTANE=$(readlink -f ${1})
+          BRIDGE=${2}
+          NETWORK=$(echo ${BRIDGE} | tr "," "\n" | while read bridge; do echo --network bridge=${bridge}; done)
           IGNITION_NAME=$(basename -- ${BUTANE})
           IGNITION_NAME=${IGNITION_NAME%.*}
           RELEASE=$(grep 4[.][0-9] ${BUTANE} | awk '{print $2}')
@@ -3130,7 +3132,8 @@ storage:
                             --vcpus 2 \
                             --ram 2048 \
                             --os-variant fedora-coreos-stable \
-                            --import --network bridge=baremetal \
+                            --import \
+                            ${NETWORK} \
                             --qemu-commandline="-fw_cfg name=opt/com.coreos/config,file=${DIRECTORY}/${IGNITION_NAME}.ign" \
                             --disk ${DISK} \
                             --graphics spice,listen=${HOST_IP} \
@@ -3198,7 +3201,7 @@ storage:
           ONP_DIR=/home/onp/openshift-network-playground
           
           VM_NAME=${6}
-          IMAGE_NAME=$(basename -- ${IMAGE})
+          IMAGE_NAME=$(basename -- ${IMAGE%%\?*})
           EXTENSION=${IMAGE_NAME##*.}
           DISK=${DIRECTORY}/${VM_NAME}.${EXTENSION}
           
